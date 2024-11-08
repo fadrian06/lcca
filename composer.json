@@ -4,7 +4,7 @@
     "symfony/dotenv": "^7.1"
   },
   "scripts": {
-    "dev": "start php -S localhost:80",
+    "dev": "composer i & start php -S localhost:80",
     "build": "composer i --no-dev & composer archive"
   },
   "autoload": {
