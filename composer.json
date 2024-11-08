@@ -1,0 +1,30 @@
+{
+  "require": {
+    "flightphp/core": "^3.12",
+    "symfony/dotenv": "^7.1"
+  },
+  "scripts": {
+    "dev": "start php -S localhost:80",
+    "build": "composer i --no-dev & composer archive"
+  },
+  "autoload": {
+    "psr-4": {
+      "LCCA\\": "app"
+    }
+  },
+  "require-dev": {
+    "symfony/var-dumper": "^7.1"
+  },
+  "archive": {
+    "name": "LCCA",
+    "exclude": [
+      ".env.example",
+      ".gitignore",
+      ".git",
+      "composer.*",
+      "*.sql",
+      "docs",
+      "*.tar"
+    ]
+  }
+}
