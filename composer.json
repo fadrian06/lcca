@@ -1,6 +1,6 @@
 {
   "require": {
-    "flightphp/core": "^3.12",
+    "flightphp/core": "^3.13",
     "symfony/dotenv": "^7.1"
   },
   "scripts": {

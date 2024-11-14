@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cab3765744d0b071f3a608e99b627efe",
+    "content-hash": "06333082d57f0ba5d713d63b73bd4399",
     "packages": [
         {
             "name": "flightphp/core",
-            "version": "v3.12.0",
+            "version": "v3.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/flightphp/core.git",
-                "reference": "63fbf9b0316969e8aa6c318f8479d1ed0578f9b4"
+                "reference": "1307e8a39d89fadba69d0c2dad53b6e0da83fd96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/flightphp/core/zipball/63fbf9b0316969e8aa6c318f8479d1ed0578f9b4",
-                "reference": "63fbf9b0316969e8aa6c318f8479d1ed0578f9b4",
+                "url": "https://api.github.com/repos/flightphp/core/zipball/1307e8a39d89fadba69d0c2dad53b6e0da83fd96",
+                "reference": "1307e8a39d89fadba69d0c2dad53b6e0da83fd96",
                 "shasum": ""
             },
             "require": {
@@ -29,7 +29,7 @@
             },
             "require-dev": {
                 "ext-pdo_sqlite": "*",
-                "flightphp/runway": "^0.2.0",
+                "flightphp/runway": "^0.2.3 || ^1.0",
                 "league/container": "^4.2",
                 "level-2/dice": "^4.0",
                 "phpstan/extension-installer": "^1.3",
@@ -76,22 +76,22 @@
             "homepage": "http://flightphp.com",
             "support": {
                 "issues": "https://github.com/flightphp/core/issues",
-                "source": "https://github.com/flightphp/core/tree/v3.12.0"
+                "source": "https://github.com/flightphp/core/tree/v3.13.0"
             },
-            "time": "2024-08-22T17:05:34+00:00"
+            "time": "2024-10-30T19:52:23+00:00"
         },
         {
             "name": "symfony/dotenv",
-            "version": "v7.1.5",
+            "version": "v7.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dotenv.git",
-                "reference": "6d966200b399fa59759286f3fc7c919f0677c449"
+                "reference": "56a10f3032a6c2f085b13bc429e9d78a2c895dc4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/dotenv/zipball/6d966200b399fa59759286f3fc7c919f0677c449",
-                "reference": "6d966200b399fa59759286f3fc7c919f0677c449",
+                "url": "https://api.github.com/repos/symfony/dotenv/zipball/56a10f3032a6c2f085b13bc429e9d78a2c895dc4",
+                "reference": "56a10f3032a6c2f085b13bc429e9d78a2c895dc4",
                 "shasum": ""
             },
             "require": {
@@ -136,7 +136,7 @@
                 "environment"
             ],
             "support": {
-                "source": "https://github.com/symfony/dotenv/tree/v7.1.5"
+                "source": "https://github.com/symfony/dotenv/tree/v7.1.6"
             },
             "funding": [
                 {
@@ -152,7 +152,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-09-17T09:16:35+00:00"
+            "time": "2024-09-28T11:14:12+00:00"
         }
     ],
     "packages-dev": [
@@ -322,10 +322,10 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": [],
+    "platform": {},
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
