@@ -1,8 +1,11 @@
 <?php
 
+use LCCA\App;
 use LCCA\Models\UserModel;
 
 /** @var UserModel $loggedUser */
+
+$urlSections = array_filter(explode('/', App::request()->url));
 
 ?>
 
@@ -419,10 +422,15 @@ use LCCA\Models\UserModel;
         </div>
         <div class="app-hero-header">
           <h5 class="fw-light">Hola <?= $loggedUser ?>,</h5>
-          <!-- <h3 class="fw-light mb-5">
-            <span>Inicio</span> / <span>Components</span> /
-            <span>Alerts</span>
-          </h3> -->
+          <h3 class="fw-light mb-5">
+            <a href="./">Inicio</a>
+            <?php foreach ($urlSections as $section): ?>
+              &nbsp;/
+              <a href="./<?= $section ?>">
+                <?= mb_convert_case($section, MB_CASE_TITLE) ?>
+              </a>
+            <?php endforeach ?>
+          </h3>
         </div>
         <div class="app-body"><?= $page ?></div>
         <div class="app-footer">

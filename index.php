@@ -16,6 +16,8 @@ $_ENV['PDO_DSN'] ??= 'sqlite::memory';
 $_ENV['PDO_USER'] ??= null;
 $_ENV['PDO_PASSWORD'] ??= null;
 
+date_default_timezone_set($_ENV['TIMEZONE'] ?? 'America/Caracas');
+
 session_start();
 $_SESSION['loggedUser'] ??= [];
 $_SESSION['messages'] ??= ['error' => null, 'success' => null];

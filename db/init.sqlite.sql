@@ -5,6 +5,14 @@ CREATE TABLE IF NOT EXISTS users (
   password VARCHAR(255) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS representatives (
+  id VARCHAR(255) PRIMARY KEY,
+  nationality VARCHAR(1) NOT NULL CHECK (nationality IN ('V', 'V')),
+  idCard INTEGER UNIQUE NOT NULL CHECK (idCard > 0),
+  names VARCHAR(255) NOT NULL CHECK (LENGTH(names) >= 3),
+  lastNames VARCHAR(255) NOT NULL CHECK (LENGTH(lastNames) >= 3),
+);
+
 CREATE TABLE IF NOT EXISTS students (
   id VARCHAR(255) PRIMARY KEY,
   nationality VARCHAR(1) NOT NULL CHECK (nationality IN ('V', 'E')),

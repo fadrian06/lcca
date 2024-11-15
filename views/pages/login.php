@@ -5,7 +5,7 @@
         <div class="border border-dark rounded-2 p-4 mt-5">
           <div class="login-form">
             <a href="./" class="mb-4 d-flex">
-              <img src="./assets/images/logo.svg" class="img-fluid login-logo" alt="Mercury Admin" />
+              <img src="./assets/images/logo-sm.svg" height="48" />
             </a>
             <h5 class="fw-light mb-5">Introduce tus credenciales para acceder al sistema.</h5>
             <div class="mb-3">

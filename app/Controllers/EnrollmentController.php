@@ -33,7 +33,7 @@ final readonly class EnrollmentController {
       $inscription->student['genre'],
       $inscription->student['haveBicentennialCollection'],
       $inscription->student['haveCanaima'],
-      $inscription->student['pendingSubjects'] ?: [],
+      $inscription->student['pendingSubjects'] ?? [],
       $inscription->student['disabilities'] ?: [],
       $inscription->student['otherDisabilityAssistance'] === ''
         ? ($inscription->student['disabilityAssistance'] ?: [])
