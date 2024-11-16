@@ -28,4 +28,5 @@ if (key_exists('id', $_SESSION['loggedUser'])) {
   App::view()->set('loggedUser', $loggedUser);
 }
 
+App::view()->preserveVars = false;
 App::start();

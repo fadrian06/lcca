@@ -13,8 +13,15 @@ final class App extends Flight
     string $layout,
     array $pageData = []
   ): void {
-    Flight::render("pages/$pageName", $pageData, 'page');
-    Flight::render("layouts/$layout", compact('title'));
+    self::render("pages/$pageName", $pageData, 'page');
+    self::render("layouts/$layout", compact('title'));
+  }
+
+  static function renderComponent(
+    string $componentName,
+    array $componentData = []
+  ): void {
+    self::render("components/$componentName", $componentData);
   }
 
   static function db(): PDO {
