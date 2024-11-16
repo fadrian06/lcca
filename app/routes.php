@@ -5,6 +5,7 @@ use LCCA\Controllers\AccountRegistrationController;
 use LCCA\Controllers\EnrollmentController;
 use LCCA\Controllers\HomeController;
 use LCCA\Controllers\LoginController;
+use LCCA\Controllers\UserProfileController;
 use LCCA\Middlewares\EnsureUserIsLoggedMiddleware;
 use LCCA\Middlewares\EnsureUserIsNotLoggedMiddleware;
 
@@ -32,5 +33,22 @@ App::group('', function (): void {
   App::group('/inscribir', function (): void {
     App::route('GET /', [EnrollmentController::class, 'showEnrollmentForm']);
     App::route('POST /', [EnrollmentController::class, 'handleNewEnrollment']);
+  });
+
+  App::group('/perfil', function (): void {
+    App::route(
+      'GET /configurar',
+      [UserProfileController::class, 'showConfigurations']
+    );
+
+    App::route(
+      'POST /configurar',
+      [UserProfileController::class, 'handleProfileInfoChange']
+    );
+
+    App::route(
+      'POST /cambiar-clave',
+      [UserProfileController::class, 'handlePasswordChange']
+    );
   });
 }, [EnsureUserIsLoggedMiddleware::class]);

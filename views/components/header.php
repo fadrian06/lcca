@@ -103,11 +103,17 @@ $urlSections = array_filter(explode('/', App::request()->url));
       </a>
       <div class="dropdown-menu dropdown-menu-end shadow">
         <!-- <a class="dropdown-item d-flex align-items-center" href="profile.html"><i
-            class="bi bi-person fs-4 me-2"></i>Profile</a>
-        <a class="dropdown-item d-flex align-items-center" href="settings.html"><i
-            class="bi bi-gear fs-4 me-2"></i>Account Settings</a> -->
-        <a class="dropdown-item d-flex align-items-center" href="./salir"><i
-            class="bi bi-escape fs-4 me-2"></i>Salir</a>
+            class="bi bi-person fs-4 me-2"></i>Profile</a> -->
+        <a
+          class="dropdown-item d-flex align-items-center"
+          href="./perfil/configurar">
+          <i class="bi bi-gear fs-4 me-2"></i>
+          Configuraciones de la cuenta
+        </a>
+        <a class="dropdown-item d-flex align-items-center" href="./salir">
+          <i class="bi bi-escape fs-4 me-2"></i>
+          Salir
+        </a>
       </div>
     </div>
   </div>
@@ -119,7 +125,7 @@ $urlSections = array_filter(explode('/', App::request()->url));
       <a href="./">Inicio</a>
       <?php foreach ($urlSections as $section): ?>
         &nbsp;/
-        <a href="./<?= $section ?>">
+        <a>
           <?= mb_convert_case($section, MB_CASE_TITLE) ?>
         </a>
       <?php endforeach ?>
