@@ -3,6 +3,7 @@
 namespace LCCA\Controllers;
 
 use LCCA\App;
+use LCCA\Enums\Role;
 use LCCA\Models\UserModel;
 
 final readonly class AccountRegistrationController
@@ -22,11 +23,12 @@ final readonly class AccountRegistrationController
       $userData->name,
       $userData->idCard,
       $userData->password,
+      Role::Admin->value,
       $userData->secretQuestion,
       $userData->secretAnswer
     );
 
     // TODO: Send success message
-    App::redirect('/ingresar');
+    LoginController::handleLogin();
   }
 }

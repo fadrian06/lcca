@@ -3,6 +3,7 @@
 namespace LCCA\Models;
 
 use LCCA\App;
+use LCCA\Enums\Role;
 use PDOException;
 use Stringable;
 
@@ -15,6 +16,7 @@ final class UserModel implements Stringable
     string $name,
     public readonly int $idCard,
     private string $password,
+    private Role $role,
     public readonly string $secretQuestion,
     private readonly string $secretAnswer
   ) {
@@ -52,6 +54,7 @@ final class UserModel implements Stringable
     string $name,
     int $idCard,
     string $password,
+    string $role,
     string $secretQuestion,
     string $secretAnswer
   ): self {
@@ -60,15 +63,16 @@ final class UserModel implements Stringable
       $name,
       $idCard,
       password_hash($password, PASSWORD_DEFAULT),
+      Role::from($role),
       $secretQuestion,
       password_hash($secretAnswer, PASSWORD_DEFAULT)
     );
 
     try {
       $stmt = App::db()->prepare('
-        INSERT INTO users(id, name, idCard, password, secretQuestion,
-        secretAnswer) VALUES (:id, :name, :idCard, :password, :secretQuestion,
-        :secretAnswer)
+        INSERT INTO users(id, name, idCard, password, role, secretQuestion,
+        secretAnswer) VALUES (:id, :name, :idCard, :password, :role,
+        :secretQuestion, :secretAnswer)
       ');
 
       $stmt->execute([
@@ -76,6 +80,7 @@ final class UserModel implements Stringable
         ':name' => $userModel->name,
         ':idCard' => $userModel->idCard,
         ':password' => $userModel->password,
+        ':role' => $userModel->role->value,
         ':secretQuestion' => $userModel->secretQuestion,
         ':secretAnswer' => $userModel->secretAnswer
       ]);
@@ -99,8 +104,8 @@ final class UserModel implements Stringable
   private static function searchByField(string $field, string $value): ?self
   {
     $stmt = App::db()->prepare("
-      SELECT id, name, idCard, password, secretQuestion, secretAnswer FROM users
-      WHERE $field = ?
+      SELECT id, name, idCard, password, role, secretQuestion, secretAnswer
+      FROM users WHERE $field = ?
     ");
 
     $stmt->execute([$value]);
@@ -112,6 +117,7 @@ final class UserModel implements Stringable
         $userData->name,
         $userData->idCard,
         $userData->password,
+        Role::from($userData->role),
         $userData->secretQuestion,
         $userData->secretAnswer
       );
