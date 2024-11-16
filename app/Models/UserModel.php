@@ -9,14 +9,15 @@ use Stringable;
 
 final class UserModel implements Stringable
 {
-  public readonly string $name;
+  private string $name;
 
   private function __construct(
     public readonly string $id,
     string $name,
-    public readonly int $idCard,
+    private int $idCard,
     private string $password,
     private Role $role,
+    private ?string $signatureImagePath,
     public readonly string $secretQuestion,
     private readonly string $secretAnswer
   ) {
@@ -33,6 +34,21 @@ final class UserModel implements Stringable
     return password_verify($secretAnswer, $this->secretAnswer);
   }
 
+  function getIdCard(): int
+  {
+    return $this->idCard;
+  }
+
+  function getSignatureImagePath(): ?string
+  {
+    return $this->signatureImagePath;
+  }
+
+  function haveSignature(): bool
+  {
+    return $this->signatureImagePath !== null;
+  }
+
   function changePassword(string $newPassword): self
   {
     $this->password = password_hash($newPassword, PASSWORD_DEFAULT);
@@ -43,6 +59,34 @@ final class UserModel implements Stringable
       ');
 
       $stmt->execute([':id' => $this->id, ':newPassword' => $this->password]);
+    } catch (PDOException $exception) {
+      dd($exception);
+    }
+
+    return $this;
+  }
+
+  function updateProfile(
+    string $name,
+    int $idCard,
+    string $signatureImagePath
+  ): self {
+    $this->name = mb_convert_case($name, MB_CASE_TITLE);
+    $this->idCard = $idCard;
+    $this->signatureImagePath = $signatureImagePath ?: null;
+
+    try {
+      $stmt = App::db()->prepare('
+        UPDATE users SET name = :name, idCard = :idCard,
+        signatureImagePath = :signatureImagePath WHERE id = :id
+      ');
+
+      $stmt->execute([
+        ':id' => $this->id,
+        ':name' => $this->name,
+        ':idCard' => $this->idCard,
+        ':signatureImagePath' => $this->signatureImagePath
+      ]);
     } catch (PDOException $exception) {
       dd($exception);
     }
@@ -64,6 +108,7 @@ final class UserModel implements Stringable
       $idCard,
       password_hash($password, PASSWORD_DEFAULT),
       Role::from($role),
+      null,
       $secretQuestion,
       password_hash($secretAnswer, PASSWORD_DEFAULT)
     );
@@ -104,8 +149,8 @@ final class UserModel implements Stringable
   private static function searchByField(string $field, string $value): ?self
   {
     $stmt = App::db()->prepare("
-      SELECT id, name, idCard, password, role, secretQuestion, secretAnswer
-      FROM users WHERE $field = ?
+      SELECT id, name, idCard, password, role, signatureImagePath,
+      secretQuestion, secretAnswer FROM users WHERE $field = ?
     ");
 
     $stmt->execute([$value]);
@@ -118,6 +163,7 @@ final class UserModel implements Stringable
         $userData->idCard,
         $userData->password,
         Role::from($userData->role),
+        $userData->signatureImagePath,
         $userData->secretQuestion,
         $userData->secretAnswer
       );

@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
   idCard INTEGER UNIQUE NOT NULL CHECK (idCard >= 0),
   password VARCHAR(255) NOT NULL,
   role VARCHAR(255) NOT NULL CHECK (role IN ('Administrador', 'Docente')),
+  signatureImagePath VARCHAR(255),
   secretQuestion VARCHAR(255) NOT NULL,
   secretAnswer VARCHAR(255) NOT NULL
 );

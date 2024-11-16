@@ -2,10 +2,11 @@
 
 namespace LCCA\Controllers;
 
+use Error;
 use LCCA\App;
 use LCCA\Models\UserModel;
 
-final readonly class UserProfileController
+final readonly class UserProfileController extends Controller
 {
   static function showConfigurations(): void
   {
@@ -16,7 +17,8 @@ final readonly class UserProfileController
     );
   }
 
-  static function handlePasswordChange(): void {
+  static function handlePasswordChange(): void
+  {
     $passwords = App::request()->data;
 
     /** @var UserModel */
@@ -29,5 +31,31 @@ final readonly class UserProfileController
     App::redirect(App::request()->referrer);
   }
 
-  static function handleProfileInfoChange(): void {}
+  static function handleProfileInfoChange(): void
+  {
+    $profileData = App::request()->data;
+
+    /** @var UserModel */
+    $loggedUser = App::view()->get('loggedUser');
+
+    try {
+      $signatureImagePath = self::ensureThatFileIsSaved(
+        'signature',
+        '',
+        $loggedUser->id,
+        'signatures',
+        'La firma es requerida'
+      );
+    } catch (Error) {
+      $signatureImagePath = $loggedUser->getSignatureImagePath();
+    }
+
+    $loggedUser->updateProfile(
+      $profileData->name,
+      $profileData->idCard,
+      $signatureImagePath
+    );
+
+    App::redirect(App::request()->referrer);
+  }
 }

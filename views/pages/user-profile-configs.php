@@ -11,7 +11,10 @@ use LCCA\Models\UserModel;
     <div class="card shadow mb-4">
       <div class="card-body">
         <div class="row justify-content-between">
-          <form method="post" class="col-sm-8 col-12">
+          <form
+            method="post"
+            enctype="multipart/form-data"
+            class="col-sm-8 col-12">
             <div class="card shadow mb-4">
               <div class="card-header">
                 <h5 class="card-title">Detalles personales</h5>
@@ -27,7 +30,7 @@ use LCCA\Models\UserModel;
                       placeholder="Introduce tu nombre"
                       pattern="[a-zA-ZáéíóúñÁÉÍÓÚÑ]{3,}"
                       title="El nombre sólo puede tener mínimo 3 letras"
-                      value="<?= $loggedUser->name ?>" />
+                      value="<?= $loggedUser ?>" />
                   </div>
                   <div class="mb-3 col-md-6">
                     <label class="form-label">Tu cédula</label>
@@ -38,7 +41,7 @@ use LCCA\Models\UserModel;
                       class="form-control"
                       placeholder="Introduce tu cédula"
                       min="0"
-                      value="<?= $loggedUser->idCard ?>" />
+                      value="<?= $loggedUser->getIdCard() ?>" />
                   </div>
                   <div class="mb-3 col-md-12">
                     <label class="form-label">Firma</label>
@@ -48,7 +51,7 @@ use LCCA\Models\UserModel;
                       name="signature"
                       class="form-control"
                       accept="image/*"
-                      required
+                      <?= $loggedUser->haveSignature() ? '' : 'required' ?>
                     />
                   </div>
                 </div>
