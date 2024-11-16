@@ -14,7 +14,9 @@ final readonly class UserModel implements Stringable
     public string $id,
     string $name,
     public string $email,
-    private string $password
+    private string $password,
+    public string $secretQuestion,
+    private string $secretAnswer
   ) {
     $this->name = mb_convert_case($name, MB_CASE_TITLE);
   }
@@ -24,26 +26,36 @@ final readonly class UserModel implements Stringable
     return password_verify($password, $this->password);
   }
 
-  static function create(string $name, string $email, string $password): self
-  {
+  static function create(
+    string $name,
+    string $email,
+    string $password,
+    string $secretQuestion,
+    string $secretAnswer
+  ): self {
     $userModel = new self(
       uniqid(),
       $name,
       $email,
-      password_hash($password, PASSWORD_DEFAULT)
+      password_hash($password, PASSWORD_DEFAULT),
+      $secretQuestion,
+      password_hash($secretAnswer, PASSWORD_DEFAULT)
     );
 
     try {
       $stmt = App::db()->prepare('
-        INSERT INTO users(id, name, email, password)
-        VALUES (:id, :name, :email, :password)
+        INSERT INTO users(id, name, email, password, secretQuestion,
+        secretAnswer) VALUES (:id, :name, :email, :password, :secretQuestion,
+        :secretAnswer)
       ');
 
       $stmt->execute([
         ':id' => $userModel->id,
         ':name' => $userModel->name,
         ':email' => $userModel->email,
-        ':password' => $userModel->password
+        ':password' => $userModel->password,
+        ':secretQuestion' => $userModel->secretQuestion,
+        ':secretAnswer' => $userModel->secretAnswer
       ]);
     } catch (PDOException $exception) {
       dd($exception);

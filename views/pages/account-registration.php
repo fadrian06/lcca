@@ -5,7 +5,9 @@
         <div class="border border-dark rounded-2 p-4 mt-5">
           <div class="login-form">
             <a href="./" class="mb-4 d-flex">
-              <img src="./assets/images/logo.svg" class="img-fluid login-logo" alt="Mercury Admin" />
+              <img
+                src="./assets/images/logo-sm.svg"
+                height="48" />
             </a>
             <h5 class="fw-light mb-5">Crea tu cuenta de administrador.</h5>
             <div class="mb-3">
@@ -24,8 +26,33 @@
             </div>
             <div class="mb-3">
               <label class="form-label">Tu contraseña</label>
-              <input type="password" name="password" required minlength="8" class="form-control" placeholder="Introduce tu contraseña" />
+              <input
+                type="password"
+                name="password"
+                required
+                minlength="8"
+                class="form-control"
+                placeholder="Introduce tu contraseña" />
             </div>
+            <div class="mb-3">
+              <label class="form-label">Pregunta de seguridad</label>
+              <input
+                onchange="document.querySelector('[name=secretAnswer]').setAttribute('placeholder', `Respuesta a: ${this.value}`)"
+                name="secretQuestion"
+                required
+                class="form-control"
+                placeholder="Introduce tu pregunta" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Respuesta de seguridad</label>
+              <input
+                type="password"
+                name="secretAnswer"
+                required
+                class="form-control"
+                placeholder="Introduce tu respuesta" />
+            </div>
+
             <!-- <div class="mb-3">
               <label class="form-label">Confirm Password</label>
               <input type="password" class="form-control" placeholder="Re-enter password" />

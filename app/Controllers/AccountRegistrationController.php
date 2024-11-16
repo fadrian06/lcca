@@ -18,9 +18,15 @@ final readonly class AccountRegistrationController
 
     // TODO: Validate empty data
     // TODO: Validate duplicates
-    UserModel::create($userData->name, $userData->email, $userData->password);
+    UserModel::create(
+      $userData->name,
+      $userData->email,
+      $userData->password,
+      $userData->secretQuestion,
+      $userData->secretAnswer
+    );
 
     // TODO: Send success message
-    App::redirect('/ingreso');
+    App::redirect('/ingresar');
   }
 }

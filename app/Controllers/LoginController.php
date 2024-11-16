@@ -7,7 +7,7 @@ use LCCA\Models\UserModel;
 
 final readonly class LoginController {
   static function showLogin(): void {
-    App::renderPage('login', 'Ingreso', 'mercury-login');
+    App::renderPage('login', 'Ingresar', 'mercury-login');
   }
 
   static function handleLogin(): void {
