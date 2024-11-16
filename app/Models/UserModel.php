@@ -13,7 +13,7 @@ final readonly class UserModel implements Stringable
   private function __construct(
     public string $id,
     string $name,
-    public string $email,
+    public int $idCard,
     private string $password,
     public string $secretQuestion,
     private string $secretAnswer
@@ -28,7 +28,7 @@ final readonly class UserModel implements Stringable
 
   static function create(
     string $name,
-    string $email,
+    int $idCard,
     string $password,
     string $secretQuestion,
     string $secretAnswer
@@ -36,7 +36,7 @@ final readonly class UserModel implements Stringable
     $userModel = new self(
       uniqid(),
       $name,
-      $email,
+      $idCard,
       password_hash($password, PASSWORD_DEFAULT),
       $secretQuestion,
       password_hash($secretAnswer, PASSWORD_DEFAULT)
@@ -44,15 +44,15 @@ final readonly class UserModel implements Stringable
 
     try {
       $stmt = App::db()->prepare('
-        INSERT INTO users(id, name, email, password, secretQuestion,
-        secretAnswer) VALUES (:id, :name, :email, :password, :secretQuestion,
+        INSERT INTO users(id, name, idCard, password, secretQuestion,
+        secretAnswer) VALUES (:id, :name, :idCard, :password, :secretQuestion,
         :secretAnswer)
       ');
 
       $stmt->execute([
         ':id' => $userModel->id,
         ':name' => $userModel->name,
-        ':email' => $userModel->email,
+        ':idCard' => $userModel->idCard,
         ':password' => $userModel->password,
         ':secretQuestion' => $userModel->secretQuestion,
         ':secretAnswer' => $userModel->secretAnswer
@@ -64,9 +64,9 @@ final readonly class UserModel implements Stringable
     return $userModel;
   }
 
-  static function searchByEmail(string $email): ?self
+  static function searchByIdCard(int $idCard): ?self
   {
-    return self::searchByField('email', $email);
+    return self::searchByField('idCard', $idCard);
   }
 
   static function searchById(string $id): ?self
@@ -77,7 +77,7 @@ final readonly class UserModel implements Stringable
   private static function searchByField(string $field, string $value): ?self
   {
     $stmt = App::db()->prepare("
-      SELECT id, name, email, password FROM users
+      SELECT id, name, idCard, password, secretQuestion, secretAnswer FROM users
       WHERE $field = ?
     ");
 
@@ -88,8 +88,10 @@ final readonly class UserModel implements Stringable
       $userData = new self(
         $userData->id,
         $userData->name,
-        $userData->email,
-        $userData->password
+        $userData->idCard,
+        $userData->password,
+        $userData->secretQuestion,
+        $userData->secretAnswer
       );
     }
 

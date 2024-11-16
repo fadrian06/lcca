@@ -20,7 +20,7 @@ final readonly class AccountRegistrationController
     // TODO: Validate duplicates
     UserModel::create(
       $userData->name,
-      $userData->email,
+      $userData->idCard,
       $userData->password,
       $userData->secretQuestion,
       $userData->secretAnswer

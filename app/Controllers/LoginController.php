@@ -14,7 +14,7 @@ final readonly class LoginController {
     $credentials = App::request()->data;
 
     // TODO: Validate empty data
-    $userFound = UserModel::searchByEmail($credentials->email);
+    $userFound = UserModel::searchByIdCard($credentials->idCard);
 
     if ($userFound?->isCorrectPassword($credentials->password)) {
       $_SESSION['loggedUser']['id'] = $userFound->id;

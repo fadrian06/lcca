@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS users (
   id VARCHAR(255) PRIMARY KEY,
   name VARCHAR(255) NOT NULL CHECK (LENGTH(name) >= 3),
-  email VARCHAR(255) NOT NULL UNIQUE CHECK (email LIKE '%@%'),
+  idCard INTEGER NOT NULL CHECK (idCard >= 0),
   password VARCHAR(255) NOT NULL,
   secretQuestion VARCHAR(255) NOT NULL,
   secretAnswer VARCHAR(255) NOT NULL

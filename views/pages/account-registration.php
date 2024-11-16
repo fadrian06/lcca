@@ -21,8 +21,14 @@
                 title="El nombre sólo puede tener mínimo 3 letras" />
             </div>
             <div class="mb-3">
-              <label class="form-label">Tu correo</label>
-              <input type="email" name="email" required class="form-control" placeholder="Introduce tu correo" />
+              <label class="form-label">Tu cédula</label>
+              <input
+                type="number"
+                name="idCard"
+                required
+                class="form-control"
+                placeholder="Introduce tu cédula"
+                min="0" />
             </div>
             <div class="mb-3">
               <label class="form-label">Tu contraseña</label>

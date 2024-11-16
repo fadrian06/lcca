@@ -7,14 +7,26 @@
             <a href="./" class="mb-4 d-flex">
               <img src="./assets/images/logo-sm.svg" height="48" />
             </a>
-            <h5 class="fw-light mb-5">Introduce tus credenciales para acceder al sistema.</h5>
+            <h5 class="fw-light mb-5">
+              Introduce tus credenciales para acceder al sistema.
+            </h5>
             <div class="mb-3">
-              <label class="form-label">Tu correo</label>
-              <input type="email" name="email" required class="form-control" placeholder="Introduce tu correo" />
+              <label class="form-label">Tu cédula</label>
+              <input
+                type="number"
+                name="idCard"
+                required
+                class="form-control"
+                placeholder="Introduce tu cédula" />
             </div>
             <div class="mb-3">
               <label class="form-label">Tu contraseña</label>
-              <input type="password" name="password" required class="form-control" placeholder="Introduce tu contraseña" />
+              <input
+                type="password"
+                name="password"
+                required
+                class="form-control"
+                placeholder="Introduce tu contraseña" />
             </div>
             <!-- <div class="d-flex align-items-center justify-content-between">
               <div class="form-check m-0">
@@ -39,7 +51,9 @@
             </div> -->
             <div class="text-center pt-4">
               <span>¿No tienes cuenta?</span>
-              <a href="./registrarse" class="text-blue text-decoration-underline ms-2">
+              <a
+                href="./registrarse"
+                class="text-blue text-decoration-underline ms-2">
                 Crea una
               </a>
             </div>
