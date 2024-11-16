@@ -44,6 +44,11 @@ final class UserModel implements Stringable
     return $this->signatureImagePath;
   }
 
+  function getRole(): string
+  {
+    return $this->role->value;
+  }
+
   function haveSignature(): bool
   {
     return $this->signatureImagePath !== null;
