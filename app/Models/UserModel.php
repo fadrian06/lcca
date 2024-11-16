@@ -8,7 +8,7 @@ use Stringable;
 
 final readonly class UserModel implements Stringable
 {
-  public readonly string $name;
+  public string $name;
 
   private function __construct(
     public string $id,
@@ -19,7 +19,8 @@ final readonly class UserModel implements Stringable
     $this->name = mb_convert_case($name, MB_CASE_TITLE);
   }
 
-  function isCorrectPassword(string $password): bool {
+  function isCorrectPassword(string $password): bool
+  {
     return password_verify($password, $this->password);
   }
 
@@ -56,11 +57,13 @@ final readonly class UserModel implements Stringable
     return self::searchByField('email', $email);
   }
 
-  static function searchById(string $id): ?self {
+  static function searchById(string $id): ?self
+  {
     return self::searchByField('id', $id);
   }
 
-  private static function searchByField(string $field, string $value): ?self {
+  private static function searchByField(string $field, string $value): ?self
+  {
     $stmt = App::db()->prepare("
       SELECT id, name, email, password FROM users
       WHERE $field = ?
@@ -81,7 +84,8 @@ final readonly class UserModel implements Stringable
     return $userData;
   }
 
-  function __toString(): string {
+  function __toString(): string
+  {
     return $this->name;
   }
 }

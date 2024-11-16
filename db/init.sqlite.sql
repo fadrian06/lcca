@@ -11,6 +11,17 @@ CREATE TABLE IF NOT EXISTS representatives (
   idCard INTEGER UNIQUE NOT NULL CHECK (idCard > 0),
   names VARCHAR(255) NOT NULL CHECK (LENGTH(names) >= 3),
   lastNames VARCHAR(255) NOT NULL CHECK (LENGTH(lastNames) >= 3),
+  educationLevel VARCHAR(255) NOT NULL CHECK (educationLevel IN ('Inicial', 'Secundaria', 'Técnico Superior', 'Universitaria')),
+  job VARCHAR(255) NOT NULL,
+  phone VARCHAR(11) NOT NULL CHECK (phone LIKE '___________'),
+  email VARCHAR(255) NOT NULL CHECK (email LIKE '%@%'),
+  bankAccountNumber VARCHAR(20) NOT NULL CHECK (bankAccountNumber LIKE '____________________'),
+  occupation VARCHAR(255) NOT NULL,
+  isFamilyBoss BOOL NOT NULL,
+  works BOOL NOT NULL,
+  jobRole VARCHAR(255),
+  companyOrInstitutionName VARCHAR(255),
+  monthlyFamilyIncome DECIMAL(10, 2) NOT NULL CHECK (monthlyFamilyIncome >= 0)
 );
 
 CREATE TABLE IF NOT EXISTS students (
@@ -32,11 +43,15 @@ CREATE TABLE IF NOT EXISTS students (
   genre VARCHAR(255) NOT NULL CHECK (genre IN ('Masculino', 'Femenino')),
   haveBicentennialCollection BOOL NOT NULL,
   haveCanaima BOOL NOT NULL,
-  pendingSubjects VARCHAR(255) CHECK (pendingSubjects LIKE '["%"]'),
-  disabilities VARCHAR(255) CHECK (disabilities LIKE '["%"]'),
-  disabilityAssistance VARCHAR(255) CHECK (disabilityAssistance LIKE '["%"]'),
+  pendingSubjects VARCHAR(255) CHECK (pendingSubjects LIKE '["%"]' OR pendingSubjects LIKE '[]'),
+  disabilities VARCHAR(255) CHECK (disabilities LIKE '["%"]' OR pendingSubjects LIKE '[]'),
+  disabilityAssistance VARCHAR(255) CHECK (disabilityAssistance LIKE '["%"]' OR pendingSubjects LIKE '[]'),
+  representative_id VARCHAR(255) NOT NULL,
 
-  UNIQUE (names, lastNames)
+  UNIQUE (names, lastNames),
+  FOREIGN KEY (representative_id) REFERENCES representatives (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS enrollments (
@@ -44,6 +59,8 @@ CREATE TABLE IF NOT EXISTS enrollments (
   student_id VARCHAR(255) NOT NULL,
   studyYear VARCHAR(2) NOT NULL CHECK (studyYear >= 1 AND studyYear <= 5),
   section VARCHAR(1) NOT NULL CHECK (section IN ('A', 'B')),
+  teacher VARCHAR(255) NOT NULL,
+  enrollmentDate DATE NOT NULL,
 
   FOREIGN KEY (student_id) REFERENCES students (id)
     ON UPDATE CASCADE

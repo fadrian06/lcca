@@ -31,9 +31,9 @@ final readonly class StudentModel
   /** @var (DisabilityAssistance|string)[] */
   private array $disabilityAssistance;
 
-
   private function __construct(
     public string $id,
+    public RepresentativeModel $representative,
     private Nationality $nationality,
     public int $idCard,
     string $names,
@@ -80,9 +80,11 @@ final readonly class StudentModel
     $this->pendingSubjects = $pendingSubjects;
     $this->disabilities = $disabilities;
     $this->disabilityAssistance = $disabilityAssistance;
+    $representative->represent($this);
   }
 
   static function create(
+    RepresentativeModel $representative,
     string $nationality,
     int $idCard,
     string $names,
@@ -106,6 +108,7 @@ final readonly class StudentModel
   ): self {
     $studentModel = new self(
       uniqid(),
+      $representative,
       Nationality::from($nationality),
       $idCard,
       $names,
@@ -134,11 +137,12 @@ final readonly class StudentModel
         birthDate, birthPlace, federalEntity, indigenousPeople, stature, weight,
         shoeSize, shirtSize, pantsSize, laterality, genre,
         haveBicentennialCollection, haveCanaima, pendingSubjects, disabilities,
-        disabilityAssistance) VALUES (:id, :nationality, :idCard, :names,
-        :lastNames, :birthDate, :birthPlace, :federalEntity, :indigenousPeople,
-        :stature, :weight, :shoeSize, :shirtSize, :pantsSize, :laterality,
-        :genre, :haveBicentennialCollection, :haveCanaima, :pendingSubjects,
-        :disabilities, :disabilityAssistance)
+        disabilityAssistance, representative_id) VALUES (:id, :nationality,
+        :idCard, :names, :lastNames, :birthDate, :birthPlace, :federalEntity,
+        :indigenousPeople, :stature, :weight, :shoeSize, :shirtSize, :pantsSize,
+        :laterality, :genre, :haveBicentennialCollection, :haveCanaima,
+        :pendingSubjects, :disabilities, :disabilityAssistance,
+        :representative_id)
       ');
 
       $stmt->execute([
@@ -162,7 +166,8 @@ final readonly class StudentModel
         ':haveCanaima' => $studentModel->haveCanaima,
         ':pendingSubjects' => json_encode(array_map(static fn(Subject $subject): string => $subject->value, $studentModel->pendingSubjects)),
         ':disabilities' => json_encode(array_map(static fn(Disability|string $disability): string => is_string($disability) ? $disability : $disability->value, $studentModel->disabilities)),
-        ':disabilityAssistance' => json_encode(array_map(static fn(DisabilityAssistance|string $assistance): string => is_string($assistance) ? $assistance : $assistance->value, $studentModel->disabilityAssistance))
+        ':disabilityAssistance' => json_encode(array_map(static fn(DisabilityAssistance|string $assistance): string => is_string($assistance) ? $assistance : $assistance->value, $studentModel->disabilityAssistance)),
+        ':representative_id' => $studentModel->representative->id
       ]);
     } catch (PDOException $exception) {
       dd($exception);
@@ -171,7 +176,18 @@ final readonly class StudentModel
     return $studentModel;
   }
 
-  function enroll(int $studyYear, string $section): EnrollmentModel {
-    return EnrollmentModel::create($this, $studyYear, $section);
+  function enroll(
+    int $studyYear,
+    string $section,
+    string $teacher,
+    string $date
+  ): EnrollmentModel {
+    return EnrollmentModel::create(
+      $this,
+      $studyYear,
+      $section,
+      $teacher,
+      $date
+    );
   }
 }
