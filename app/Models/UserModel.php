@@ -6,17 +6,17 @@ use LCCA\App;
 use PDOException;
 use Stringable;
 
-final readonly class UserModel implements Stringable
+final class UserModel implements Stringable
 {
-  public string $name;
+  public readonly string $name;
 
   private function __construct(
-    public string $id,
+    public readonly string $id,
     string $name,
-    public int $idCard,
+    public readonly int $idCard,
     private string $password,
-    public string $secretQuestion,
-    private string $secretAnswer
+    public readonly string $secretQuestion,
+    private readonly string $secretAnswer
   ) {
     $this->name = mb_convert_case($name, MB_CASE_TITLE);
   }
@@ -24,6 +24,28 @@ final readonly class UserModel implements Stringable
   function isCorrectPassword(string $password): bool
   {
     return password_verify($password, $this->password);
+  }
+
+  function isCorrectSecretAnswer(string $secretAnswer): bool
+  {
+    return password_verify($secretAnswer, $this->secretAnswer);
+  }
+
+  function changePassword(string $newPassword): self
+  {
+    $this->password = password_hash($newPassword, PASSWORD_DEFAULT);
+
+    try {
+      $stmt = App::db()->prepare('
+        UPDATE users SET password = :newPassword WHERE id = :id
+      ');
+
+      $stmt->execute([':id' => $this->id, ':newPassword' => $this->password]);
+    } catch (PDOException $exception) {
+      dd($exception);
+    }
+
+    return $this;
   }
 
   static function create(

@@ -5,12 +5,15 @@ namespace LCCA\Controllers;
 use LCCA\App;
 use LCCA\Models\UserModel;
 
-final readonly class LoginController {
-  static function showLogin(): void {
+final readonly class LoginController
+{
+  static function showLogin(): void
+  {
     App::renderPage('login', 'Ingresar', 'mercury-login');
   }
 
-  static function handleLogin(): void {
+  static function handleLogin(): void
+  {
     $credentials = App::request()->data;
 
     // TODO: Validate empty data
@@ -22,14 +25,58 @@ final readonly class LoginController {
       App::redirect('/');
     } else {
       $_SESSION['loggedUser'] = null;
-      
+
       App::redirect(App::request()->referrer);
     }
   }
 
-  static function handleLogout(): void {
+  static function handleLogout(): void
+  {
     $_SESSION['loggedUser'] = [];
 
     App::redirect('/ingresar');
+  }
+
+  static function showRecover(?int $userIdCard): void
+  {
+    $userFound = null;
+
+    if (!$userIdCard) {
+      App::request()->query->cedula && App::redirect('/perfil/recuperar/' . App::request()->query->cedula);
+    } else {
+      $userFound = UserModel::searchByIdCard($userIdCard);
+    }
+
+    App::renderPage(
+      'recover-profile',
+      'Recuperar perfil',
+      'mercury-login',
+      compact('userFound')
+    );
+  }
+
+  static function checkAnswer(int $userIdCard): void
+  {
+    $userFound = UserModel::searchByIdCard($userIdCard);
+
+    if (!$userFound->isCorrectSecretAnswer(App::request()->data->secretAnswer)) {
+      App::redirect(App::request()->referrer);
+    } else {
+      App::renderPage(
+        'recover-password',
+        'Cambiar contraseña',
+        'mercury-login',
+        compact('userFound')
+      );
+    }
+  }
+
+  static function recoverPassword(int $userIdCard): void
+  {
+    $userFound = UserModel::searchByIdCard($userIdCard);
+    $userFound->changePassword(App::request()->data->password);
+
+    App::request()->data->idCard = $userFound->idCard;
+    self::handleLogin();
   }
 }

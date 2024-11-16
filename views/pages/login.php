@@ -28,13 +28,17 @@
                 class="form-control"
                 placeholder="Introduce tu contraseña" />
             </div>
-            <!-- <div class="d-flex align-items-center justify-content-between">
-              <div class="form-check m-0">
+            <div class="d-flex align-items-center justify-content-between">
+              <!-- <div class="form-check m-0">
                 <input class="form-check-input" type="checkbox" value="" id="rememberPassword" />
                 <label class="form-check-label" for="rememberPassword">Remember</label>
-              </div>
-              <a href="forgot-password.html" class="text-blue text-decoration-underline">Lost password?</a>
-            </div> -->
+              </div> -->
+              <a
+                href="./perfil/recuperar"
+                class="text-blue text-decoration-underline">
+                ¿Olvidó su contraseña?
+              </a>
+            </div>
             <div class="d-grid py-3 mt-4">
               <button type="submit" class="btn btn-lg btn-primary">
                 Ingresar
