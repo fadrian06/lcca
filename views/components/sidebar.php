@@ -42,6 +42,20 @@
           <span class="menu-text">Inscribir estudiante</span>
         </a>
       </li>
+      <li class="treeview">
+        <a href="javascript:void">
+          <i class="bi bi-person-video3"></i>
+          <span class="menu-text">Docentes</span>
+        </a>
+        <ul class="treeview-menu">
+          <li>
+            <a href="./docentes">Listado</a>
+          </li>
+          <li>
+            <a href="./docentes/registrar">Registrar</a>
+          </li>
+        </ul>
+      </li>
 
       <!-- <li>
         <a href="widgets.html">

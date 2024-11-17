@@ -4,6 +4,7 @@ namespace LCCA\Models;
 
 use LCCA\App;
 use LCCA\Enums\Role;
+use PDO;
 use PDOException;
 use Stringable;
 
@@ -99,6 +100,11 @@ final class UserModel implements Stringable
     return $this;
   }
 
+  function delete(): void {
+    $stmt = App::db()->prepare('DELETE FROM users WHERE id = ?');
+    $stmt->execute([$this->id]);
+  }
+
   static function create(
     string $name,
     int $idCard,
@@ -151,23 +157,32 @@ final class UserModel implements Stringable
     return self::searchByField('id', $id);
   }
 
+  /** @return self[] */
+  static function all(?Role $role = null): array
+  {
+    $query = $role
+      ? 'SELECT * FROM users WHERE role = ?'
+      : 'SELECT * FROM users';
+
+    $stmt = App::db()->prepare($query);
+    $stmt->execute([$role->value]);
+
+    return $stmt->fetchAll(PDO::FETCH_FUNC, [__CLASS__, 'mapper']);
+  }
+
   private static function searchByField(string $field, string $value): ?self
   {
-    $stmt = App::db()->prepare("
-      SELECT id, name, idCard, password, role, signatureImagePath,
-      secretQuestion, secretAnswer FROM users WHERE $field = ?
-    ");
-
+    $stmt = App::db()->prepare("SELECT * FROM users WHERE $field = ?");
     $stmt->execute([$value]);
     $userData = $stmt->fetch() ?: null;
 
     if ($userData) {
-      $userData = new self(
+      return self::mapper(
         $userData->id,
         $userData->name,
         $userData->idCard,
         $userData->password,
-        Role::from($userData->role),
+        $userData->role,
         $userData->signatureImagePath,
         $userData->secretQuestion,
         $userData->secretAnswer
@@ -175,6 +190,28 @@ final class UserModel implements Stringable
     }
 
     return $userData;
+  }
+
+  private static function mapper(
+    string $id,
+    string $name,
+    int $idCard,
+    string $password,
+    string $role,
+    ?string $signatureImagePath,
+    string $secretQuestion,
+    string $secretAnswer
+  ): self {
+    return new self(
+      $id,
+      $name,
+      $idCard,
+      $password,
+      Role::from($role),
+      $signatureImagePath,
+      $secretQuestion,
+      $secretAnswer
+    );
   }
 
   function __toString(): string

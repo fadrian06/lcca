@@ -5,6 +5,7 @@ use LCCA\Controllers\AccountRegistrationController;
 use LCCA\Controllers\EnrollmentController;
 use LCCA\Controllers\HomeController;
 use LCCA\Controllers\LoginController;
+use LCCA\Controllers\TeacherController;
 use LCCA\Controllers\UserProfileController;
 use LCCA\Middlewares\EnsureUserIsLoggedMiddleware;
 use LCCA\Middlewares\EnsureUserIsNotLoggedMiddleware;
@@ -50,5 +51,19 @@ App::group('', function (): void {
       'POST /cambiar-clave',
       [UserProfileController::class, 'handlePasswordChange']
     );
+  });
+
+  App::group('/docentes', function (): void {
+    App::route('GET /', [TeacherController::class, 'showTeachers']);
+    App::route('GET /registrar', [TeacherController::class, 'addTeacher']);
+
+    App::route('POST /registrar', [
+      TeacherController::class,
+      'handleTeacherRegistration'
+    ]);
+
+    App::group('/@id:[\w]+', function (): void {
+      App::route('POST /eliminar', [TeacherController::class, 'deleteTeacher']);
+    });
   });
 }, [EnsureUserIsLoggedMiddleware::class]);
