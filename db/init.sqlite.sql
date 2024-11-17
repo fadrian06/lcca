@@ -73,6 +73,10 @@ CREATE TABLE IF NOT EXISTS students (
   disabilityAssistance
     VARCHAR(255)
     CHECK (disabilityAssistance LIKE '["%"]' OR pendingSubjects LIKE '[]'),
+  status
+    VARCHAR(255)
+    NOT NULL
+    CHECK (status IN ('Activo', 'Graduado', 'Retirado')),
   representative_id VARCHAR(255) NOT NULL,
 
   UNIQUE (names, lastNames),

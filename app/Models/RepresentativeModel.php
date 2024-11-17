@@ -123,4 +123,78 @@ final class RepresentativeModel
 
     return $this;
   }
+
+  static function searchById(string $id): ?self
+  {
+    return self::searchByField('id', $id);
+  }
+
+  private static function searchByField(string $field, string $value): ?self
+  {
+    $stmt = App::db()->prepare("SELECT * FROM representatives WHERE $field = ?");
+    $stmt->execute([$value]);
+    $representativeData = $stmt->fetch() ?: null;
+
+    if ($representativeData) {
+      return self::mapper(
+        $representativeData->id,
+        $representativeData->nationality,
+        $representativeData->idCard,
+        $representativeData->names,
+        $representativeData->lastNames,
+        $representativeData->educationLevel,
+        $representativeData->job,
+        $representativeData->phone,
+        $representativeData->email,
+        $representativeData->bankAccountNumber,
+        $representativeData->occupation,
+        $representativeData->isFamilyBoss,
+        $representativeData->works,
+        $representativeData->jobRole,
+        $representativeData->companyOrInstitutionName,
+        $representativeData->monthlyFamilyIncome
+      );
+    }
+
+    return $representativeData;
+  }
+
+  private static function mapper(
+    string $id,
+    string $nationality,
+    int $idCard,
+    string $names,
+    string $lastNames,
+    string $educationLevel,
+    string $job,
+    string $phone,
+    string $email,
+    string $bankAccountNumber,
+    string $occupation,
+    bool $isFamilyBoss,
+    bool $works,
+    ?string $jobRole,
+    ?string $companyOrInstitutionName,
+    float $monthlyFamilyIncome
+  ): self
+  {
+    return new self(
+      $id,
+      Nationality::from($nationality),
+      $idCard,
+      $names,
+      $lastNames,
+      EducationLevel::from($educationLevel),
+      $job,
+      $phone,
+      $email,
+      $bankAccountNumber,
+      $occupation,
+      $isFamilyBoss,
+      $works,
+      $jobRole,
+      $companyOrInstitutionName,
+      $monthlyFamilyIncome
+    );
+  }
 }

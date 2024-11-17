@@ -1,12 +1,18 @@
 <?php
 
 $counters = [
-  /*[
+  [
     'detailsHref' => './estudiantes',
-    'iconClass' => 'bi bi-pie-chart',
-    'label' => 'Products',
-    'amount' => 250
-  ],*/
+    'iconClass' => 'bi bi-people',
+    'label' => 'Estudiantes activos',
+    'amount' => $activeStudentsAmount
+  ],
+  [
+    'detailsHref' => './docentes',
+    'iconClass' => 'bi bi-person-video3',
+    'label' => 'Docentes',
+    'amount' => $teachersAmount
+  ],
 ];
 
 ?>
