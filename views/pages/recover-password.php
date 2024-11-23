@@ -11,7 +11,7 @@ use LCCA\Models\UserModel;
     <div class="col-xl-4 col-lg-5 col-sm-6 col-12">
       <form
         method="post"
-        action="./perfil/recuperar/<?= $userFound->idCard ?>/cambiar-clave"
+        action="./perfil/recuperar/<?= $userFound->getIdCard() ?>/cambiar-clave"
         class="my-5">
         <div class="border border-dark rounded-2 p-4 mt-5">
           <div class="login-form">

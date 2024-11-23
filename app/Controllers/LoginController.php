@@ -76,7 +76,7 @@ final readonly class LoginController
     $userFound = UserModel::searchByIdCard($userIdCard);
     $userFound->changePassword(App::request()->data->password);
 
-    App::request()->data->idCard = $userFound->idCard;
+    App::request()->data->idCard = $userFound->getIdCard();
     self::handleLogin();
   }
 }
