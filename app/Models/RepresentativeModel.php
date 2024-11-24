@@ -6,8 +6,9 @@ use LCCA\App;
 use LCCA\Enums\EducationLevel;
 use LCCA\Enums\Nationality;
 use PDOException;
+use Stringable;
 
-final class RepresentativeModel
+final class RepresentativeModel implements Stringable
 {
   public readonly string $names;
   public readonly string $lastNames;
@@ -189,5 +190,12 @@ final class RepresentativeModel
       $companyOrInstitutionName,
       $monthlyFamilyIncome
     );
+  }
+
+  function __toString(): string {
+    [$firstName] = explode(' ', $this->names);
+    [$firstLastName] = explode(' ', $this->lastNames);
+
+    return "$firstName $firstLastName";
   }
 }

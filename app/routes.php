@@ -5,6 +5,7 @@ use LCCA\Controllers\AccountRegistrationController;
 use LCCA\Controllers\EnrollmentController;
 use LCCA\Controllers\HomeController;
 use LCCA\Controllers\LoginController;
+use LCCA\Controllers\StudentController;
 use LCCA\Controllers\SubjectController;
 use LCCA\Controllers\TeacherController;
 use LCCA\Controllers\UserProfileController;
@@ -82,5 +83,9 @@ App::group('', function (): void {
       App::route('POST /editar', [SubjectController::class, 'handleEditSubject']);
       App::route('/eliminar', [SubjectController::class, 'deleteSubject']);
     });
+  });
+
+  App::group('/estudiantes', function (): void{
+    App::route('GET /', [StudentController::class, 'showStudents']);
   });
 }, [EnsureUserIsLoggedMiddleware::class]);

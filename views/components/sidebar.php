@@ -36,6 +36,12 @@
           <span class="menu-text">Inicio</span>
         </a>
       </li>
+      <li>
+        <a href="./estudiantes">
+          <i class="bi bi-people"></i>
+          <span class="menu-text">Estudiantes</span>
+        </a>
+      </li>
       <li class="treeview">
         <a href="javascript:void">
           <i class="bi bi-stickies"></i>

@@ -252,7 +252,7 @@ use LCCA\Models\UserModel;
                 <input
                   class="form-check-input"
                   type="radio"
-                  name="student[haveBicentennialCollection]"
+                  name="student[hasBicentennialCollection]"
                   required
                   value="Sí" />
               </label>
@@ -261,7 +261,7 @@ use LCCA\Models\UserModel;
                 <input
                   class="form-check-input"
                   type="radio"
-                  name="student[haveBicentennialCollection]"
+                  name="student[hasBicentennialCollection]"
                   required
                   value="No" />
               </label>
@@ -277,7 +277,7 @@ use LCCA\Models\UserModel;
                 <input
                   class="form-check-input"
                   type="radio"
-                  name="student[haveCanaima]"
+                  name="student[hasCanaima]"
                   required
                   value="Sí" />
               </label>
@@ -286,7 +286,7 @@ use LCCA\Models\UserModel;
                 <input
                   class="form-check-input"
                   type="radio"
-                  name="student[haveCanaima]"
+                  name="student[hasCanaima]"
                   required
                   value="No" />
               </label>
@@ -332,7 +332,7 @@ use LCCA\Models\UserModel;
                 <input
                   class="form-check-input"
                   type="radio"
-                  name="student[haveDisabilityAssistance]"
+                  name="student[hasDisabilityAssistance]"
                   required
                   value="Sí" />
               </label>
@@ -341,7 +341,7 @@ use LCCA\Models\UserModel;
                 <input
                   class="form-check-input"
                   type="radio"
-                  name="student[haveDisabilityAssistance]"
+                  name="student[hasDisabilityAssistance]"
                   required
                   value="No" />
               </label>

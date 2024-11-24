@@ -69,8 +69,8 @@ CREATE TABLE IF NOT EXISTS students (
     NOT NULL
     CHECK (laterality IN ('Diestro', 'Zurdo', 'Ambidiestro')),
   genre VARCHAR(255) NOT NULL CHECK (genre IN ('Masculino', 'Femenino')),
-  haveBicentennialCollection BOOL NOT NULL,
-  haveCanaima BOOL NOT NULL,
+  hasBicentennialCollection BOOL NOT NULL,
+  hasCanaima BOOL NOT NULL,
   disabilities
     VARCHAR(255)
     CHECK (disabilities LIKE '["%"]' OR disabilities LIKE '[]'),

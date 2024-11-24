@@ -66,8 +66,8 @@ final readonly class EnrollmentController
       $inscription->student['sizes']['pants'],
       $inscription->student['laterality'],
       $inscription->student['genre'],
-      $inscription->student['haveBicentennialCollection'],
-      $inscription->student['haveCanaima'],
+      $inscription->student['hasBicentennialCollection'],
+      $inscription->student['hasCanaima'],
       $inscription->student['pendingSubjects'] ?? [],
       $inscription->student['disabilities'] ?: [],
       $inscription->student['otherDisabilityAssistance'] === ''

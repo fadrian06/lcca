@@ -16,8 +16,8 @@ final readonly class EnrollmentModel
     public string $id,
     public StudentModel $student,
     public UserModel $teacher,
-    private StudyYear $studyYear,
-    private Section $section,
+    public StudyYear $studyYear,
+    public Section $section,
     private DateTimeInterface $date
   ) {}
 
@@ -73,6 +73,29 @@ final readonly class EnrollmentModel
     $stmt->execute();
 
     return $stmt->fetchAll(PDO::FETCH_FUNC, [__CLASS__, 'mapper']);
+  }
+
+  /** @return self[] */
+  static function allByStudent(StudentModel $student): array
+  {
+    $stmt = App::db()->prepare('SELECT * FROM enrollments WHERE student_id = ?');
+    $stmt->execute([$student->id]);
+
+    return $stmt->fetchAll(PDO::FETCH_FUNC, fn(
+      string $id,
+      string $student_id,
+      string $teacher_id,
+      string $studyYear,
+      string $section,
+      string $enrollmentDate
+    ): self => new self(
+      $id,
+      $student,
+      UserModel::searchById($teacher_id),
+      StudyYear::from($studyYear),
+      Section::from($section),
+      new DateTimeImmutable($enrollmentDate)
+    ));
   }
 
   private static function mapper(

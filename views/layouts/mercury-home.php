@@ -19,6 +19,11 @@ use LCCA\Models\UserModel;
   <link rel="stylesheet" href="./assets/fonts/bootstrap/bootstrap-icons.css" />
   <link rel="stylesheet" href="./assets/css/main.min.css" />
   <link rel="stylesheet" href="./assets/vendor/overlay-scroll/OverlayScrollbars.min.css" />
+  <style>
+    th, td {
+      white-space: nowrap;
+    }
+  </style>
 </head>
 
 <body>

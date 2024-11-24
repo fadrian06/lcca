@@ -12,11 +12,14 @@ use LCCA\Enums\Genre;
 use LCCA\Enums\IndigenousPeople;
 use LCCA\Enums\Laterality;
 use LCCA\Enums\Nationality;
+use LCCA\Enums\Section;
 use LCCA\Enums\ShirtSize;
+use LCCA\Enums\StudyYear;
 use PDO;
 use PDOException;
+use Stringable;
 
-final readonly class StudentModel
+final readonly class StudentModel implements Stringable
 {
   public string $names;
   public string $lastNames;
@@ -27,6 +30,9 @@ final readonly class StudentModel
 
   /** @var (DisabilityAssistance|string)[] */
   private array $disabilityAssistance;
+
+  /** @var EnrollmentModel[] */
+  private array $enrollments;
 
   /** @param SubjectModel[] $pendingSubjects */
   private function __construct(
@@ -47,8 +53,8 @@ final readonly class StudentModel
     public int $pantsSize,
     private Laterality $laterality,
     private Genre $genre,
-    public bool $haveBicentennialCollection,
-    public bool $haveCanaima,
+    public bool $hasBicentennialCollection,
+    public bool $hasCanaima,
     private array $pendingSubjects,
     array $disabilities,
     array $disabilityAssistance,
@@ -73,7 +79,45 @@ final readonly class StudentModel
 
     $this->disabilities = $disabilities;
     $this->disabilityAssistance = $disabilityAssistance;
+    $this->enrollments = EnrollmentModel::allByStudent($this);
     $representative->represent($this);
+  }
+
+  function isGraduated(): bool
+  {
+    return $this->graduatedDate !== null;
+  }
+
+  function isRetired(): bool
+  {
+    return $this->retiredDate !== null;
+  }
+
+  function getStudyYear(): StudyYear
+  {
+    return $this->enrollments[0]->studyYear;
+  }
+
+  function getSection(): Section
+  {
+    return $this->enrollments[0]->section;
+  }
+
+  /** @return self[] */
+  static function all(): array
+  {
+    $stmt = App::db()->query('
+      SELECT id, representative_id as representativeId, nationality, idCard,
+      names, lastNames, birthDate, birthPlace, federalEntity, indigenousPeople,
+      stature, weight, shoeSize, shirtSize, pantsSize, laterality, genre,
+      hasBicentennialCollection, hasCanaima, disabilities,
+      disabilityAssistance, graduatedDate, retiredDate
+      FROM students
+    ');
+
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_FUNC, [__CLASS__, 'mapper']);
   }
 
   static function create(
@@ -93,8 +137,8 @@ final readonly class StudentModel
     int $pantsSize,
     string $laterality,
     string $genre,
-    bool $haveBicentennialCollection,
-    bool $haveCanaima,
+    bool $hasBicentennialCollection,
+    bool $hasCanaima,
     array $pendingSubjectsIds,
     array $disabilities,
     array $disabilityAssistance
@@ -125,8 +169,8 @@ final readonly class StudentModel
       $pantsSize,
       Laterality::from($laterality),
       Genre::from($genre),
-      $haveBicentennialCollection,
-      $haveCanaima,
+      $hasBicentennialCollection,
+      $hasCanaima,
       $pendingSubjects,
       $disabilities,
       $disabilityAssistance,
@@ -141,12 +185,12 @@ final readonly class StudentModel
         INSERT INTO students(id, nationality, idCard, names, lastNames,
         birthDate, birthPlace, federalEntity, indigenousPeople, stature, weight,
         shoeSize, shirtSize, pantsSize, laterality, genre,
-        haveBicentennialCollection, haveCanaima, disabilities,
+        hasBicentennialCollection, hasCanaima, disabilities,
         disabilityAssistance, representative_id) VALUES (:id,
         :nationality, :idCard, :names, :lastNames, :birthDate, :birthPlace,
         :federalEntity, :indigenousPeople, :stature, :weight, :shoeSize,
         :shirtSize, :pantsSize, :laterality, :genre,
-        :haveBicentennialCollection, :haveCanaima, :disabilities,
+        :hasBicentennialCollection, :hasCanaima, :disabilities,
         :disabilityAssistance, :representative_id)
       ');
 
@@ -167,8 +211,8 @@ final readonly class StudentModel
         ':pantsSize' => $studentModel->pantsSize,
         ':laterality' => $studentModel->laterality->value,
         ':genre' => $studentModel->genre->value,
-        ':haveBicentennialCollection' => $studentModel->haveBicentennialCollection,
-        ':haveCanaima' => $studentModel->haveCanaima,
+        ':hasBicentennialCollection' => $studentModel->hasBicentennialCollection,
+        ':hasCanaima' => $studentModel->hasCanaima,
         ':disabilities' => json_encode(array_map(static fn(Disability|string $disability): string => is_string($disability) ? $disability : $disability->value, $studentModel->disabilities)),
         ':disabilityAssistance' => json_encode(array_map(static fn(DisabilityAssistance|string $assistance): string => is_string($assistance) ? $assistance : $assistance->value, $studentModel->disabilityAssistance)),
         ':representative_id' => $studentModel->representative->id
@@ -241,8 +285,8 @@ final readonly class StudentModel
         $studentData->pantsSize,
         $studentData->laterality,
         $studentData->genre,
-        $studentData->haveBicentennialCollection,
-        $studentData->haveCanaima,
+        $studentData->hasBicentennialCollection,
+        $studentData->hasCanaima,
         $studentData->disabilities,
         $studentData->disabilityAssistance,
         $studentData->graduatedDate,
@@ -271,8 +315,8 @@ final readonly class StudentModel
     int $pantsSize,
     string $laterality,
     string $genre,
-    bool $haveBicentennialCollection,
-    bool $haveCanaima,
+    bool $hasBicentennialCollection,
+    bool $hasCanaima,
     string $disabilities,
     string $disabilityAssistance,
     ?string $graduatedDate,
@@ -303,13 +347,21 @@ final readonly class StudentModel
       $pantsSize,
       Laterality::from($laterality),
       Genre::from($genre),
-      $haveBicentennialCollection,
-      $haveCanaima,
+      $hasBicentennialCollection,
+      $hasCanaima,
       $pendingSubjects,
       json_decode($disabilities, true),
       json_decode($disabilityAssistance, true),
       $graduatedDate ? new DateTimeImmutable($graduatedDate) : null,
       $retiredDate ? new DateTimeImmutable($retiredDate) : null
     );
+  }
+
+  function __toString(): string
+  {
+    [$firstName] = explode(' ', $this->names);
+    [$firstLastName] = explode(' ', $this->lastNames);
+
+    return "$firstName $firstLastName";
   }
 }
