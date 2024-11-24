@@ -5,6 +5,7 @@ use LCCA\Controllers\AccountRegistrationController;
 use LCCA\Controllers\EnrollmentController;
 use LCCA\Controllers\HomeController;
 use LCCA\Controllers\LoginController;
+use LCCA\Controllers\SubjectController;
 use LCCA\Controllers\TeacherController;
 use LCCA\Controllers\UserProfileController;
 use LCCA\Middlewares\EnsureUserIsLoggedMiddleware;
@@ -51,11 +52,16 @@ App::group('', function (): void {
       'POST /cambiar-clave',
       [UserProfileController::class, 'handlePasswordChange']
     );
+
+    App::route(
+      '/eliminar',
+      [UserProfileController::class, 'deleteAccount']
+    );
   });
 
   App::group('/docentes', function (): void {
     App::route('GET /', [TeacherController::class, 'showTeachers']);
-    App::route('GET /registrar', [TeacherController::class, 'addTeacher']);
+    App::route('GET /registrar', [TeacherController::class, 'showAddTeacherPage']);
 
     App::route('POST /registrar', [
       TeacherController::class,
@@ -64,6 +70,17 @@ App::group('', function (): void {
 
     App::group('/@id:[\w]+', function (): void {
       App::route('POST /eliminar', [TeacherController::class, 'deleteTeacher']);
+    });
+  });
+
+  App::group('/areas', function (): void {
+    App::route('GET /', [SubjectController::class, 'showSubjects']);
+    App::route('POST /', [SubjectController::class, 'addSubject']);
+
+    App::group('/@id:[\w]+', function (): void {
+      App::route('GET /editar', [SubjectController::class, 'showEditPage']);
+      App::route('POST /editar', [SubjectController::class, 'handleEditSubject']);
+      App::route('/eliminar', [SubjectController::class, 'deleteSubject']);
     });
   });
 }, [EnsureUserIsLoggedMiddleware::class]);

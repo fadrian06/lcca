@@ -29,4 +29,16 @@ enum FederalEntity: string
   case Yaracuy = 'Yaracuy';
   case Zulia = 'Zulia';
   case DependenciasFederales = 'Dependencias Federales';
+
+  /** @return array<string, self[]> */
+  static function casesByInitial(): array
+  {
+    $initials = [];
+
+    foreach (self::cases() as $federalEntity) {
+      $initials[$federalEntity->value[0]][] = $federalEntity;
+    }
+
+    return $initials;
+  }
 }

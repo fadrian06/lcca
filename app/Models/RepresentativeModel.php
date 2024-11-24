@@ -28,7 +28,6 @@ final class RepresentativeModel
     public readonly string $bankAccountNumber,
     public readonly string $occupation,
     public readonly bool $isFamilyBoss,
-    public readonly bool $works,
     public readonly ?string $jobRole,
     public readonly ?string $companyOrInstitutionName,
     public readonly float $monthlyFamilyIncome
@@ -49,7 +48,6 @@ final class RepresentativeModel
     string $bankAccountNumber,
     string $occupation,
     bool $isFamilyBoss,
-    bool $works,
     ?string $jobRole,
     ?string $companyOrInstitutionName,
     float $monthlyFamilyIncome
@@ -67,7 +65,6 @@ final class RepresentativeModel
       $bankAccountNumber,
       $occupation,
       $isFamilyBoss,
-      $works,
       $jobRole ?: null,
       $companyOrInstitutionName ?: null,
       $monthlyFamilyIncome
@@ -77,10 +74,10 @@ final class RepresentativeModel
       $stmt = App::db()->prepare('
         INSERT INTO representatives (id, nationality, idCard, names, lastNames,
         educationLevel, job, phone, email, bankAccountNumber, occupation,
-        isFamilyBoss, works, jobRole, companyOrInstitutionName,
+        isFamilyBoss, jobRole, companyOrInstitutionName,
         monthlyFamilyIncome) VALUES (:id, :nationality, :idCard, :names,
         :lastNames, :educationLevel, :job, :phone, :email, :bankAccountNumber,
-        :occupation, :isFamilyBoss, :works, :jobRole, :companyOrInstitutionName,
+        :occupation, :isFamilyBoss, :jobRole, :companyOrInstitutionName,
         :monthlyFamilyIncome)
       ');
 
@@ -96,8 +93,7 @@ final class RepresentativeModel
         ':email' => $representativeModel->email,
         ':bankAccountNumber' => $representativeModel->bankAccountNumber,
         ':occupation' => $representativeModel->occupation,
-        ':isFamilyBoss' => $representativeModel->isFamilyBoss,
-        ':works' => $representativeModel->works,
+        ':isFamilyBoss' => (int) $representativeModel->isFamilyBoss,
         ':jobRole' => $representativeModel->jobRole,
         ':companyOrInstitutionName' => $representativeModel->companyOrInstitutionName,
         ':monthlyFamilyIncome' => $representativeModel->monthlyFamilyIncome,
@@ -149,7 +145,6 @@ final class RepresentativeModel
         $representativeData->bankAccountNumber,
         $representativeData->occupation,
         $representativeData->isFamilyBoss,
-        $representativeData->works,
         $representativeData->jobRole,
         $representativeData->companyOrInstitutionName,
         $representativeData->monthlyFamilyIncome
@@ -172,7 +167,6 @@ final class RepresentativeModel
     string $bankAccountNumber,
     string $occupation,
     bool $isFamilyBoss,
-    bool $works,
     ?string $jobRole,
     ?string $companyOrInstitutionName,
     float $monthlyFamilyIncome
@@ -191,7 +185,6 @@ final class RepresentativeModel
       $bankAccountNumber,
       $occupation,
       $isFamilyBoss,
-      $works,
       $jobRole,
       $companyOrInstitutionName,
       $monthlyFamilyIncome

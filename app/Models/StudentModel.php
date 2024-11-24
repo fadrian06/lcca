@@ -13,8 +13,7 @@ use LCCA\Enums\IndigenousPeople;
 use LCCA\Enums\Laterality;
 use LCCA\Enums\Nationality;
 use LCCA\Enums\ShirtSize;
-use LCCA\Enums\StudentStatus;
-use LCCA\Enums\Subject;
+use PDO;
 use PDOException;
 
 final readonly class StudentModel
@@ -23,15 +22,13 @@ final readonly class StudentModel
   public string $lastNames;
   public string $birthPlace;
 
-  /** @var Subject[] */
-  private array $pendingSubjects;
-
   /** @var (Disability|string)[] */
   private array $disabilities;
 
   /** @var (DisabilityAssistance|string)[] */
   private array $disabilityAssistance;
 
+  /** @param SubjectModel[] $pendingSubjects */
   private function __construct(
     public string $id,
     public RepresentativeModel $representative,
@@ -52,20 +49,15 @@ final readonly class StudentModel
     private Genre $genre,
     public bool $haveBicentennialCollection,
     public bool $haveCanaima,
-    array $pendingSubjects,
+    private array $pendingSubjects,
     array $disabilities,
     array $disabilityAssistance,
-    private StudentStatus $status
+    private ?DateTimeInterface $graduatedDate,
+    private ?DateTimeInterface $retiredDate
   ) {
     $this->names = mb_convert_case($names, MB_CASE_TITLE);
     $this->lastNames = mb_convert_case($lastNames, MB_CASE_TITLE);
     $this->birthPlace = mb_convert_case($birthPlace, MB_CASE_TITLE);
-
-    foreach ($pendingSubjects as &$subject) {
-      if (!is_null(Subject::tryFrom($subject))) {
-        $subject = Subject::from($subject);
-      }
-    }
 
     foreach ($disabilities as &$disability) {
       if (!is_null(Disability::tryFrom($disability))) {
@@ -79,7 +71,6 @@ final readonly class StudentModel
       }
     }
 
-    $this->pendingSubjects = $pendingSubjects;
     $this->disabilities = $disabilities;
     $this->disabilityAssistance = $disabilityAssistance;
     $representative->represent($this);
@@ -104,10 +95,18 @@ final readonly class StudentModel
     string $genre,
     bool $haveBicentennialCollection,
     bool $haveCanaima,
-    array $pendingSubjects,
+    array $pendingSubjectsIds,
     array $disabilities,
     array $disabilityAssistance
   ): self {
+    $graduatedDate = null;
+    $retiredDate = null;
+
+    $pendingSubjects = array_map(
+      fn(string $subjectId): SubjectModel => SubjectModel::searchById($subjectId),
+      $pendingSubjectsIds
+    );
+
     $studentModel = new self(
       uniqid(),
       $representative,
@@ -131,21 +130,24 @@ final readonly class StudentModel
       $pendingSubjects,
       $disabilities,
       $disabilityAssistance,
-      StudentStatus::Active
+      $graduatedDate,
+      $retiredDate
     );
+
+    App::db()->beginTransaction();
 
     try {
       $stmt = App::db()->prepare('
         INSERT INTO students(id, nationality, idCard, names, lastNames,
         birthDate, birthPlace, federalEntity, indigenousPeople, stature, weight,
         shoeSize, shirtSize, pantsSize, laterality, genre,
-        haveBicentennialCollection, haveCanaima, pendingSubjects, disabilities,
-        disabilityAssistance, status, representative_id) VALUES (:id,
+        haveBicentennialCollection, haveCanaima, disabilities,
+        disabilityAssistance, representative_id) VALUES (:id,
         :nationality, :idCard, :names, :lastNames, :birthDate, :birthPlace,
         :federalEntity, :indigenousPeople, :stature, :weight, :shoeSize,
         :shirtSize, :pantsSize, :laterality, :genre,
-        :haveBicentennialCollection, :haveCanaima, :pendingSubjects,
-        :disabilities, :disabilityAssistance, :status, :representative_id)
+        :haveBicentennialCollection, :haveCanaima, :disabilities,
+        :disabilityAssistance, :representative_id)
       ');
 
       $stmt->execute([
@@ -167,13 +169,27 @@ final readonly class StudentModel
         ':genre' => $studentModel->genre->value,
         ':haveBicentennialCollection' => $studentModel->haveBicentennialCollection,
         ':haveCanaima' => $studentModel->haveCanaima,
-        ':pendingSubjects' => json_encode(array_map(static fn(Subject $subject): string => $subject->value, $studentModel->pendingSubjects)),
         ':disabilities' => json_encode(array_map(static fn(Disability|string $disability): string => is_string($disability) ? $disability : $disability->value, $studentModel->disabilities)),
         ':disabilityAssistance' => json_encode(array_map(static fn(DisabilityAssistance|string $assistance): string => is_string($assistance) ? $assistance : $assistance->value, $studentModel->disabilityAssistance)),
-        ':status' => $studentModel->status->value,
         ':representative_id' => $studentModel->representative->id
       ]);
+
+      if ($studentModel->pendingSubjects !== []) {
+        $pendingSubjectsValues = array_map(
+          fn(SubjectModel $subjectModel): string => "('$studentModel->id', '$subjectModel->id')",
+          $studentModel->pendingSubjects
+        );
+
+        $shortQuery = 'INSERT INTO pendingSubjects VALUES %s';
+        $fullQuery = sprintf($shortQuery, join(',', $pendingSubjectsValues));
+        $stmt = App::db()->prepare($fullQuery);
+        $stmt->execute();
+      }
+
+      App::db()->commit();
     } catch (PDOException $exception) {
+      App::db()->rollBack();
+
       dd($exception);
     }
 
@@ -183,14 +199,14 @@ final readonly class StudentModel
   function enroll(
     int $studyYear,
     string $section,
-    string $teacher,
+    string $teacherId,
     string $date
   ): EnrollmentModel {
     return EnrollmentModel::create(
       $this,
       $studyYear,
       $section,
-      $teacher,
+      $teacherId,
       $date
     );
   }
@@ -227,10 +243,10 @@ final readonly class StudentModel
         $studentData->genre,
         $studentData->haveBicentennialCollection,
         $studentData->haveCanaima,
-        $studentData->pendingSubjects,
         $studentData->disabilities,
         $studentData->disabilityAssistance,
-        $studentData->status
+        $studentData->graduatedDate,
+        $studentData->retiredDate
       );
     }
 
@@ -257,11 +273,18 @@ final readonly class StudentModel
     string $genre,
     bool $haveBicentennialCollection,
     bool $haveCanaima,
-    string $pendingSubjects,
     string $disabilities,
     string $disabilityAssistance,
-    string $status
+    ?string $graduatedDate,
+    ?string $retiredDate
   ): self {
+    $stmt = App::db()->query('SELECT subject_id FROM pendingSubjects');
+
+    $pendingSubjects = $stmt->fetchAll(
+      PDO::FETCH_FUNC,
+      fn(string $subjectId): SubjectModel => SubjectModel::searchById($subjectId)
+    );
+
     return new self(
       $id,
       RepresentativeModel::searchById($representativeId),
@@ -282,10 +305,11 @@ final readonly class StudentModel
       Genre::from($genre),
       $haveBicentennialCollection,
       $haveCanaima,
-      json_decode($pendingSubjects, true),
+      $pendingSubjects,
       json_decode($disabilities, true),
       json_decode($disabilityAssistance, true),
-      StudentStatus::from($status)
+      $graduatedDate ? new DateTimeImmutable($graduatedDate) : null,
+      $retiredDate ? new DateTimeImmutable($retiredDate) : null
     );
   }
 }

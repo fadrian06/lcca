@@ -20,7 +20,7 @@ final readonly class TeacherController extends Controller
     );
   }
 
-  static function addTeacher(): void
+  static function showAddTeacherPage(): void
   {
     App::renderPage('teacher-registration', 'Registrar docente', 'mercury-home');
   }

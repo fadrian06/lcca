@@ -3,6 +3,7 @@
 namespace LCCA;
 
 use Flight;
+use LCCA\Models\UserModel;
 use PDO;
 
 final class App extends Flight
@@ -24,7 +25,8 @@ final class App extends Flight
     self::render("components/$componentName", $componentData);
   }
 
-  static function db(): PDO {
+  static function db(): PDO
+  {
     static $pdo = null;
 
     if (!$pdo) {
@@ -34,5 +36,10 @@ final class App extends Flight
     }
 
     return $pdo;
+  }
+
+  static function loggedUser(): ?UserModel
+  {
+    return self::view()->get('loggedUser');
   }
 }

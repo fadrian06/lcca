@@ -6,47 +6,42 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use LCCA\App;
 use LCCA\Enums\Section;
-use LCCA\Enums\StudentStatus;
 use LCCA\Enums\StudyYear;
 use PDO;
 use PDOException;
 
 final readonly class EnrollmentModel
 {
-  public string $teacher;
-
   private function __construct(
     public string $id,
     public StudentModel $student,
+    public UserModel $teacher,
     private StudyYear $studyYear,
     private Section $section,
-    string $teacher,
     private DateTimeInterface $date
-  ) {
-    $this->teacher = mb_convert_case($teacher, MB_CASE_TITLE);
-  }
+  ) {}
 
   static function create(
     StudentModel $student,
     int $studyYear,
     string $section,
-    string $teacher,
+    string $teacherId,
     string $date
   ): self {
     $enrollmentModel = new self(
       uniqid(),
       $student,
+      UserModel::searchById($teacherId),
       StudyYear::from($studyYear),
       Section::from($section),
-      $teacher,
       new DateTimeImmutable($date)
     );
 
     try {
       $stmt = App::db()->prepare('
-        INSERT INTO enrollments (id, student_id, studyYear, section, teacher,
+        INSERT INTO enrollments (id, student_id, studyYear, section, teacher_id,
         enrollmentDate) VALUES (:id, :student_id, :studyYear, :section,
-        :teacher, :enrollmentDate)
+        :teacherId, :enrollmentDate)
       ');
 
       $stmt->execute([
@@ -54,7 +49,7 @@ final readonly class EnrollmentModel
         ':student_id' => $enrollmentModel->student->id,
         ':studyYear' => $enrollmentModel->studyYear->value,
         ':section' => $enrollmentModel->section->value,
-        ':teacher' => $enrollmentModel->teacher,
+        ':teacherId' => $enrollmentModel->teacher->id,
         ':enrollmentDate' => $enrollmentModel->date->format('Y-m-d')
       ]);
     } catch (PDOException $exception) {
@@ -69,11 +64,13 @@ final readonly class EnrollmentModel
   {
     $stmt = App::db()->prepare('
       SELECT DISTINCT e.student_id as studentId, e.id as enrollmentId,
-      e.studyYear, e.section, e.teacher, e.enrollmentDate FROM enrollments e
-      JOIN students s ON e.student_id = s.id AND s.status = ?
+      e.studyYear, e.section, e.teacher_id as teacherId,
+      e.enrollmentDate FROM enrollments e
+      JOIN students s ON e.student_id = s.id AND s.graduatedDate IS NULL
+      AND s.retiredDate IS NULL
     ');
 
-    $stmt->execute([StudentStatus::Active->value]);
+    $stmt->execute();
 
     return $stmt->fetchAll(PDO::FETCH_FUNC, [__CLASS__, 'mapper']);
   }
@@ -83,15 +80,15 @@ final readonly class EnrollmentModel
     string $enrollmentId,
     int $studyYear,
     string $section,
-    string $teacher,
+    string $teacherId,
     string $enrollmentDate
   ): self {
     return new self(
       $enrollmentId,
       StudentModel::searchById($studentId),
+      UserModel::searchById($teacherId),
       StudyYear::from($studyYear),
       Section::from($section),
-      $teacher,
       new DateTimeImmutable($enrollmentDate)
     );
   }

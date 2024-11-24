@@ -19,4 +19,17 @@ enum IndigenousPeople: string
   case Panares = 'Panares';
   case Pumes = 'Pumés';
   case Makiritares = 'Makiritares';
+
+  /** @return string[] */
+  static function valuesSorted(): array
+  {
+    $values = array_map(
+      fn(self $indigenousPeople): string => $indigenousPeople->value,
+      self::cases()
+    );
+
+    sort($values);
+
+    return $values;
+  }
 }

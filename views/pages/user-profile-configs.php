@@ -44,6 +44,24 @@ use LCCA\Models\UserModel;
                       value="<?= $loggedUser->getIdCard() ?>" />
                   </div>
                   <div class="mb-3 col-md-12">
+                    <label class="form-label">Pregunta de seguridad</label>
+                    <input
+                      onchange="document.querySelector('[name=secretAnswer]').setAttribute('placeholder', `Respuesta a: ${this.value}`)"
+                      name="secretQuestion"
+                      required
+                      class="form-control"
+                      placeholder="Introduce tu pregunta"
+                      value="<?= $loggedUser->getSecretQuestion() ?>" />
+                  </div>
+                  <div class="mb-3 col-md-12">
+                    <label class="form-label">Respuesta de seguridad</label>
+                    <input
+                      type="password"
+                      name="secretAnswer"
+                      class="form-control"
+                      placeholder="Introduce tu respuesta" />
+                  </div>
+                  <div class="mb-3 col-9">
                     <label class="form-label">Firma</label>
                     <input
                       capture="user"
@@ -51,9 +69,15 @@ use LCCA\Models\UserModel;
                       name="signature"
                       class="form-control"
                       accept="image/*"
-                      <?= $loggedUser->haveSignature() ? '' : 'required' ?>
-                    />
+                      <?= $loggedUser->hasSignature() ? '' : 'required' ?> />
                   </div>
+                  <?php if ($loggedUser->hasSignature()): ?>
+                    <div class="mb-3 col-3">
+                      <img
+                        src="<?= $loggedUser->getSignatureUrl() ?>"
+                        class="img-fluid" />
+                    </div>
+                  <?php endif ?>
                 </div>
               </div>
               <button class="card-footer btn btn-primary">Actualizar</button>
@@ -97,6 +121,9 @@ use LCCA\Models\UserModel;
             </div>
           </form>
         </div>
+      </div>
+      <div class="card-footer text-end">
+        <a href="./perfil/eliminar" class="btn btn-danger">Eliminar cuenta</a>
       </div>
     </div>
   </div>

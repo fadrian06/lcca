@@ -2,6 +2,8 @@
 
 namespace LCCA\Models;
 
+use DateTimeImmutable;
+use DateTimeInterface;
 use LCCA\App;
 use LCCA\Enums\Role;
 use PDO;
@@ -18,9 +20,10 @@ final class UserModel implements Stringable
     private int $idCard,
     private string $password,
     private Role $role,
-    private ?string $signatureImagePath,
-    public readonly string $secretQuestion,
-    private readonly string $secretAnswer
+    private ?string $signatureBase64,
+    private string $secretQuestion,
+    private string $secretAnswer,
+    private ?DateTimeInterface $deletedDate
   ) {
     $this->name = mb_convert_case($name, MB_CASE_TITLE);
   }
@@ -40,9 +43,9 @@ final class UserModel implements Stringable
     return $this->idCard;
   }
 
-  function getSignatureImagePath(): ?string
+  function getSignatureUrl(): ?string
   {
-    return $this->signatureImagePath;
+    return "data:image/jpg;base64,$this->signatureBase64";
   }
 
   function getRole(): string
@@ -50,9 +53,19 @@ final class UserModel implements Stringable
     return $this->role->value;
   }
 
-  function haveSignature(): bool
+  function getSecretQuestion(): string
   {
-    return $this->signatureImagePath !== null;
+    return $this->secretQuestion;
+  }
+
+  function hasSignature(): bool
+  {
+    return $this->signatureBase64 !== null;
+  }
+
+  function isDeleted(): bool
+  {
+    return $this->deletedDate !== null;
   }
 
   function changePassword(string $newPassword): self
@@ -75,23 +88,37 @@ final class UserModel implements Stringable
   function updateProfile(
     string $name,
     int $idCard,
-    string $signatureImagePath
+    ?string $signatureBase64,
+    string $secretQuestion,
+    ?string $secretAnswer
   ): self {
     $this->name = mb_convert_case($name, MB_CASE_TITLE);
     $this->idCard = $idCard;
-    $this->signatureImagePath = $signatureImagePath ?: null;
+    $this->secretQuestion = $secretQuestion;
+
+    if ($signatureBase64) {
+      $this->signatureBase64 = $signatureBase64;
+    }
+
+    if ($secretAnswer) {
+      $this->secretAnswer = password_hash($secretAnswer, PASSWORD_DEFAULT);
+    }
 
     try {
       $stmt = App::db()->prepare('
         UPDATE users SET name = :name, idCard = :idCard,
-        signatureImagePath = :signatureImagePath WHERE id = :id
+        signature = :signature, secretQuestion = :secretQuestion,
+        secretAnswer = :secretAnswer
+        WHERE id = :id
       ');
 
       $stmt->execute([
         ':id' => $this->id,
         ':name' => $this->name,
         ':idCard' => $this->idCard,
-        ':signatureImagePath' => $this->signatureImagePath
+        ':signature' => $this->signatureBase64,
+        ':secretQuestion' => $this->secretQuestion,
+        ':secretAnswer' => $this->secretAnswer
       ]);
     } catch (PDOException $exception) {
       dd($exception);
@@ -100,9 +127,19 @@ final class UserModel implements Stringable
     return $this;
   }
 
-  function delete(): void {
-    $stmt = App::db()->prepare('DELETE FROM users WHERE id = ?');
-    $stmt->execute([$this->id]);
+  function delete(): void
+  {
+    $this->deletedDate = new DateTimeImmutable;
+
+    $stmt = App::db()->prepare('
+      UPDATE users SET deletedDate = :deletedDate
+      WHERE id = :id
+    ');
+
+    $stmt->execute([
+      ':id' => $this->id,
+      ':deletedDate' => $this->deletedDate->format('Y-m-d')
+    ]);
   }
 
   static function create(
@@ -113,15 +150,19 @@ final class UserModel implements Stringable
     string $secretQuestion,
     string $secretAnswer
   ): self {
+    $signatureBase64 = null;
+    $deletedDate = null;
+
     $userModel = new self(
       uniqid(),
       $name,
       $idCard,
       password_hash($password, PASSWORD_DEFAULT),
       Role::from($role),
-      null,
+      $signatureBase64,
       $secretQuestion,
-      password_hash($secretAnswer, PASSWORD_DEFAULT)
+      password_hash($secretAnswer, PASSWORD_DEFAULT),
+      $deletedDate
     );
 
     try {
@@ -161,8 +202,8 @@ final class UserModel implements Stringable
   static function all(?Role $role = null): array
   {
     $query = $role
-      ? 'SELECT * FROM users WHERE role = ?'
-      : 'SELECT * FROM users';
+      ? 'SELECT * FROM users WHERE role = ? AND deletedDate IS NULL'
+      : 'SELECT * FROM users WHERE deletedDate IS NULL';
 
     $stmt = App::db()->prepare($query);
     $stmt->execute([$role->value]);
@@ -183,9 +224,10 @@ final class UserModel implements Stringable
         $userData->idCard,
         $userData->password,
         $userData->role,
-        $userData->signatureImagePath,
+        $userData->signature,
         $userData->secretQuestion,
-        $userData->secretAnswer
+        $userData->secretAnswer,
+        $userData->deletedDate
       );
     }
 
@@ -198,9 +240,10 @@ final class UserModel implements Stringable
     int $idCard,
     string $password,
     string $role,
-    ?string $signatureImagePath,
+    ?string $signature,
     string $secretQuestion,
-    string $secretAnswer
+    string $secretAnswer,
+    ?string $deletedDate
   ): self {
     return new self(
       $id,
@@ -208,9 +251,10 @@ final class UserModel implements Stringable
       $idCard,
       $password,
       Role::from($role),
-      $signatureImagePath,
+      $signature,
       $secretQuestion,
-      $secretAnswer
+      $secretAnswer,
+      $deletedDate ? new DateTimeImmutable($deletedDate) : null
     );
   }
 

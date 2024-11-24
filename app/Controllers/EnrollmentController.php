@@ -3,14 +3,25 @@
 namespace LCCA\Controllers;
 
 use LCCA\App;
+use LCCA\Enums\Role;
 use LCCA\Models\RepresentativeModel;
 use LCCA\Models\StudentModel;
+use LCCA\Models\SubjectModel;
+use LCCA\Models\UserModel;
 
 final readonly class EnrollmentController
 {
   static function showEnrollmentForm(): void
   {
-    App::renderPage('new-enroll', 'Inscribir estudiante', 'mercury-home');
+    $subjects = SubjectModel::all();
+    $teachers = UserModel::all(Role::Teacher);
+
+    App::renderPage(
+      'new-enroll',
+      'Inscribir estudiante',
+      'mercury-home',
+      compact('subjects', 'teachers')
+    );
   }
 
   static function handleNewEnrollment(): void
@@ -31,7 +42,6 @@ final readonly class EnrollmentController
       $inscription->representative['bankAccountNumber'],
       $inscription->representative['occupation'],
       $inscription->representative['isFamilyBoss'] === 'Sí',
-      $inscription->representative['works'] === 'Sí',
       $inscription->representative['jobRole'],
       $inscription->representative['companyOrInstitutionName'],
       $inscription->representative['monthlyFamilyIncome']
@@ -39,7 +49,7 @@ final readonly class EnrollmentController
 
     // TODO: Validate empty data
     // TODO: Validate duplicates
-    $enrollmentModel = StudentModel::create(
+    StudentModel::create(
       $representativeModel,
       $inscription->student['nationality'],
       $inscription->student['idCard'],
@@ -67,7 +77,7 @@ final readonly class EnrollmentController
     )->enroll(
       $inscription->studyYear,
       $inscription->section,
-      $inscription->teacher,
+      $inscription->teacherId,
       $inscription->date
     );
 

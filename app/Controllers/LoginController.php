@@ -19,15 +19,19 @@ final readonly class LoginController
     // TODO: Validate empty data
     $userFound = UserModel::searchByIdCard($credentials->idCard);
 
-    if ($userFound?->isCorrectPassword($credentials->password)) {
+    if (
+      $userFound?->isCorrectPassword($credentials->password)
+      && !$userFound->isDeleted()
+    ) {
       $_SESSION['loggedUser']['id'] = $userFound->id;
-
       App::redirect('/');
-    } else {
-      $_SESSION['loggedUser'] = null;
 
-      App::redirect(App::request()->referrer);
+      return;
     }
+
+    $_SESSION['loggedUser'] = [];
+
+    App::redirect(App::request()->referrer);
   }
 
   static function handleLogout(): void
