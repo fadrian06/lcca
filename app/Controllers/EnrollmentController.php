@@ -39,6 +39,7 @@ final readonly class EnrollmentController
       $inscription->representative['job'],
       $inscription->representative['phone'],
       $inscription->representative['email'],
+      $inscription->representative['address'],
       $inscription->representative['bankAccountNumber'],
       $inscription->representative['occupation'],
       $inscription->representative['isFamilyBoss'] === 'Sí',

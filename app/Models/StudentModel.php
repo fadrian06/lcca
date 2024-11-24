@@ -114,6 +114,31 @@ final readonly class StudentModel implements Stringable
     return $this->enrollments[0]->section;
   }
 
+  function getFullIdCard(): string
+  {
+    return strtoupper($this->nationality->value . $this->idCard);
+  }
+
+  function getAddress(): string
+  {
+    return $this->currentRepresentative()->address;
+  }
+
+  function getProgressPercent(): int
+  {
+    if ($this->isGraduated()) {
+      return 100;
+    }
+
+    return $this->getStudyYear()->getProgressPercent();
+  }
+
+  /** @return RepresentativeModel[] */
+  function getAllRepresentatives(): array
+  {
+    return $this->representatives;
+  }
+
   /** @return self[] */
   static function all(): array
   {

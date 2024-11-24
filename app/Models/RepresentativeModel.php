@@ -12,6 +12,7 @@ final class RepresentativeModel implements Stringable
 {
   public readonly string $names;
   public readonly string $lastNames;
+  public readonly string $address;
 
   /** @var StudentModel[] */
   private array $students = [];
@@ -26,6 +27,7 @@ final class RepresentativeModel implements Stringable
     public readonly string $job,
     public readonly string $phone,
     public readonly string $email,
+    string $address,
     public readonly string $bankAccountNumber,
     public readonly string $occupation,
     public readonly bool $isFamilyBoss,
@@ -35,6 +37,7 @@ final class RepresentativeModel implements Stringable
   ) {
     $this->names = mb_convert_case($names, MB_CASE_TITLE);
     $this->lastNames = mb_convert_case($lastNames, MB_CASE_TITLE);
+    $this->address = mb_convert_case($address, MB_CASE_TITLE);
   }
 
   static function create(
@@ -46,6 +49,7 @@ final class RepresentativeModel implements Stringable
     string $job,
     string $phone,
     string $email,
+    string $address,
     string $bankAccountNumber,
     string $occupation,
     bool $isFamilyBoss,
@@ -63,6 +67,7 @@ final class RepresentativeModel implements Stringable
       $job,
       $phone,
       $email,
+      $address,
       $bankAccountNumber,
       $occupation,
       $isFamilyBoss,
@@ -74,12 +79,12 @@ final class RepresentativeModel implements Stringable
     try {
       $stmt = App::db()->prepare('
         INSERT INTO representatives (id, nationality, idCard, names, lastNames,
-        educationLevel, job, phone, email, bankAccountNumber, occupation,
-        isFamilyBoss, jobRole, companyOrInstitutionName,
+        educationLevel, job, phone, email, address, bankAccountNumber,
+        occupation, isFamilyBoss, jobRole, companyOrInstitutionName,
         monthlyFamilyIncome) VALUES (:id, :nationality, :idCard, :names,
-        :lastNames, :educationLevel, :job, :phone, :email, :bankAccountNumber,
-        :occupation, :isFamilyBoss, :jobRole, :companyOrInstitutionName,
-        :monthlyFamilyIncome)
+        :lastNames, :educationLevel, :job, :phone, :email, :address,
+        :bankAccountNumber, :occupation, :isFamilyBoss, :jobRole,
+        :companyOrInstitutionName, :monthlyFamilyIncome)
       ');
 
       $stmt->execute([
@@ -92,6 +97,7 @@ final class RepresentativeModel implements Stringable
         ':job' => $representativeModel->job,
         ':phone' => $representativeModel->phone,
         ':email' => $representativeModel->email,
+        ':address' => $representativeModel->address,
         ':bankAccountNumber' => $representativeModel->bankAccountNumber,
         ':occupation' => $representativeModel->occupation,
         ':isFamilyBoss' => (int) $representativeModel->isFamilyBoss,
@@ -143,6 +149,7 @@ final class RepresentativeModel implements Stringable
         $representativeData->job,
         $representativeData->phone,
         $representativeData->email,
+        $representativeData->address,
         $representativeData->bankAccountNumber,
         $representativeData->occupation,
         $representativeData->isFamilyBoss,
@@ -165,6 +172,7 @@ final class RepresentativeModel implements Stringable
     string $job,
     string $phone,
     string $email,
+    string $address,
     string $bankAccountNumber,
     string $occupation,
     bool $isFamilyBoss,
@@ -183,6 +191,7 @@ final class RepresentativeModel implements Stringable
       $job,
       $phone,
       $email,
+      $address,
       $bankAccountNumber,
       $occupation,
       $isFamilyBoss,

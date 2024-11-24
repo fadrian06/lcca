@@ -25,4 +25,9 @@ enum StudyYear: int
       self::Fifth => 'Quinto'
     } . ' año';
   }
+
+  function getProgressPercent(): int
+  {
+    return ($this->value - 1) * 20;
+  }
 }

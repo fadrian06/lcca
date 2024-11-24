@@ -18,4 +18,16 @@ final readonly class StudentController
       compact('students')
     );
   }
+
+  static function showStudentProfile(string $id): void
+  {
+    $student = StudentModel::searchById($id) ?? App::redirect(App::request()->referrer);
+
+    App::renderPage(
+      'student-profile',
+      $student,
+      'mercury-home',
+      compact('student')
+    );
+  }
 }

@@ -244,10 +244,10 @@ use LCCA\Models\UserModel;
     <fieldset class="my-3">
       <legend>1.a.- ASPECTOS PEDAGÓGICOS</legend>
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
           <div class="input-group mb-3">
             <span class="input-group-text">
-              ¿Posee<br />Colección<br />Bicentenario?
+              ¿Posee Colección<br />Bicentenario?
             </span>
             <div class="form-control">
               <label class="form-check">
@@ -271,7 +271,7 @@ use LCCA\Models\UserModel;
             </div>
           </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-6">
           <div class="input-group mb-3">
             <span class="input-group-text">¿Posee<br />Canaima?</span>
             <div class="form-control">
@@ -296,7 +296,7 @@ use LCCA\Models\UserModel;
             </div>
           </div>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-12">
           <label class="input-group mb-3">
             <span class="input-group-text">Materias<br />pendientes:</span>
             <select
@@ -510,21 +510,21 @@ use LCCA\Models\UserModel;
     <fieldset class="my-3">
       <legend>2.1.- DATOS SOCIOECONÓMICOS</legend>
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
           <label class="input-group mb-3">
             <span class="input-group-text">Ocupación:</span>
             <textarea
               class="form-control"
               name="representative[occupation]"
               required
-              rows="2"></textarea>
+              rows="1"></textarea>
           </label>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-6">
           <div class="input-group mb-3">
-            <span class="input-group-text">¿Es jefe de<br />familia?</span>
+            <span class="input-group-text">¿Es jefe de familia?</span>
             <div class="form-control">
-              <label class="form-check">
+              <label class="form-check form-check-inline">
                 <input
                   class="form-check-input"
                   type="radio"
@@ -533,7 +533,7 @@ use LCCA\Models\UserModel;
                   value="Sí" />
                 <span class="form-check-label">Sí</span>
               </label>
-              <label class="form-check">
+              <label class="form-check form-check-inline">
                 <input
                   class="form-check-input"
                   type="radio"
@@ -545,55 +545,59 @@ use LCCA\Models\UserModel;
             </div>
           </div>
         </div>
-        <div class="col-md-5">
-          <label class="input-group mb-3">
+        <div class="col-md-12">
+          <div class="input-group mb-3">
+            <span class="input-group-text">¿Trabaja<br />actualmente?</span>
+            <div class="input-group-text d-grid">
+              <label class="form-check">
+                <input
+                  class="form-check-input"
+                  onchange="document.querySelector(`[name='representative[jobRole]']`).setAttribute('required', true); document.querySelector(`[name='representative[companyOrInstitutionName]']`).setAttribute('required', true)"
+                  type="radio"
+                  name="representative[works]"
+                  value="Sí"
+                  required />
+                <span class="form-check-label">Sí</span>
+              </label>
+              <label class="form-check">
+                <input
+                  class="form-check-input"
+                  onchange="document.querySelector(`[name='representative[jobRole]']`).removeAttribute('required'); document.querySelector(`[name='representative[companyOrInstitutionName]']`).removeAttribute('required')"
+                  type="radio"
+                  name="representative[works]"
+                  value="No"
+                  required />
+                <span class="form-check-label">No</span>
+              </label>
+            </div>
             <input
               class="form-control"
-              placeholder="Ingreso familiar mensual"
+              placeholder="Cargo y funciones"
+              name="representative[jobRole]" />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="input-group mb-3">
+            <span class="input-group-text">
+              Nombre de la<br />empresa/institución
+            </span>
+            <input
+              class="form-control"
+              name="representative[companyOrInstitutionName]" />
+          </label>
+        </div>
+        <div class="col-md-6">
+          <label class="input-group mb-3">
+            <span class="input-group-text">Ingreso familiar<br />mensual</span>
+            <input
+              class="form-control"
               type="number"
               step=".01"
               name="representative[monthlyFamilyIncome]"
               required />
-            <span class="input-group-text">En<br />Bs.</span>
+            <span class="input-group-text">Bs.</span>
           </label>
         </div>
-      </div>
-      <div class="col-md-12">
-        <div class="input-group mb-3">
-          <span class="input-group-text">¿Trabaja<br />actualmente?</span>
-          <div class="input-group-text d-grid">
-            <label class="form-check">
-              <input
-                class="form-check-input"
-                onchange="document.querySelector(`[name='representative[jobRole]']`).setAttribute('required', true); document.querySelector(`[name='representative[companyOrInstitutionName]']`).setAttribute('required', true)"
-                type="radio"
-                name="representative[works]"
-                value="Sí"
-                required />
-              <span class="form-check-label">Sí</span>
-            </label>
-            <label class="form-check">
-              <input
-                class="form-check-input"
-                onchange="document.querySelector(`[name='representative[jobRole]']`).removeAttribute('required'); document.querySelector(`[name='representative[companyOrInstitutionName]']`).removeAttribute('required')"
-                type="radio"
-                name="representative[works]"
-                value="No"
-                required />
-              <span class="form-check-label">No</span>
-            </label>
-          </div>
-          <input
-            class="form-control"
-            placeholder="Cargo y funciones"
-            name="representative[jobRole]" />
-        </div>
-        <label class="input-group mb-3">
-          <span class="input-group-text">Nombre de la empresa/institución</span>
-          <input
-            class="form-control"
-            name="representative[companyOrInstitutionName]" />
-        </label>
       </div>
     </fieldset>
   </fieldset>
@@ -661,19 +665,6 @@ use LCCA\Models\UserModel;
       </li>
     </ul>
     <div class="row">
-      <div class="col-md-6">
-        <label class="input-group mb-3">
-          <span class="input-group-text">Docente:</span>
-          <select name="teacherId" required class="form-select">
-            <option value=""></option>
-            <?php foreach ($teachers as $teacher): ?>
-              <option value="<?= $teacher->id ?>">
-                <?= $teacher ?>
-              </option>
-            <?php endforeach ?>
-          </select>
-        </label>
-      </div>
       <div class="col-md-6">
         <label class="input-group mb-3">
           <span class="input-group-text">Fecha:</span>

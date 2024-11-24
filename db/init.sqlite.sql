@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS representatives (
   job VARCHAR(255) NOT NULL,
   phone VARCHAR(11) UNIQUE NOT NULL CHECK (phone LIKE '___________'),
   email VARCHAR(255) UNIQUE NOT NULL CHECK (email LIKE '%@%'),
+  address TEXT NOT NULL,
   bankAccountNumber
     VARCHAR(20)
     UNIQUE

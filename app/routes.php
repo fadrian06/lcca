@@ -87,6 +87,10 @@ App::group('', function (): void {
 
   App::group('/estudiantes', function (): void {
     App::route('GET /', [StudentController::class, 'showStudents']);
+
+    App::group('/@id:\w+', function (): void {
+      App::route('GET /', [StudentController::class, 'showStudentProfile']);
+    });
   });
 }, [EnsureUserIsLoggedMiddleware::class]);
 
