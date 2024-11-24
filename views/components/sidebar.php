@@ -6,7 +6,7 @@
   </div>
   <div class="sidebar-user-profile">
     <img
-      src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/1200px-User_icon_2.svg.png"
+      src="./assets/images/User_icon_2.svg.png"
       class="profile-thumb rounded-circle p-2 d-lg-flex d-none" />
     <h5 class="profile-name lh-lg mt-2 text-truncate"><?= $loggedUser->getRole() ?></h5>
     <ul class="profile-actions d-flex m-0 p-0">

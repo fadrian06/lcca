@@ -28,7 +28,7 @@ $urlSections = array_filter(explode('/', App::request()->url));
         data-bs-toggle="dropdown">
         <span class="d-none d-md-block me-2"><?= $loggedUser ?></span>
         <img
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/1200px-User_icon_2.svg.png"
+          src="./assets/images/User_icon_2.svg.png"
           class="rounded-circle img-3x" />
       </a>
       <div class="dropdown-menu dropdown-menu-end shadow">
