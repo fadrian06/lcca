@@ -27,7 +27,7 @@ use LCCA\Models\UserModel;
                   readonly
                   disabled
                   class="form-control"
-                  value="<?= $userFound->secretQuestion ?>" />
+                  value="<?= $userFound->getSecretQuestion() ?>" />
               </div>
               <div class="mb-3">
                 <label class="form-label">Tu respuesta</label>

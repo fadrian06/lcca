@@ -8,7 +8,9 @@ use LCCA\Enums\Genre;
 use LCCA\Enums\IndigenousPeople;
 use LCCA\Enums\Laterality;
 use LCCA\Enums\Nationality;
+use LCCA\Enums\Section;
 use LCCA\Enums\ShirtSize;
+use LCCA\Enums\StudyYear;
 use LCCA\Models\SubjectModel;
 use LCCA\Models\UserModel;
 
@@ -32,16 +34,16 @@ use LCCA\Models\UserModel;
     <label>
       <select name="studyYear" required class="form-select">
         <option value="">Año</option>
-        <?php foreach (range(1, 5) as $year): ?>
-          <option value="<?= $year ?>"><?= $year ?>°</option>
+        <?php foreach (StudyYear::cases() as $studyYear): ?>
+          <option value="<?= $studyYear->value ?>"><?= $studyYear->value ?>°</option>
         <?php endforeach ?>
       </select>
     </label>
     <label>
       <select name="section" required class="form-select">
         <option value="">Sección</option>
-        <option>A</option>
-        <option>B</option>
+        <?php foreach (Section::cases() as $section) ?>
+        <option><?= $section->value ?></option>
       </select>
     </label>
   </header>

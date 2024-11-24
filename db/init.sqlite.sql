@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS users (
   name VARCHAR(255) NOT NULL CHECK (LENGTH(name) >= 3),
   idCard INTEGER UNIQUE NOT NULL CHECK (idCard >= 0),
   password VARCHAR(255) NOT NULL,
-  role VARCHAR(255) NOT NULL CHECK (role IN ('Administrador', 'Docente')),
+  role VARCHAR(255) NOT NULL CHECK (role IN ('Coordinador', 'Docente')),
   signature BLOB UNIQUE,
   secretQuestion VARCHAR(255) NOT NULL,
   secretAnswer VARCHAR(255) NOT NULL,
@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS enrollments (
   id VARCHAR(255) PRIMARY KEY,
   student_id VARCHAR(255) NOT NULL,
   teacher_id VARCHAR(255) NOT NULL,
-  studyYear VARCHAR(2) NOT NULL CHECK (studyYear >= 1 AND studyYear <= 5),
+  studyYear INTEGER NOT NULL CHECK (studyYear >= 1 AND studyYear <= 5),
   section VARCHAR(1) NOT NULL CHECK (section IN ('A', 'B')),
   enrollmentDate DATE NOT NULL,
 
@@ -111,6 +111,20 @@ CREATE TABLE IF NOT EXISTS enrollments (
     ON UPDATE CASCADE
     ON DELETE CASCADE,
   FOREIGN KEY (teacher_id) REFERENCES users (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS notes (
+  student_id VARCHAR(255) NOT NULL,
+  subject_id VARCHAR(255) NOT NULL,
+  studyYear INTEGER NOT NULL CHECK (studyYear >= 1 AND studyYear <= 5),
+  note INTEGER NOT NULL CHECK (note >= 0 AND note <= 20),
+
+  FOREIGN KEY (student_id) REFERENCES students (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  FOREIGN KEY (subject_id) REFERENCES subjects (id)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );

@@ -23,7 +23,7 @@ final readonly class AccountRegistrationController
       $userData->name,
       $userData->idCard,
       $userData->password,
-      Role::Admin->value,
+      Role::Coordinator->value,
       $userData->secretQuestion,
       $userData->secretAnswer
     );

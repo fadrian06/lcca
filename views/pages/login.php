@@ -29,10 +29,6 @@
                 placeholder="Introduce tu contraseña" />
             </div>
             <div class="d-flex align-items-center justify-content-between">
-              <!-- <div class="form-check m-0">
-                <input class="form-check-input" type="checkbox" value="" id="rememberPassword" />
-                <label class="form-check-label" for="rememberPassword">Remember</label>
-              </div> -->
               <a
                 href="./perfil/recuperar"
                 class="text-blue text-decoration-underline">
@@ -44,15 +40,6 @@
                 Ingresar
               </button>
             </div>
-            <!-- <div class="text-center py-3">or Login with</div>
-            <div class="d-flex gap-2 justify-content-center">
-              <button type="submit" class="btn btn-outline-danger">
-                <i class="bi bi-google me-2"></i>Gmail
-              </button>
-              <button type="submit" class="btn btn-outline-info">
-                <i class="bi bi-facebook me-2"></i>Facebook
-              </button>
-            </div> -->
             <div class="text-center pt-4">
               <span>¿No tienes cuenta?</span>
               <a
