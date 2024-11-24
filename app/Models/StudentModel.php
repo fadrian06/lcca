@@ -34,10 +34,13 @@ final readonly class StudentModel implements Stringable
   /** @var EnrollmentModel[] */
   private array $enrollments;
 
-  /** @param SubjectModel[] $pendingSubjects */
+  /**
+   * @param RepresentativeModel[] $representatives
+   * @param SubjectModel[] $pendingSubjects
+   */
   private function __construct(
     public string $id,
-    public RepresentativeModel $representative,
+    private array $representatives,
     private Nationality $nationality,
     public int $idCard,
     string $names,
@@ -80,7 +83,15 @@ final readonly class StudentModel implements Stringable
     $this->disabilities = $disabilities;
     $this->disabilityAssistance = $disabilityAssistance;
     $this->enrollments = EnrollmentModel::allByStudent($this);
-    $representative->represent($this);
+
+    foreach ($this->representatives as $representative) {
+      $representative->represent($this);
+    }
+  }
+
+  function currentRepresentative(): RepresentativeModel
+  {
+    return $this->representatives[0];
   }
 
   function isGraduated(): bool
@@ -107,11 +118,10 @@ final readonly class StudentModel implements Stringable
   static function all(): array
   {
     $stmt = App::db()->query('
-      SELECT id, representative_id as representativeId, nationality, idCard,
-      names, lastNames, birthDate, birthPlace, federalEntity, indigenousPeople,
-      stature, weight, shoeSize, shirtSize, pantsSize, laterality, genre,
-      hasBicentennialCollection, hasCanaima, disabilities,
-      disabilityAssistance, graduatedDate, retiredDate
+      SELECT id, nationality, idCard, names, lastNames, birthDate, birthPlace,
+      federalEntity, indigenousPeople, stature, weight, shoeSize, shirtSize,
+      pantsSize, laterality, genre, hasBicentennialCollection, hasCanaima,
+      disabilities, disabilityAssistance, graduatedDate, retiredDate
       FROM students
     ');
 
@@ -153,7 +163,7 @@ final readonly class StudentModel implements Stringable
 
     $studentModel = new self(
       uniqid(),
-      $representative,
+      [$representative],
       Nationality::from($nationality),
       $idCard,
       $names,
@@ -186,12 +196,11 @@ final readonly class StudentModel implements Stringable
         birthDate, birthPlace, federalEntity, indigenousPeople, stature, weight,
         shoeSize, shirtSize, pantsSize, laterality, genre,
         hasBicentennialCollection, hasCanaima, disabilities,
-        disabilityAssistance, representative_id) VALUES (:id,
-        :nationality, :idCard, :names, :lastNames, :birthDate, :birthPlace,
-        :federalEntity, :indigenousPeople, :stature, :weight, :shoeSize,
-        :shirtSize, :pantsSize, :laterality, :genre,
-        :hasBicentennialCollection, :hasCanaima, :disabilities,
-        :disabilityAssistance, :representative_id)
+        disabilityAssistance) VALUES (:id, :nationality, :idCard, :names,
+        :lastNames, :birthDate, :birthPlace, :federalEntity, :indigenousPeople,
+        :stature, :weight, :shoeSize, :shirtSize, :pantsSize, :laterality,
+        :genre, :hasBicentennialCollection, :hasCanaima, :disabilities,
+        :disabilityAssistance)
       ');
 
       $stmt->execute([
@@ -215,7 +224,6 @@ final readonly class StudentModel implements Stringable
         ':hasCanaima' => $studentModel->hasCanaima,
         ':disabilities' => json_encode(array_map(static fn(Disability|string $disability): string => is_string($disability) ? $disability : $disability->value, $studentModel->disabilities)),
         ':disabilityAssistance' => json_encode(array_map(static fn(DisabilityAssistance|string $assistance): string => is_string($assistance) ? $assistance : $assistance->value, $studentModel->disabilityAssistance)),
-        ':representative_id' => $studentModel->representative->id
       ]);
 
       if ($studentModel->pendingSubjects !== []) {
@@ -229,6 +237,16 @@ final readonly class StudentModel implements Stringable
         $stmt = App::db()->prepare($fullQuery);
         $stmt->execute();
       }
+
+      $stmt = App::db()->prepare('
+        INSERT INTO representativeHistory (student_id, representative_id)
+        VALUES (:studentId, :representativeId)
+      ');
+
+      $stmt->execute([
+        ':studentId' => $studentModel->id,
+        ':representativeId' => $representative->id
+      ]);
 
       App::db()->commit();
     } catch (PDOException $exception) {
@@ -269,7 +287,6 @@ final readonly class StudentModel implements Stringable
     if ($studentData) {
       return self::mapper(
         $studentData->id,
-        $studentData->representative_id,
         $studentData->nationality,
         $studentData->idCard,
         $studentData->names,
@@ -299,7 +316,6 @@ final readonly class StudentModel implements Stringable
 
   private static function mapper(
     string $id,
-    string $representativeId,
     string $nationality,
     int $idCard,
     string $names,
@@ -329,9 +345,21 @@ final readonly class StudentModel implements Stringable
       fn(string $subjectId): SubjectModel => SubjectModel::searchById($subjectId)
     );
 
+    $stmt = App::db()->prepare('
+      SELECT representative_id FROM representativeHistory
+      WHERE student_id = ? ORDER BY id DESC
+    ');
+
+    $stmt->execute([$id]);
+
+    $representatives = $stmt->fetchAll(
+      PDO::FETCH_FUNC,
+      fn(string $representativeId): RepresentativeModel => RepresentativeModel::searchById($representativeId)
+    );
+
     return new self(
       $id,
-      RepresentativeModel::searchById($representativeId),
+      $representatives,
       Nationality::from($nationality),
       $idCard,
       $names,

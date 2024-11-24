@@ -79,9 +79,18 @@ CREATE TABLE IF NOT EXISTS students (
     CHECK (disabilityAssistance LIKE '["%"]' OR disabilityAssistance LIKE '[]'),
   graduatedDate DATE,
   retiredDate DATE,
+
+  UNIQUE (names, lastNames)
+);
+
+CREATE TABLE IF NOT EXISTS representativeHistory (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  student_id VARCHAR(255) NOT NULL,
   representative_id VARCHAR(255) NOT NULL,
 
-  UNIQUE (names, lastNames),
+  FOREIGN KEY (student_id) REFERENCES students (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
   FOREIGN KEY (representative_id) REFERENCES representatives (id)
     ON UPDATE CASCADE
     ON DELETE CASCADE

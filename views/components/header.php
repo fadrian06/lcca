@@ -21,6 +21,9 @@ $urlSections = array_filter(explode('/', App::request()->url));
     </a>
   </div>
   <div class="header-actions">
+    <div class="me-2">
+      <?php App::renderComponent('search-student') ?>
+    </div>
     <div class="dropdown ms-3">
       <a
         class="dropdown-toggle d-flex py-2 align-items-center text-decoration-none"

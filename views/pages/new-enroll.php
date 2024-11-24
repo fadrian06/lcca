@@ -42,8 +42,9 @@ use LCCA\Models\UserModel;
     <label>
       <select name="section" required class="form-select">
         <option value="">Sección</option>
-        <?php foreach (Section::cases() as $section) ?>
-        <option><?= $section->value ?></option>
+        <?php foreach (Section::cases() as $section): ?>
+          <option><?= $section->value ?></option>
+        <?php endforeach ?>
       </select>
     </label>
   </header>

@@ -77,7 +77,7 @@ final readonly class EnrollmentController
     )->enroll(
       $inscription->studyYear,
       $inscription->section,
-      $inscription->teacherId,
+      App::loggedUser()->id,
       $inscription->date
     );
 

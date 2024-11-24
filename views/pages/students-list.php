@@ -20,6 +20,8 @@ foreach ($students as $student) {
   $studentsByStudyYear[$student->getStudyYear()->value][$student->getSection()->value][] = $student;
 }
 
+/** @var array<1|2|3|4|5, array<'A'|'B', StudentModel[]>> $studentsByStudyYear */
+
 ?>
 
 <div class="row">
@@ -88,7 +90,7 @@ foreach ($students as $student) {
                                     <?php endif ?>
                                   </td>
                                   <td><?= $student ?></td>
-                                  <td><?= $student->representative ?></td>
+                                  <td><?= $student->currentRepresentative() ?></td>
                                 </tr>
                               <?php endforeach ?>
                             </tbody>
