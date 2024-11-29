@@ -5,6 +5,10 @@ use LCCA\Models\UserModel;
 
 /** @var UserModel $loggedUser */
 
+$messages = $_SESSION['messages'];
+
+$_SESSION['messages'] = ['error' => null, 'success' => null];
+
 ?>
 
 <!DOCTYPE html>
@@ -42,6 +46,14 @@ use LCCA\Models\UserModel;
   <script src="./assets/vendor/overlay-scroll/jquery.overlayScrollbars.min.js"></script>
   <script src="./assets/vendor/overlay-scroll/custom-scrollbar.js"></script>
   <script src="./assets/js/custom.js"></script>
+
+  <script>
+    <?php if ($messages['error']): ?>
+      alert('<?= $messages['error'] ?>')
+    <?php elseif ($messages['success']): ?>
+      alert('✅ <?= $messages['success'] ?>')
+    <?php endif ?>
+  </script>
 </body>
 
 </html>

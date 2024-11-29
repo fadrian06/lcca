@@ -1,3 +1,11 @@
+<?php
+
+$messages = $_SESSION['messages'];
+
+$_SESSION['messages'] = ['error' => null, 'success' => null];
+
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -13,6 +21,14 @@
 
 <body>
   <?= $page ?>
+
+  <script>
+    <?php if ($messages['error']): ?>
+      alert('<?= $messages['error'] ?>')
+    <?php elseif ($messages['success']): ?>
+      alert('✅ <?= $messages['success'] ?>')
+    <?php endif ?>
+  </script>
 </body>
 
 </html>
