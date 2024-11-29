@@ -18,7 +18,8 @@
                 class="form-control"
                 placeholder="Introduce tu nombre"
                 pattern="[a-zA-ZáéíóúñÁÉÍÓÚÑ]{3,}"
-                title="El nombre sólo puede tener mínimo 3 letras" />
+                title="El nombre sólo puede tener mínimo 3 letras"
+                value="<?= $_SESSION['lastData']['name'] ?? '' ?>" />
             </div>
             <div class="mb-3">
               <label class="form-label">Tu cédula</label>
@@ -28,7 +29,8 @@
                 required
                 class="form-control"
                 placeholder="Introduce tu cédula"
-                min="0" />
+                min="0"
+                value="<?= $_SESSION['lastData']['idCard'] ?? '' ?>" />
             </div>
             <div class="mb-3">
               <label class="form-label">Tu contraseña</label>
@@ -36,9 +38,11 @@
                 type="password"
                 name="password"
                 required
-                minlength="8"
                 class="form-control"
-                placeholder="Introduce tu contraseña" />
+                placeholder="Introduce tu contraseña"
+                pattern="(?=.*\d)(?=.*[A-ZÑ])(?=.*\W).{8,}"
+                title="La contraseña debe tener al menos 8 caracteres, un número, un símbolo y una mayúscula"
+                value="<?= $_SESSION['lastData']['password'] ?? '' ?>" />
             </div>
             <div class="mb-3">
               <label class="form-label">Pregunta de seguridad</label>
@@ -47,7 +51,8 @@
                 name="secretQuestion"
                 required
                 class="form-control"
-                placeholder="Introduce tu pregunta" />
+                placeholder="Introduce tu pregunta"
+                value="<?= $_SESSION['lastData']['secretQuestion'] ?? '' ?>" />
             </div>
             <div class="mb-3">
               <label class="form-label">Respuesta de seguridad</label>
@@ -56,7 +61,8 @@
                 name="secretAnswer"
                 required
                 class="form-control"
-                placeholder="Introduce tu respuesta" />
+                placeholder="Introduce tu respuesta"
+                value="<?= $_SESSION['lastData']['secretAnswer'] ?? '' ?>" />
             </div>
             <div class="d-grid py-3 mt-4">
               <button type="submit" class="btn btn-lg btn-primary">
