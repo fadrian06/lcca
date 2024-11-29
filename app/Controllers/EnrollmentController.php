@@ -70,7 +70,7 @@ final readonly class EnrollmentController
       $inscription->student['hasBicentennialCollection'],
       $inscription->student['hasCanaima'],
       $inscription->student['pendingSubjects'] ?? [],
-      $inscription->student['disabilities'] ?: [],
+      $inscription->student['disabilities'] ?? [],
       $inscription->student['otherDisabilityAssistance'] === ''
         ? ($inscription->student['disabilityAssistance'] ?: [])
         : [$inscription->student['otherDisabilityAssistance']]
