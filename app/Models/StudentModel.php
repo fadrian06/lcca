@@ -51,6 +51,10 @@ use Stringable;
  * @property-read SubjectModel[] $pendingSubjects
  * @property-read bool $isMale
  * @property-read bool $isFemale
+ * @property-read int $idCard
+ * @property-read string $names
+ * @property-read string $lastNames
+ * @property-read string $birthPlace
  */
 final class StudentModel implements Stringable
 {
@@ -93,11 +97,11 @@ final class StudentModel implements Stringable
     private ?DateTimeInterface $graduatedDate,
     private ?DateTimeInterface $retiredDate
   ) {
-    $this->names = $names;
-    $this->lastNames = $lastNames;
-    $this->birthPlace = $birthPlace;
-    $this->disabilities = $disabilities;
-    $this->disabilityAssistance = $disabilityAssistance;
+    $this->__set('names', $names);
+    $this->__set('lastNames', $lastNames);
+    $this->__set('birthPlace', $birthPlace);
+    $this->__set('disabilities', $disabilities);
+    $this->__set('disabilityAssistance', $disabilityAssistance);
     $this->enrollments = EnrollmentModel::allByStudent($this);
 
     foreach ($this->representatives as $representative) {
@@ -316,7 +320,7 @@ final class StudentModel implements Stringable
   }
 
   function update(
-    RepresentativeModel $representative,
+    RepresentativeModel $newOrUpdatedRepresentative,
     string $nationality,
     int $idCard,
     string $names,
@@ -338,43 +342,26 @@ final class StudentModel implements Stringable
     array $disabilities,
     array $disabilityAssistance
   ): self {
-    $pendingSubjects = array_map(
-      fn(string $subjectId): SubjectModel => SubjectModel::searchById($subjectId),
-      $pendingSubjectsIds
-    );
-
-    foreach ($disabilities as &$disability) {
-      if (!is_null(Disability::tryFrom($disability))) {
-        $disability = Disability::from($disability);
-      }
-    }
-
-    foreach ($disabilityAssistance as &$assistance) {
-      if (!is_null(DisabilityAssistance::tryFrom($assistance))) {
-        $assistance = DisabilityAssistance::from($assistance);
-      }
-    }
-
-    $this->nationality = Nationality::from($nationality);
+    $this->__set('nationality', $nationality);
     $this->idCard = $idCard;
-    $this->names = mb_convert_case($names, MB_CASE_TITLE);
-    $this->lastNames = mb_convert_case($lastNames, MB_CASE_TITLE);
-    $this->birthDate = new DateTimeImmutable($birthDate);
-    $this->birthPlace = mb_convert_case($birthPlace, MB_CASE_TITLE);
-    $this->federalEntity = FederalEntity::from($federalEntity);
-    $this->indigenousPeople = IndigenousPeople::tryFrom($indigenousPeople ?: '');
+    $this->__set('names', $names);
+    $this->__set('lastNames', $lastNames);
+    $this->__set('birthDate', $birthDate);
+    $this->__set('birthPlace', $birthPlace);
+    $this->__set('federalEntity', $federalEntity);
+    $this->__set('indigenousPeople', $indigenousPeople);
     $this->stature = $stature;
     $this->weight = $weight;
     $this->shoeSize = $shoeSize;
-    $this->shirtSize = ShirtSize::from($shirtSize);
+    $this->__set('shirtSize', $shirtSize);
     $this->pantsSize = $pantsSize;
-    $this->laterality = Laterality::from($laterality);
-    $this->genre = Genre::from($genre);
+    $this->__set('laterality', $laterality);
+    $this->__set('genre', $genre);
     $this->hasBicentennialCollection = $hasBicentennialCollection;
     $this->hasCanaima = $hasCanaima;
-    $this->pendingSubjects = $pendingSubjects;
-    $this->disabilities = $disabilities;
-    $this->disabilityAssistance = $disabilityAssistance;
+    $this->__set('pendingSubjects', $pendingSubjectsIds);
+    $this->__set('disabilities', $disabilities);
+    $this->__set('disabilityAssistance', $disabilityAssistance);
 
     App::db()->beginTransaction();
 
@@ -413,6 +400,36 @@ final class StudentModel implements Stringable
         ':disabilityAssistance' => json_encode(array_map(static fn(DisabilityAssistance|string $assistance): string => is_string($assistance) ? $assistance : $assistance->value, $this->disabilityAssistance)),
         ':id' => $this->id
       ]);
+
+      if ($this->pendingSubjects !== []) {
+        $pendingSubjectsValues = array_map(
+          fn(SubjectModel $subjectModel): string => "('$this->id', '$subjectModel->id')",
+          $this->pendingSubjects
+        );
+
+        $shortQuery = 'INSERT INTO pendingSubjects VALUES %s';
+        $fullQuery = sprintf($shortQuery, join(',', $pendingSubjectsValues));
+        $stmt = App::db()->prepare($fullQuery);
+        $stmt->execute();
+      }
+
+      // Check if $newOrUpdatedRepresentative is already in $this->representatives to create another row in representativeHistory
+      if (!array_any(
+        $this->representatives,
+        fn(RepresentativeModel $representative): bool => $representative->id === $newOrUpdatedRepresentative->id
+      )) {
+        $stmt = App::db()->prepare('
+          INSERT INTO representativeHistory (student_id, representative_id)
+          VALUES (:studentId, :representativeId)
+        ');
+
+        $stmt->execute([
+          ':studentId' => $this->id,
+          ':representativeId' => $newOrUpdatedRepresentative->id
+        ]);
+      }
+
+      $newOrUpdatedRepresentative->represent($this);
 
       App::db()->commit();
     } catch (PDOException $exception) {
@@ -646,6 +663,10 @@ final class StudentModel implements Stringable
       'pendingSubjects' => $this->pendingSubjects,
       'isMale' => $this->genre->isMale(),
       'isFemale' => $this->genre->isFemale(),
+      'idCard' => $this->idCard,
+      'names' => $this->names,
+      'lastNames' => $this->lastNames,
+      'birthPlace' => $this->birthPlace,
       default => null,
     };
   }
@@ -653,10 +674,19 @@ final class StudentModel implements Stringable
   function __set(string $name, mixed $value): void
   {
     switch ($name) {
+      case 'nationality':
+        $this->nationality = Nationality::from($value);
+        break;
       case 'names':
       case 'lastNames':
       case 'birthPlace':
         $this->$name = mb_convert_case($value, MB_CASE_TITLE);
+        break;
+      case 'birthDate':
+        $this->birthDate = new DateTimeImmutable($value);
+        break;
+      case 'federalEntity':
+        $this->federalEntity = FederalEntity::from($value);
         break;
       case 'disabilities':
         foreach ($value as &$disability) {
@@ -679,6 +709,20 @@ final class StudentModel implements Stringable
       case 'indigenousPeople':
         $this->indigenousPeople = IndigenousPeople::tryFrom($value ?: '');
         break;
+      case 'shirtSize':
+        $this->shirtSize = ShirtSize::from($value);
+        break;
+      case 'laterality':
+        $this->laterality = Laterality::from($value);
+        break;
+      case 'genre':
+        $this->genre = Genre::from($value);
+        break;
+      case 'pendingSubjects':
+        $this->pendingSubjects = array_map(
+          fn(string $subjectId): SubjectModel => SubjectModel::searchById($subjectId),
+          $value
+        );
     }
   }
 }

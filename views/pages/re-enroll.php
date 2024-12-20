@@ -625,7 +625,7 @@ use LCCA\Models\SubjectModel;
                   name="representative[works]"
                   value="Sí"
                   required
-                  <?= $student->currentRepresentative->works() ? 'checked' : '' ?> />
+                  <?= $student->currentRepresentative->works ? 'checked' : '' ?> />
                 <span class="form-check-label">Sí</span>
               </label>
               <label class="form-check">
@@ -636,7 +636,7 @@ use LCCA\Models\SubjectModel;
                   name="representative[works]"
                   value="No"
                   required
-                  <?= !$student->currentRepresentative->works() ? 'checked' : '' ?> />
+                  <?= !$student->currentRepresentative->works ? 'checked' : '' ?> />
                 <span class="form-check-label">No</span>
               </label>
             </div>

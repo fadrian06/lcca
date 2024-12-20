@@ -105,10 +105,26 @@ final readonly class EnrollmentController
     $inscription = App::request()->data;
 
     // TODO: Validate empty data
-    // TODO: Update student if changes
-    // TODO: Update extra representative if changes or register another representative
+    $newOrUpdatedRepresentative = $student->currentRepresentative->updateOrCreate(
+      $inscription->representative['nationality'],
+      $inscription->representative['idCard'],
+      $inscription->representative['names'],
+      $inscription->representative['lastNames'],
+      $inscription->representative['educationLevel'],
+      $inscription->representative['job'],
+      $inscription->representative['phone'],
+      $inscription->representative['email'],
+      $inscription->representative['address'],
+      $inscription->representative['bankAccountNumber'],
+      $inscription->representative['occupation'],
+      $inscription->representative['isFamilyBoss'] === 'Sí',
+      $inscription->representative['jobRole'],
+      $inscription->representative['companyOrInstitutionName'],
+      $inscription->representative['monthlyFamilyIncome']
+    );
+
     $student->update(
-      $student->currentRepresentative,
+      $newOrUpdatedRepresentative,
       $inscription->student['nationality'],
       $inscription->student['idCard'],
       $inscription->student['names'],

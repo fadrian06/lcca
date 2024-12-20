@@ -38,7 +38,6 @@ CREATE TABLE IF NOT EXISTS representatives (
   address TEXT NOT NULL,
   bankAccountNumber
     VARCHAR(20)
-    UNIQUE
     NOT NULL
     CHECK (bankAccountNumber LIKE '____________________'),
   occupation VARCHAR(255) NOT NULL,

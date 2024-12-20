@@ -1,6 +1,8 @@
 <?php
 
 use Jenssegers\Date\Date;
+use LCCA\Enums\Disability;
+use LCCA\Enums\DisabilityAssistance;
 use LCCA\Models\StudentModel;
 
 /** @var StudentModel $student */
@@ -118,14 +120,28 @@ function getRandomColor(): string
           <h6 class="d-flex align-items-center mb-3">
             <i class="bi bi-person-wheelchair fs-2 me-2"></i>
             Discapacidades:&nbsp;
-            <span><?= join(', ', $student->disabilities) ?></span>
+            <span>
+              <?= join(', ', array_map(
+                fn(string|Disability $disability): string => is_string($disability)
+                  ? $disability
+                  : $disability->value,
+                $student->disabilities
+              )) ?>
+            </span>
           </h6>
         <?php endif ?>
         <?php if ($student->disabilityAssistance): ?>
           <h6 class="d-flex align-items-center mb-3">
             <i class="bi bi-clipboard2-pulse fs-2 me-2"></i>
             Recibe:&nbsp;
-            <span><?= join(', ', $student->disabilityAssistance) ?></span>
+            <span>
+              <?= join(', ', array_map(
+                fn(string|DisabilityAssistance $assistance): string => is_string($assistance)
+                  ? $assistance
+                  : $assistance->value,
+                $student->disabilityAssistance
+              )) ?>
+            </span>
           </h6>
         <?php endif ?>
       </div>
