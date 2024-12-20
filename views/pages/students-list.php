@@ -118,16 +118,20 @@ foreach ($students as $student) {
                                       <?php if ($student->canGraduate()): ?>
                                         <button
                                           formaction="./estudiantes/<?= $student->id ?>/graduar"
-                                          class="btn btn-sm btn-outline-success bi bi-mortarboard-fill"
-                                          data-bs-toggle="tooltip"
-                                          title="Graduar">
+                                          class="btn btn-sm btn-outline-success">
+                                          Graduar
                                         </button>
+                                      <?php else: ?>
+                                        <a
+                                          href="./estudiantes/<?= $student->id ?>/reinscribir"
+                                          class="btn btn-sm btn-outline-primary">
+                                          Promover
+                                        </a>
                                       <?php endif ?>
                                       <button
                                         formaction="./estudiantes/<?= $student->id ?>/retirar"
-                                        class="btn btn-sm btn-outline-danger bi bi-emoji-frown-fill"
-                                        data-bs-toggle="tooltip"
-                                        title="Retirar">
+                                        class="btn btn-sm btn-outline-danger">
+                                        Retirar
                                       </button>
                                     </form>
                                   </td>
