@@ -20,7 +20,8 @@ $_SESSION['messages'] = ['error' => null, 'success' => null];
   <base href="<?= str_replace('index.php', '', $_SERVER['SCRIPT_NAME']) ?>" />
   <title><?= $title ?> - LCCA</title>
   <link rel="icon" href="./assets/images/favicon.ico" />
-  <link rel="stylesheet" href="./assets/fonts/bootstrap/bootstrap-icons.css" />
+  <link rel="stylesheet" href="./assets/fonts/bootstrap/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="./assets/vendor/fontawesome/css/all.min.css" />
   <link rel="stylesheet" href="./assets/css/main.min.css" />
   <link rel="stylesheet" href="./assets/vendor/overlay-scroll/OverlayScrollbars.min.css" />
   <style>

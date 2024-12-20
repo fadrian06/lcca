@@ -20,12 +20,12 @@ foreach (StudyYear::cases() as $studyYear) {
 }
 
 foreach ($students as $student) {
-  if ($student->isGraduated()) {
+  if ($student->isGraduated) {
     $graduatedStudents[] = $student;
-  } elseif ($student->isRetired()) {
+  } elseif ($student->isRetired) {
     $retiredStudents[] = $student;
   } else {
-    $studentsByStudyYear[$student->getStudyYear()->value][$student->getSection()->value][] = $student;
+    $studentsByStudyYear[$student->studyYear->value][$student->studySection->value][] = $student;
   }
 }
 
@@ -112,10 +112,15 @@ foreach ($students as $student) {
                               <?php foreach ($studentsByStudyYear[$studyYear->value][$section->value] as $student): ?>
                                 <tr>
                                   <td><?= $student ?></td>
-                                  <td><?= $student->currentRepresentative() ?></td>
+                                  <td><?= $student->currentRepresentative ?></td>
                                   <td>
                                     <form method="post">
-                                      <?php if ($student->canGraduate()): ?>
+                                      <a
+                                        href="./estudiantes/<?= $student->id ?>"
+                                        class="btn btn-sm btn-light">
+                                        Detalles
+                                      </a>
+                                      <?php if ($student->canGraduate): ?>
                                         <button
                                           formaction="./estudiantes/<?= $student->id ?>/graduar"
                                           class="btn btn-sm btn-outline-success">
@@ -157,16 +162,24 @@ foreach ($students as $student) {
                         <th>Fecha</th>
                         <th>Estudiante</th>
                         <th>Representante</th>
+                        <th></th>
                       </tr>
                     </thead>
                     <tbody>
                       <?php foreach ($graduatedStudents as $student): ?>
                         <tr>
                           <td>
-                            <?= mb_ucfirst((new Date($student->getGraduatedDate()))->diffForHumans()) ?>
+                            <?= mb_ucfirst((new Date($student->graduatedDate))->diffForHumans()) ?>
                           </td>
                           <td><?= $student ?></td>
-                          <td><?= $student->currentRepresentative() ?></td>
+                          <td><?= $student->currentRepresentative ?></td>
+                          <td>
+                            <a
+                              href="./estudiantes/<?= $student->id ?>"
+                              class="btn btn-sm btn-light">
+                              Detalles
+                            </a>
+                          </td>
                         </tr>
                       <?php endforeach ?>
                     </tbody>
@@ -192,11 +205,16 @@ foreach ($students as $student) {
                       <?php foreach ($retiredStudents as $student): ?>
                         <tr>
                           <td>
-                            <?= mb_ucfirst((new Date($student->getRetiredDate()))->diffForHumans()) ?>
+                            <?= mb_ucfirst((new Date($student->retiredDate))->diffForHumans()) ?>
                           </td>
                           <td><?= $student ?></td>
-                          <td><?= $student->currentRepresentative() ?></td>
+                          <td><?= $student->currentRepresentative ?></td>
                           <td>
+                            <a
+                              href="./estudiantes/<?= $student->id ?>"
+                              class="btn btn-sm btn-light">
+                              Detalles
+                            </a>
                             <a
                               href="./estudiantes/<?= $student->id ?>/reinscribir"
                               class="btn btn-sm btn-outline-success">

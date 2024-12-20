@@ -19,16 +19,45 @@ use PDO;
 use PDOException;
 use Stringable;
 
+/**
+ * @property-read string $fullName
+ * @property-read bool $isGraduated
+ * @property-read bool $isRetired
+ * @property-read StudyYear $studyYear
+ * @property-read Section $studySection
+ * @property-read RepresentativeModel $currentRepresentative
+ * @property-read string $fullIdCard
+ * @property-read DateTimeInterface $birthDate
+ * @property-read ?string $otherDisabilityAssistance
+ * @property-read ?DateTimeInterface $graduatedDate
+ * @property-read bool $canGraduate
+ * @property-read int $progressPercent
+ * @property-read ?DateTimeInterface $retiredDate
+ * @property-read RepresentativeModel[] $representatives
+ * @property-read int $age
+ * @property-read (Disability|string)[] $disabilities
+ * @property-read (DisabilityAssistance|string)[] $disabilityAssistance
+ * @property-read string $fullBirthPlace
+ * @property-read ?IndigenousPeople $indigenousPeople
+ * @property-read float $stature
+ * @property-read float $weight
+ * @property-read int $shoeSize
+ * @property-read ShirtSize $shirtSize
+ * @property-read int $pantsSize
+ * @property-read Laterality $laterality
+ * @property-read Genre $genre
+ * @property-read bool $hasBicentennialCollection
+ * @property-read bool $hasCanaima
+ * @property-read SubjectModel[] $pendingSubjects
+ * @property-read bool $isMale
+ * @property-read bool $isFemale
+ */
 final class StudentModel implements Stringable
 {
-  public readonly string $names;
-  public readonly string $lastNames;
-  public readonly string $birthPlace;
-
-  /** @var (Disability|string)[] */
+  private string $names;
+  private string $lastNames;
+  private string $birthPlace;
   private array $disabilities;
-
-  /** @var (DisabilityAssistance|string)[] */
   private array $disabilityAssistance;
 
   /** @var EnrollmentModel[] */
@@ -42,44 +71,31 @@ final class StudentModel implements Stringable
     public readonly string $id,
     private array $representatives,
     private Nationality $nationality,
-    public readonly int $idCard,
+    private int $idCard,
     string $names,
     string $lastNames,
     private DateTimeInterface $birthDate,
     string $birthPlace,
     private FederalEntity $federalEntity,
     private ?IndigenousPeople $indigenousPeople,
-    public readonly float $stature,
-    public readonly float $weight,
-    public readonly int $shoeSize,
+    private float $stature,
+    private float $weight,
+    private int $shoeSize,
     private ShirtSize $shirtSize,
-    public readonly int $pantsSize,
+    private int $pantsSize,
     private Laterality $laterality,
     private Genre $genre,
-    public readonly bool $hasBicentennialCollection,
-    public readonly bool $hasCanaima,
+    private bool $hasBicentennialCollection,
+    private bool $hasCanaima,
     private array $pendingSubjects,
     array $disabilities,
     array $disabilityAssistance,
     private ?DateTimeInterface $graduatedDate,
     private ?DateTimeInterface $retiredDate
   ) {
-    $this->names = mb_convert_case($names, MB_CASE_TITLE);
-    $this->lastNames = mb_convert_case($lastNames, MB_CASE_TITLE);
-    $this->birthPlace = mb_convert_case($birthPlace, MB_CASE_TITLE);
-
-    foreach ($disabilities as &$disability) {
-      if (!is_null(Disability::tryFrom($disability))) {
-        $disability = Disability::from($disability);
-      }
-    }
-
-    foreach ($disabilityAssistance as &$assistance) {
-      if (!is_null(DisabilityAssistance::tryFrom($assistance))) {
-        $assistance = DisabilityAssistance::from($assistance);
-      }
-    }
-
+    $this->names = $names;
+    $this->lastNames = $lastNames;
+    $this->birthPlace = $birthPlace;
     $this->disabilities = $disabilities;
     $this->disabilityAssistance = $disabilityAssistance;
     $this->enrollments = EnrollmentModel::allByStudent($this);
@@ -89,49 +105,9 @@ final class StudentModel implements Stringable
     }
   }
 
-  function currentRepresentative(): RepresentativeModel
-  {
-    return $this->representatives[0];
-  }
-
-  function isGraduated(): bool
-  {
-    return $this->graduatedDate !== null;
-  }
-
-  function isRetired(): bool
-  {
-    return $this->retiredDate !== null;
-  }
-
-  function getStudyYear(): StudyYear
-  {
-    return $this->enrollments[count($this->enrollments) - 1]->studyYear;
-  }
-
-  function getSection(): Section
-  {
-    return $this->enrollments[count($this->enrollments) - 1]->section;
-  }
-
-  function getFullIdCard(): string
-  {
-    return strtoupper($this->nationality->value . $this->idCard);
-  }
-
-  function getAddress(): string
-  {
-    return $this->currentRepresentative()->address;
-  }
-
   function isFromNationality(Nationality $nationality): bool
   {
     return $this->nationality === $nationality;
-  }
-
-  function getBirthDate(): DateTimeInterface
-  {
-    return $this->birthDate;
   }
 
   function isFromFederalEntity(FederalEntity $federalEntity): bool
@@ -139,7 +115,7 @@ final class StudentModel implements Stringable
     return $this->federalEntity === $federalEntity;
   }
 
-  function isA(Genre $genre): bool
+  function isAGenre(Genre $genre): bool
   {
     return $this->genre === $genre;
   }
@@ -172,14 +148,6 @@ final class StudentModel implements Stringable
     return $this->disabilityAssistance !== [];
   }
 
-  function getOtherDisabilityAssistance(): ?string
-  {
-    return array_filter(
-      $this->disabilityAssistance,
-      fn(string|DisabilityAssistance $studentDisabilityAssistance): bool => is_string($studentDisabilityAssistance)
-    )[0] ?? null;
-  }
-
   function isIndigenous(null|string|IndigenousPeople $indigenousPeople = null): bool
   {
     if (is_string($indigenousPeople)) {
@@ -201,38 +169,6 @@ final class StudentModel implements Stringable
   function hasLaterality(Laterality $laterality): bool
   {
     return $this->laterality === $laterality;
-  }
-
-  function canGraduate(): bool
-  {
-    return $this->getStudyYear()->isFifthYear()
-      && !$this->isGraduated()
-      && !$this->isRetired();
-  }
-
-  function getGraduatedDate(): ?DateTimeInterface
-  {
-    return $this->graduatedDate;
-  }
-
-  function getRetiredDate(): ?DateTimeInterface
-  {
-    return $this->retiredDate;
-  }
-
-  function getProgressPercent(): int
-  {
-    if ($this->isGraduated()) {
-      return 100;
-    }
-
-    return $this->getStudyYear()->getProgressPercent();
-  }
-
-  /** @return RepresentativeModel[] */
-  function getAllRepresentatives(): array
-  {
-    return $this->representatives;
   }
 
   /** @return self[] */
@@ -377,6 +313,115 @@ final class StudentModel implements Stringable
     }
 
     return $studentModel;
+  }
+
+  function update(
+    RepresentativeModel $representative,
+    string $nationality,
+    int $idCard,
+    string $names,
+    string $lastNames,
+    string $birthDate,
+    string $birthPlace,
+    string $federalEntity,
+    ?string $indigenousPeople,
+    float $stature,
+    float $weight,
+    int $shoeSize,
+    string $shirtSize,
+    int $pantsSize,
+    string $laterality,
+    string $genre,
+    bool $hasBicentennialCollection,
+    bool $hasCanaima,
+    array $pendingSubjectsIds,
+    array $disabilities,
+    array $disabilityAssistance
+  ): self {
+    $pendingSubjects = array_map(
+      fn(string $subjectId): SubjectModel => SubjectModel::searchById($subjectId),
+      $pendingSubjectsIds
+    );
+
+    foreach ($disabilities as &$disability) {
+      if (!is_null(Disability::tryFrom($disability))) {
+        $disability = Disability::from($disability);
+      }
+    }
+
+    foreach ($disabilityAssistance as &$assistance) {
+      if (!is_null(DisabilityAssistance::tryFrom($assistance))) {
+        $assistance = DisabilityAssistance::from($assistance);
+      }
+    }
+
+    $this->nationality = Nationality::from($nationality);
+    $this->idCard = $idCard;
+    $this->names = mb_convert_case($names, MB_CASE_TITLE);
+    $this->lastNames = mb_convert_case($lastNames, MB_CASE_TITLE);
+    $this->birthDate = new DateTimeImmutable($birthDate);
+    $this->birthPlace = mb_convert_case($birthPlace, MB_CASE_TITLE);
+    $this->federalEntity = FederalEntity::from($federalEntity);
+    $this->indigenousPeople = IndigenousPeople::tryFrom($indigenousPeople ?: '');
+    $this->stature = $stature;
+    $this->weight = $weight;
+    $this->shoeSize = $shoeSize;
+    $this->shirtSize = ShirtSize::from($shirtSize);
+    $this->pantsSize = $pantsSize;
+    $this->laterality = Laterality::from($laterality);
+    $this->genre = Genre::from($genre);
+    $this->hasBicentennialCollection = $hasBicentennialCollection;
+    $this->hasCanaima = $hasCanaima;
+    $this->pendingSubjects = $pendingSubjects;
+    $this->disabilities = $disabilities;
+    $this->disabilityAssistance = $disabilityAssistance;
+
+    App::db()->beginTransaction();
+
+    try {
+      $stmt = App::db()->prepare('
+        UPDATE students SET nationality = :nationality, idCard = :idCard,
+        names = :names, lastNames = :lastNames, birthDate = :birthDate,
+        birthPlace = :birthPlace, federalEntity = :federalEntity,
+        indigenousPeople = :indigenousPeople, stature = :stature,
+        weight = :weight, shoeSize = :shoeSize, shirtSize = :shirtSize,
+        pantsSize = :pantsSize, laterality = :laterality, genre = :genre,
+        hasBicentennialCollection = :hasBicentennialCollection,
+        hasCanaima = :hasCanaima, disabilities = :disabilities,
+        disabilityAssistance = :disabilityAssistance WHERE id = :id
+      ');
+
+      $stmt->execute([
+        ':nationality' => $this->nationality->value,
+        ':idCard' => $this->idCard,
+        ':names' => $this->names,
+        ':lastNames' => $this->lastNames,
+        ':birthDate' => $this->birthDate->format('Y-m-d'),
+        ':birthPlace' => $this->birthPlace,
+        ':federalEntity' => $this->federalEntity->value,
+        ':indigenousPeople' => $this->indigenousPeople?->value,
+        ':stature' => $this->stature,
+        ':weight' => $this->weight,
+        ':shoeSize' => $this->shoeSize,
+        ':shirtSize' => $this->shirtSize->value,
+        ':pantsSize' => $this->pantsSize,
+        ':laterality' => $this->laterality->value,
+        ':genre' => $this->genre->value,
+        ':hasBicentennialCollection' => $this->hasBicentennialCollection,
+        ':hasCanaima' => $this->hasCanaima,
+        ':disabilities' => json_encode(array_map(static fn(Disability|string $disability): string => is_string($disability) ? $disability : $disability->value, $this->disabilities)),
+        ':disabilityAssistance' => json_encode(array_map(static fn(DisabilityAssistance|string $assistance): string => is_string($assistance) ? $assistance : $assistance->value, $this->disabilityAssistance)),
+        ':id' => $this->id
+      ]);
+
+      App::db()->commit();
+    } catch (PDOException $exception) {
+      App::db()->rollBack();
+
+      dd($exception);
+    }
+
+    return $this;
   }
 
   function enroll(
@@ -559,5 +604,81 @@ final class StudentModel implements Stringable
     [$firstLastName] = explode(' ', $this->lastNames);
 
     return "$firstName $firstLastName";
+  }
+
+  function __get(string $name): mixed
+  {
+    return match ($name) {
+      'fullName' => "$this->names $this->lastNames",
+      'address' => $this->currentRepresentative->address,
+      'isGraduated' => $this->graduatedDate !== null,
+      'isRetired' => $this->retiredDate !== null,
+      'studyYear' => $this->enrollments[count($this->enrollments) - 1]->studyYear,
+      'studySection' => $this->enrollments[count($this->enrollments) - 1]->section,
+      'currentRepresentative' => $this->representatives[0],
+      'fullIdCard' => strtoupper($this->nationality->value . $this->idCard),
+      'birthDate' => $this->birthDate,
+      'otherDisabilityAssistance' => array_filter(
+        $this->disabilityAssistance,
+        fn(string|DisabilityAssistance $studentDisabilityAssistance): bool => is_string($studentDisabilityAssistance)
+      )[0] ?? null,
+      'graduatedDate' => $this->graduatedDate,
+      'canGraduate' => $this->studyYear->isFifthYear()
+        && !$this->isGraduated
+        && !$this->isRetired,
+      'progressPercent' => $this->isGraduated ? 100 : $this->studyYear->getProgressPercent(),
+      'retiredDate' => $this->retiredDate,
+      'representatives' => $this->representatives,
+      'age' => $this->birthDate->diff(new DateTimeImmutable())->y,
+      'disabilities' => $this->disabilities,
+      'disabilityAssistance' => $this->disabilityAssistance,
+      'fullBirthPlace' => "$this->birthPlace, {$this->federalEntity->fullValue()}",
+      'indigenousPeople' => $this->indigenousPeople,
+      'stature' => $this->stature,
+      'weight' => $this->weight,
+      'shoeSize' => $this->shoeSize,
+      'shirtSize' => $this->shirtSize,
+      'pantsSize' => $this->pantsSize,
+      'laterality' => $this->laterality,
+      'genre' => $this->genre,
+      'hasBicentennialCollection' => $this->hasBicentennialCollection,
+      'hasCanaima' => $this->hasCanaima,
+      'pendingSubjects' => $this->pendingSubjects,
+      'isMale' => $this->genre->isMale(),
+      'isFemale' => $this->genre->isFemale(),
+      default => null,
+    };
+  }
+
+  function __set(string $name, mixed $value): void
+  {
+    switch ($name) {
+      case 'names':
+      case 'lastNames':
+      case 'birthPlace':
+        $this->$name = mb_convert_case($value, MB_CASE_TITLE);
+        break;
+      case 'disabilities':
+        foreach ($value as &$disability) {
+          if (!is_null(Disability::tryFrom($disability))) {
+            $disability = Disability::from($disability);
+          }
+        }
+
+        $this->disabilities = $value;
+        break;
+      case 'disabilityAssistance':
+        foreach ($value as &$assistance) {
+          if (!is_null(DisabilityAssistance::tryFrom($assistance))) {
+            $assistance = DisabilityAssistance::from($assistance);
+          }
+        }
+
+        $this->disabilityAssistance = $value;
+        break;
+      case 'indigenousPeople':
+        $this->indigenousPeople = IndigenousPeople::tryFrom($value ?: '');
+        break;
+    }
   }
 }

@@ -1,8 +1,25 @@
 <?php
 
+use Jenssegers\Date\Date;
 use LCCA\Models\StudentModel;
 
 /** @var StudentModel $student */
+
+function getRandomColor(): string
+{
+  static $colors = [
+    'primary',
+    'secondary',
+    'success',
+    'danger',
+    'warning',
+    'info',
+    'light',
+    'dark'
+  ];
+
+  return $colors[array_rand($colors)];
+}
 
 ?>
 
@@ -17,11 +34,30 @@ use LCCA\Models\StudentModel;
               class="img-5xx rounded-circle" />
           </div>
           <div class="col">
-            <h6 class="text-primary"><?= $student->getFullIdCard() ?></h6>
-            <h4 class="m-0"><?= $student ?></h4>
+            <h6 class="text-primary">
+              <?= $student->fullIdCard ?>
+              <?php if ($student->isGraduated): ?>
+                <span class="badge border border-success text-success">
+                  <i class="bi bi-mortarboard-fill"></i>
+                  Graduado
+                </span>
+              <?php elseif ($student->isRetired): ?>
+                <span class="badge border border-danger text-danger">
+                  <i class="bi bi-emoji-frown-fill"></i>
+                  Retirado
+                </span>
+              <?php else: ?>
+                <span class="badge border border-primary text-primary">
+                  <i class="bi bi-emoji-smile-fill"></i>
+                  Activo
+                </span>
+              <?php endif ?>
+            </h6>
+            <h4 class="m-0"><?= $student->fullName ?></h4>
           </div>
           <div class="col-12 col-md-auto">
             <a href="javascript:" class="btn btn-outline-primary btn-lg">
+              <i class="bi bi-pen-fill"></i>
               Editar
             </a>
           </div>
@@ -38,27 +74,62 @@ use LCCA\Models\StudentModel;
       </div>
       <div class="card-body">
         <h6 class="d-flex align-items-center mb-3">
+          <i class="bi bi-gender-<?= $student->isMale ? 'male' : 'female' ?> fs-2 me-2"></i>
+          <span><?= $student->genre->value ?></span>
+        </h6>
+        <h6 class="d-flex align-items-center mb-3">
           <i class="bi bi-house fs-2 me-2"></i>
           Vive en&nbsp;
-          <span><?= $student->getAddress() ?></span>
+          <span><?= $student->address ?></span>
         </h6>
+        <h6 class="d-flex align-items-center mb-3">
+          <i class="bi bi-hospital fs-2 me-2"></i>
+          Nació en&nbsp;
+          <span><?= $student->fullBirthPlace ?></span>
+        </h6>
+        <h6 class="d-flex align-items-center mb-3">
+          <i class="bi bi-cake2 fs-2 me-2"></i>
+          Cumple años el&nbsp;
+          <span><?= (new Date($student->birthDate))->format('d \d\e M') ?></span>
+        </h6>
+        <h6 class="d-flex align-items-center mb-3">
+          <i class="bi bi-calendar-heart fs-2 me-2"></i>
+          Tiene&nbsp;
+          <span><?= $student->age ?> años</span>
+        </h6>
+        <h6 class="d-flex align-items-center mb-3">
+          <i class="bi bi-rulers fs-2 me-2"></i>
+          Mide&nbsp;
+          <span><?= $student->stature ?> cm</span>
+        </h6>
+        <h6 class="d-flex align-items-center mb-3">
+          <i class="fa-solid fa-scale-balanced fs-4 me-2"></i>
+          Pesa&nbsp;
+          <span><?= $student->weight ?> kg</span>
+        </h6>
+        <?php if ($student->indigenousPeople): ?>
+          <h6 class="d-flex align-items-center mb-3">
+            <i class="bi bi-people fs-2 me-2"></i>
+            Etnia&nbsp;
+            <span><?= $student->indigenousPeople?->value ?></span>
+          </h6>
+        <?php endif ?>
+        <?php if ($student->disabilities): ?>
+          <h6 class="d-flex align-items-center mb-3">
+            <i class="bi bi-person-wheelchair fs-2 me-2"></i>
+            Discapacidades:&nbsp;
+            <span><?= join(', ', $student->disabilities) ?></span>
+          </h6>
+        <?php endif ?>
+        <?php if ($student->disabilityAssistance): ?>
+          <h6 class="d-flex align-items-center mb-3">
+            <i class="bi bi-clipboard2-pulse fs-2 me-2"></i>
+            Recibe:&nbsp;
+            <span><?= join(', ', $student->disabilityAssistance) ?></span>
+          </h6>
+        <?php endif ?>
       </div>
     </div>
-    <!-- <div class="card shadow mb-4">
-      <div class="card-header">
-        <h5 class="card-title">Skills</h5>
-      </div>
-      <div class="card-body">
-        <div class="d-inline-flex gap-2 flex-wrap">
-          <span class="badge bg-danger">HTML</span>
-          <span class="badge bg-info">Javascript</span>
-          <span class="badge bg-success">React</span>
-          <span class="badge bg-warning">Scss</span>
-          <span class="badge bg-primary">Angular</span>
-          <span class="badge bg-secondary">CSS</span>
-        </div>
-      </div>
-    </div> -->
     <!-- <div class="card shadow mb-4">
       <div class="card-header">
         <h5 class="card-title">Earnings</h5>
@@ -232,37 +303,91 @@ use LCCA\Models\StudentModel;
   <div class="col-xxl-3 col-sm-6 col-12 order-sm-3">
     <div class="card shadow mb-4">
       <div class="card-body">
+        <table class="table">
+          <tr>
+            <th>Año</th>
+            <th>Sección</th>
+            <th></th>
+          </tr>
+          <tr>
+            <td class="fs-1"><?= $student->studyYear->value ?>°</td>
+            <td class="fs-1"><?= $student->studySection->value ?></td>
+            <td style="vertical-align: middle">
+              <form method="post">
+                <?php if ($student->canGraduate): ?>
+                  <button
+                    formaction="./estudiantes/<?= $student->id ?>/graduar"
+                    class="btn btn-outline-success btn-sm">
+                    <i class="bi bi-mortarboard-fill"></i>
+                    Graduar
+                  </button>
+                <?php else: ?>
+                  <a
+                    href="./estudiantes/<?= $student->id ?>/reinscribir"
+                    class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-emoji-sunglasses-fill"></i>
+                    Promover
+                  </a>
+                <?php endif ?>
+                <?php if (!$student->isGraduated && !$student->isRetired): ?>
+                  <button
+                    formaction="./estudiantes/<?= $student->id ?>/retirar"
+                    class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-emoji-frown-fill"></i>
+                    Retirar
+                  </button>
+                <?php endif ?>
+              </form>
+            </td>
+          </tr>
+        </table>
         <div class="d-flex justify-content-between mb-2">
           <span>Progreso</span>
           <span class="text-primary">
-            <?= $student->getProgressPercent() ?>%
+            <?= $student->progressPercent ?>%
           </span>
         </div>
         <div class="progress small">
           <div
             class="progress-bar bg-primary"
-            style="width: <?= $student->getProgressPercent() ?>%">
+            style="width: <?= $student->progressPercent ?>%">
           </div>
         </div>
       </div>
     </div>
+    <?php if ($student->pendingSubjects): ?>
+      <div class="card shadow mb-4">
+        <div class="card-header">
+          <h5 class="card-title">Materias pendientes</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-inline-flex gap-2 flex-wrap">
+            <?php foreach ($student->pendingSubjects as $subject): ?>
+              <span class="badge bg-<?= getRandomColor() ?>">
+                <?= $subject ?>
+              </span>
+            <?php endforeach ?>
+          </div>
+        </div>
+      </div>
+    <?php endif ?>
     <div class="card shadow mb-4">
       <div class="card-header">
         <h5 class="card-title">Representantes</h5>
       </div>
       <div class="card-body">
         <div class="row g-2 row-cols-3">
-          <?php foreach ($student->getAllRepresentatives() as $representative): ?>
+          <?php foreach ($student->representatives as $representative): ?>
             <div class="col text-center">
               <img
                 src="assets/images/146579-200.png"
                 class="img-fluid rounded-2" />
-                <strong><?= $representative ?></strong>
-                <?php if ($representative === $student->currentRepresentative()): ?>
-                  <span class="badge border border-success text-success">
-                    Actual
-                  </span>
-                <?php endif ?>
+              <strong><?= $representative ?></strong>
+              <?php if ($representative === $student->currentRepresentative): ?>
+                <span class="badge border border-success text-success">
+                  Actual
+                </span>
+              <?php endif ?>
             </div>
           <?php endforeach ?>
         </div>

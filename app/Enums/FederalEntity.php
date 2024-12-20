@@ -41,4 +41,11 @@ enum FederalEntity: string
 
     return $initials;
   }
+
+  function fullValue(): string {
+    return match ($this) {
+      self::DependenciasFederales, self::DistritoCapital => $this->value,
+      default => "Edo. $this->value"
+    };
+  }
 }

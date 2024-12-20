@@ -35,15 +35,15 @@ use LCCA\Models\SubjectModel;
       <select name="studyYear" required class="form-select">
         <option value="">Año</option>
         <?php foreach (StudyYear::cases() as $studyYear): ?>
-          <?php if ($student->isRetired()): ?>
+          <?php if ($student->isRetired): ?>
             <option
-              <?= $student->getStudyYear()->isGreaterThan($studyYear) ? 'disabled' : '' ?>
+              <?= $student->studyYear->isGreaterThan($studyYear) ? 'disabled' : '' ?>
               value="<?= $studyYear->value ?>">
               <?= $studyYear->value ?>°
             </option>
           <?php else: ?>
             <option
-              <?= $student->getStudyYear()->isGreaterOrEqualThan($studyYear) ? 'disabled' : '' ?>
+              <?= $student->studyYear->isGreaterOrEqualThan($studyYear) ? 'disabled' : '' ?>
               value="<?= $studyYear->value ?>">
               <?= $studyYear->value ?>°
             </option>
@@ -125,7 +125,7 @@ use LCCA\Models\SubjectModel;
             type="date"
             name="student[birth][date]"
             required
-            value="<?= $student->getBirthDate()->format('Y-m-d') ?>" />
+            value="<?= $student->birthDate->format('Y-m-d') ?>" />
         </label>
       </div>
       <div class="col-md-7">
@@ -271,7 +271,7 @@ use LCCA\Models\SubjectModel;
           <select class="form-select" name="student[genre]" required>
             <option value=""></option>
             <?php foreach (Genre::cases() as $genre): ?>
-              <option <?= $student->isA($genre) ? 'selected' : '' ?>>
+              <option <?= $student->isAGenre($genre) ? 'selected' : '' ?>>
                 <?= $genre->value ?>
               </option>
             <?php endforeach ?>
@@ -425,14 +425,14 @@ use LCCA\Models\SubjectModel;
                   type="checkbox"
                   name="student[disabilityAssistance][]"
                   value="Otra"
-                  <?= $student->getOtherDisabilityAssistance() ? 'checked' : '' ?> />
+                  <?= $student->otherDisabilityAssistance ? 'checked' : '' ?> />
                 <span class="form-check-label">Otra</span>
               </label>
               <input
                 class="form-control mt-3"
                 placeholder="¿Cuál?"
                 name="student[otherDisabilityAssistance]"
-                value="<?= $student->getOtherDisabilityAssistance() ?>" />
+                value="<?= $student->otherDisabilityAssistance ?>" />
             </div>
           </div>
         </div>
@@ -457,7 +457,7 @@ use LCCA\Models\SubjectModel;
                   name="representative[nationality]"
                   required
                   value="<?= $nationality->value ?>"
-                  <?= $student->currentRepresentative()->isFromNationality($nationality) ? 'checked' : '' ?> />
+                  <?= $student->currentRepresentative->isFromNationality($nationality) ? 'checked' : '' ?> />
               </label>
             <?php endforeach ?>
           </div>
@@ -467,7 +467,7 @@ use LCCA\Models\SubjectModel;
             name="representative[idCard]"
             id="representative[idCard]"
             required
-            value="<?= $student->currentRepresentative()->idCard ?>" />
+            value="<?= $student->currentRepresentative->idCard ?>" />
         </div>
       </div>
       <div class="col-md-6">
@@ -477,7 +477,7 @@ use LCCA\Models\SubjectModel;
             class="form-control"
             name="representative[names]"
             required
-            value="<?= $student->currentRepresentative()->names ?>" />
+            value="<?= $student->currentRepresentative->names ?>" />
         </label>
       </div>
       <div class="col-md-6">
@@ -487,7 +487,7 @@ use LCCA\Models\SubjectModel;
             class="form-control"
             name="representative[lastNames]"
             required
-            value="<?= $student->currentRepresentative()->lastNames ?>" />
+            value="<?= $student->currentRepresentative->lastNames ?>" />
         </label>
       </div>
       <div class="col-md-7">
@@ -502,7 +502,7 @@ use LCCA\Models\SubjectModel;
                   name="representative[educationLevel]"
                   required
                   value="<?= $educationLevel->value ?>"
-                  <?= $student->currentRepresentative()->hasEducationLevel($educationLevel) ? 'checked' : '' ?> />
+                  <?= $student->currentRepresentative->hasEducationLevel($educationLevel) ? 'checked' : '' ?> />
                 <span class="form-check-label">
                   <?= $educationLevel->value ?>
                 </span>
@@ -518,7 +518,7 @@ use LCCA\Models\SubjectModel;
             class="form-control"
             name="representative[job]"
             required
-            value="<?= $student->currentRepresentative()->job ?>" />
+            value="<?= $student->currentRepresentative->job ?>" />
         </label>
       </div>
       <div class="col-md-6">
@@ -533,7 +533,7 @@ use LCCA\Models\SubjectModel;
             maxlength="11"
             pattern="[0-9]{11}"
             title="El teléfono debe tener 11 dígitos (Ej: 04165335826)"
-            value="<?= $student->currentRepresentative()->phone ?>" />
+            value="<?= $student->currentRepresentative->phone ?>" />
         </label>
       </div>
       <div class="col-md-6">
@@ -544,7 +544,7 @@ use LCCA\Models\SubjectModel;
             type="email"
             name="representative[email]"
             required
-            value="<?= $student->currentRepresentative()->email ?>" />
+            value="<?= $student->currentRepresentative->email ?>" />
         </label>
       </div>
       <div class="col-md-6">
@@ -554,7 +554,7 @@ use LCCA\Models\SubjectModel;
             class="form-control"
             name="representative[address]"
             required
-            rows="2"><?= $student->currentRepresentative()->address ?></textarea>
+            rows="2"><?= $student->currentRepresentative->address ?></textarea>
         </label>
       </div>
       <div class="col-md-6">
@@ -569,7 +569,7 @@ use LCCA\Models\SubjectModel;
             maxlength="20"
             pattern="[0-9]{20}"
             title="El número de cuenta debe tener al menos 20 dígitos (Ej: 01020859940000533182)"
-            value="<?= $student->currentRepresentative()->bankAccountNumber ?>" />
+            value="<?= $student->currentRepresentative->bankAccountNumber ?>" />
         </label>
       </div>
     </div>
@@ -583,7 +583,7 @@ use LCCA\Models\SubjectModel;
               class="form-control"
               name="representative[occupation]"
               required
-              rows="1"><?= $student->currentRepresentative()->occupation ?></textarea>
+              rows="1"><?= $student->currentRepresentative->occupation ?></textarea>
           </label>
         </div>
         <div class="col-md-6">
@@ -597,7 +597,7 @@ use LCCA\Models\SubjectModel;
                   name="representative[isFamilyBoss]"
                   required
                   value="Sí"
-                  <?= $student->currentRepresentative()->isFamilyBoss ? 'checked' : '' ?> />
+                  <?= $student->currentRepresentative->isFamilyBoss ? 'checked' : '' ?> />
                 <span class="form-check-label">Sí</span>
               </label>
               <label class="form-check form-check-inline">
@@ -607,7 +607,7 @@ use LCCA\Models\SubjectModel;
                   name="representative[isFamilyBoss]"
                   required
                   value="No"
-                  <?= !$student->currentRepresentative()->isFamilyBoss ? 'checked' : '' ?> />
+                  <?= !$student->currentRepresentative->isFamilyBoss ? 'checked' : '' ?> />
                 <span class="form-check-label">No</span>
               </label>
             </div>
@@ -625,7 +625,7 @@ use LCCA\Models\SubjectModel;
                   name="representative[works]"
                   value="Sí"
                   required
-                  <?= $student->currentRepresentative()->works() ? 'checked' : '' ?> />
+                  <?= $student->currentRepresentative->works() ? 'checked' : '' ?> />
                 <span class="form-check-label">Sí</span>
               </label>
               <label class="form-check">
@@ -636,7 +636,7 @@ use LCCA\Models\SubjectModel;
                   name="representative[works]"
                   value="No"
                   required
-                  <?= !$student->currentRepresentative()->works() ? 'checked' : '' ?> />
+                  <?= !$student->currentRepresentative->works() ? 'checked' : '' ?> />
                 <span class="form-check-label">No</span>
               </label>
             </div>
@@ -644,7 +644,7 @@ use LCCA\Models\SubjectModel;
               class="form-control"
               placeholder="Cargo y funciones"
               name="representative[jobRole]"
-              value="<?= $student->currentRepresentative()->jobRole ?>" />
+              value="<?= $student->currentRepresentative->jobRole ?>" />
           </div>
         </div>
         <div class="col-md-6">
@@ -655,7 +655,7 @@ use LCCA\Models\SubjectModel;
             <input
               class="form-control"
               name="representative[companyOrInstitutionName]"
-              value="<?= $student->currentRepresentative()->companyOrInstitutionName ?>" />
+              value="<?= $student->currentRepresentative->companyOrInstitutionName ?>" />
           </label>
         </div>
         <div class="col-md-6">
@@ -667,7 +667,7 @@ use LCCA\Models\SubjectModel;
               step=".01"
               name="representative[monthlyFamilyIncome]"
               required
-              value="<?= $student->currentRepresentative()->monthlyFamilyIncome ?>" />
+              value="<?= $student->currentRepresentative->monthlyFamilyIncome ?>" />
             <span class="input-group-text">Bs.</span>
           </label>
         </div>
