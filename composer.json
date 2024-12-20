@@ -1,7 +1,9 @@
 {
   "require": {
     "flightphp/core": "^3.13",
-    "symfony/dotenv": "^7.2"
+    "symfony/dotenv": "^7.2",
+    "symfony/polyfill-php84": "^1.31",
+    "jenssegers/date": "^4.0"
   },
   "scripts": {
     "dev": "composer i & start php -S localhost:80",

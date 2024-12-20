@@ -36,7 +36,7 @@ $_SESSION['messages'] = ['error' => null, 'success' => null];
       <?php App::renderComponent('sidebar') ?>
       <div class="app-container">
         <?php App::renderComponent('header') ?>
-        <div class="app-body"><?= $page ?></div>
+        <div class="app-body overflow-y-scroll"><?= $page ?></div>
         <?php App::renderComponent('footer') ?>
       </div>
     </div>

@@ -90,6 +90,10 @@ App::group('', function (): void {
 
     App::group('/@id:\w+', function (): void {
       App::route('GET /', [StudentController::class, 'showStudentProfile']);
+      App::route('GET /reinscribir', [EnrollmentController::class, 'showReEnrollForm']);
+      App::route('POST /reinscribir', [EnrollmentController::class, 'handleReEnrollment']);
+      App::route('POST /graduar', [StudentController::class, 'handleGraduation']);
+      App::route('POST /retirar', [StudentController::class, 'handleRetirement']);
     });
   });
 }, [EnsureUserIsLoggedMiddleware::class]);

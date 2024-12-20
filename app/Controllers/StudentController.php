@@ -30,4 +30,24 @@ final readonly class StudentController
       compact('student')
     );
   }
+
+  static function handleGraduation(string $id): void
+  {
+    $student = StudentModel::searchById($id) ?? App::redirect(App::request()->referrer);
+
+    $student->graduate();
+
+    // TODO: Show success message
+    App::redirect('/estudiantes');
+  }
+
+  static function handleRetirement(string $id): void
+  {
+    $student = StudentModel::searchById($id) ?? App::redirect(App::request()->referrer);
+
+    $student->retire();
+
+    // TODO: Show success message
+    App::redirect('/estudiantes');
+  }
 }

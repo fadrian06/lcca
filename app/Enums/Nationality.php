@@ -2,7 +2,8 @@
 
 namespace LCCA\Enums;
 
-enum Nationality: string {
+enum Nationality: string
+{
   case Venezuelan = 'V';
   case Foreign = 'E';
 }

@@ -2,7 +2,8 @@
 
 namespace LCCA\Enums;
 
-enum ShirtSize: string {
+enum ShirtSize: string
+{
   case S = 'S';
   case M = 'M';
   case L = 'L';

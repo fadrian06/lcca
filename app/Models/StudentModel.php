@@ -19,11 +19,11 @@ use PDO;
 use PDOException;
 use Stringable;
 
-final readonly class StudentModel implements Stringable
+final class StudentModel implements Stringable
 {
-  public string $names;
-  public string $lastNames;
-  public string $birthPlace;
+  public readonly string $names;
+  public readonly string $lastNames;
+  public readonly string $birthPlace;
 
   /** @var (Disability|string)[] */
   private array $disabilities;
@@ -39,25 +39,25 @@ final readonly class StudentModel implements Stringable
    * @param SubjectModel[] $pendingSubjects
    */
   private function __construct(
-    public string $id,
+    public readonly string $id,
     private array $representatives,
     private Nationality $nationality,
-    public int $idCard,
+    public readonly int $idCard,
     string $names,
     string $lastNames,
     private DateTimeInterface $birthDate,
     string $birthPlace,
     private FederalEntity $federalEntity,
     private ?IndigenousPeople $indigenousPeople,
-    public float $stature,
-    public float $weight,
-    public int $shoeSize,
+    public readonly float $stature,
+    public readonly float $weight,
+    public readonly int $shoeSize,
     private ShirtSize $shirtSize,
-    public int $pantsSize,
+    public readonly int $pantsSize,
     private Laterality $laterality,
     private Genre $genre,
-    public bool $hasBicentennialCollection,
-    public bool $hasCanaima,
+    public readonly bool $hasBicentennialCollection,
+    public readonly bool $hasCanaima,
     private array $pendingSubjects,
     array $disabilities,
     array $disabilityAssistance,
@@ -106,12 +106,12 @@ final readonly class StudentModel implements Stringable
 
   function getStudyYear(): StudyYear
   {
-    return $this->enrollments[0]->studyYear;
+    return $this->enrollments[count($this->enrollments) - 1]->studyYear;
   }
 
   function getSection(): Section
   {
-    return $this->enrollments[0]->section;
+    return $this->enrollments[count($this->enrollments) - 1]->section;
   }
 
   function getFullIdCard(): string
@@ -122,6 +122,102 @@ final readonly class StudentModel implements Stringable
   function getAddress(): string
   {
     return $this->currentRepresentative()->address;
+  }
+
+  function isFromNationality(Nationality $nationality): bool
+  {
+    return $this->nationality === $nationality;
+  }
+
+  function getBirthDate(): DateTimeInterface
+  {
+    return $this->birthDate;
+  }
+
+  function isFromFederalEntity(FederalEntity $federalEntity): bool
+  {
+    return $this->federalEntity === $federalEntity;
+  }
+
+  function isA(Genre $genre): bool
+  {
+    return $this->genre === $genre;
+  }
+
+  function hasPendingSubject(SubjectModel $subject): bool
+  {
+    return array_any(
+      $this->pendingSubjects,
+      fn(SubjectModel $pendingSubject): bool => $pendingSubject->id === $subject->id
+    );
+  }
+
+  function hasDisability(Disability $disability): bool
+  {
+    return array_any(
+      $this->disabilities,
+      fn(Disability|string $studentDisability): bool => $studentDisability === $disability
+    );
+  }
+
+  function hasDisabilityAssistance(null|string|DisabilityAssistance $assistance = null): bool
+  {
+    if ($assistance) {
+      return array_any(
+        $this->disabilityAssistance,
+        fn(string|DisabilityAssistance $studentDisabilityAssistance): bool => $studentDisabilityAssistance === $assistance
+      );
+    }
+
+    return $this->disabilityAssistance !== [];
+  }
+
+  function getOtherDisabilityAssistance(): ?string
+  {
+    return array_filter(
+      $this->disabilityAssistance,
+      fn(string|DisabilityAssistance $studentDisabilityAssistance): bool => is_string($studentDisabilityAssistance)
+    )[0] ?? null;
+  }
+
+  function isIndigenous(null|string|IndigenousPeople $indigenousPeople = null): bool
+  {
+    if (is_string($indigenousPeople)) {
+      $indigenousPeople = IndigenousPeople::from($indigenousPeople);
+    }
+
+    if ($indigenousPeople instanceof IndigenousPeople) {
+      return $this->indigenousPeople === $indigenousPeople;
+    }
+
+    return $this->indigenousPeople !== null;
+  }
+
+  function isShirtSize(ShirtSize $shirtSize): bool
+  {
+    return $this->shirtSize === $shirtSize;
+  }
+
+  function hasLaterality(Laterality $laterality): bool
+  {
+    return $this->laterality === $laterality;
+  }
+
+  function canGraduate(): bool
+  {
+    return $this->getStudyYear()->isFifthYear()
+      && !$this->isGraduated()
+      && !$this->isRetired();
+  }
+
+  function getGraduatedDate(): ?DateTimeInterface
+  {
+    return $this->graduatedDate;
+  }
+
+  function getRetiredDate(): ?DateTimeInterface
+  {
+    return $this->retiredDate;
   }
 
   function getProgressPercent(): int
@@ -289,6 +385,17 @@ final readonly class StudentModel implements Stringable
     string $teacherId,
     string $date
   ): EnrollmentModel {
+    $this->graduatedDate = null;
+    $this->retiredDate = null;
+
+    $stmt = App::db()->prepare('
+      UPDATE students
+      SET graduatedDate = NULL, retiredDate = NULL
+      WHERE id = ?
+    ');
+
+    $stmt->execute([$this->id]);
+
     return EnrollmentModel::create(
       $this,
       $studyYear,
@@ -296,6 +403,42 @@ final readonly class StudentModel implements Stringable
       $teacherId,
       $date
     );
+  }
+
+  function graduate(): self
+  {
+    $this->graduatedDate = new DateTimeImmutable();
+
+    $stmt = App::db()->prepare('
+      UPDATE students
+      SET graduatedDate = :graduatedDate
+      WHERE id = :id
+    ');
+
+    $stmt->execute([
+      ':id' => $this->id,
+      ':graduatedDate' => $this->graduatedDate->format('Y-m-d')
+    ]);
+
+    return $this;
+  }
+
+  function retire(): self
+  {
+    $this->retiredDate = new DateTimeImmutable();
+
+    $stmt = App::db()->prepare('
+      UPDATE students
+      SET retiredDate = :retiredDate
+      WHERE id = :id
+    ');
+
+    $stmt->execute([
+      ':id' => $this->id,
+      ':retiredDate' => $this->retiredDate->format('Y-m-d')
+    ]);
+
+    return $this;
   }
 
   static function searchById(string $id): ?self

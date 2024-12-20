@@ -1,28 +1,25 @@
-<?php $id = uniqid() ?>
+<?php
 
-<div class="dropdown">
-  <button
-    class="btn btn-outline-primary dropdown-toggle"
-    data-bs-toggle="dropdown"
-    data-bs-auto-close="outside">
-    Buscar estudiante
-  </button>
-  <form id="<?= $id ?>" class="dropdown-menu p-4">
-    <div class="mb-3">
-      <label class="mb-3">
-        <span class="form-label">Por cédula</span>
-        <input type="number" name="idCardSearched" class="form-control" />
-      </label>
-      <label class="mb-3">
-        <span class="form-label" style="white-space: nowrap">
-          Por nombre o apellido
-        </span>
-        <input name="namesSearched" class="form-control" />
-      </label>
-    </div>
-    <dl></dl>
-  </form>
-</div>
+$hrefFormat ??= './estudiantes/${student.id}';
+$id = uniqid();
+
+?>
+
+<form id="<?= $id ?>" class="p-4" action="javascript:">
+  <div class="mb-3">
+    <label class="mb-3">
+      <span class="form-label">Por cédula</span>
+      <input type="number" name="idCardSearched" class="form-control" />
+    </label>
+    <label class="mb-3">
+      <span class="form-label" style="white-space: nowrap">
+        Por nombre o apellido
+      </span>
+      <input name="namesSearched" class="form-control" />
+    </label>
+  </div>
+  <dl></dl>
+</form>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
@@ -54,7 +51,7 @@
 
         students.forEach(student => {
           $fragment.innerHTML += `
-            <a href="./estudiantes/${student.id}" class="btn btn-dark">
+            <a href="<?= $hrefFormat ?>" class="btn btn-dark w-100">
               <dt>${student.nationality}${student.idCard}</dt>
               <dd>${student.names} ${student.lastNames}</dd>
             </a>

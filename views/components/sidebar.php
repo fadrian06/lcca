@@ -1,3 +1,9 @@
+<?php
+
+use LCCA\App;
+
+?>
+
 <nav id="sidebar" class="sidebar-wrapper">
   <div class="app-brand px-3 py-3 d-flex align-items-center">
     <a href="./">
@@ -8,25 +14,9 @@
     <img
       src="./assets/images/User_icon_2.svg.png"
       class="profile-thumb rounded-circle p-2 d-lg-flex d-none" />
-    <h5 class="profile-name lh-lg mt-2 text-truncate"><?= $loggedUser->getRole() ?></h5>
-    <ul class="profile-actions d-flex m-0 p-0">
-      <li class="opacity-0 disabled">
-        <a href="javascript:void(0)">
-          <i class="bi bi-skype fs-4"></i>
-          <span class="count-label"></span>
-        </a>
-      </li>
-      <li class="opacity-0 disabled">
-        <a href="javascript:void(0)">
-          <i class="bi bi-dribbble fs-4"></i>
-        </a>
-      </li>
-      <li class="opacity-0 disabled">
-        <a href="javascript:void(0)">
-          <i class="bi bi-twitter fs-4"></i>
-        </a>
-      </li>
-    </ul>
+    <h5 class="profile-name lh-lg mt-2 text-truncate">
+      <?= $loggedUser->getRole() ?>
+    </h5>
   </div>
   <div class="sidebarMenuScroll">
     <ul class="sidebar-menu">
@@ -50,6 +40,11 @@
         <ul class="treeview-menu">
           <li>
             <a href="./inscribir">Nuevo ingreso</a>
+          </li>
+          <li>
+            <a href="#reinscribir" data-bs-toggle="modal">
+              Reinscribir
+            </a>
           </li>
         </ul>
       </li>
@@ -76,3 +71,17 @@
     </ul>
   </div>
 </nav>
+
+<div class="modal fade" id="reinscribir">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5">Reinscribir estudiante</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <?php App::renderComponent('search-student', ['hrefFormat' => './estudiantes/${student.id}/reinscribir']) ?>
+      </div>
+    </div>
+  </div>
+</div>

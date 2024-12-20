@@ -1,5 +1,6 @@
 <?php
 
+use Jenssegers\Date\Date;
 use LCCA\App;
 use LCCA\Middlewares\EnsureAppIsNotInMaintenanceMiddleware;
 use LCCA\Models\UserModel;
@@ -22,6 +23,7 @@ $_ENV['PDO_PASSWORD'] ??= null;
 $_ENV['MAINTENANCE'] = ($_ENV['MAINTENANCE'] ?? 'false') === 'true';
 
 date_default_timezone_set($_ENV['TIMEZONE'] ?? 'America/Caracas');
+Date::setLocale($_ENV['LOCALE'] ?? 'es');
 
 session_start();
 $_SESSION['loggedUser'] ??= [];

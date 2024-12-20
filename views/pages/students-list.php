@@ -1,5 +1,6 @@
 <?php
 
+use Jenssegers\Date\Date;
 use LCCA\Enums\Section;
 use LCCA\Enums\StudyYear;
 use LCCA\Models\StudentModel;
@@ -7,6 +8,8 @@ use LCCA\Models\StudentModel;
 /** @var StudentModel[] $students */
 
 $studentsByStudyYear = [];
+$graduatedStudents = [];
+$retiredStudents = [];
 
 foreach (StudyYear::cases() as $studyYear) {
   $studentsByStudyYear[$studyYear->value] = [];
@@ -17,10 +20,20 @@ foreach (StudyYear::cases() as $studyYear) {
 }
 
 foreach ($students as $student) {
-  $studentsByStudyYear[$student->getStudyYear()->value][$student->getSection()->value][] = $student;
+  if ($student->isGraduated()) {
+    $graduatedStudents[] = $student;
+  } elseif ($student->isRetired()) {
+    $retiredStudents[] = $student;
+  } else {
+    $studentsByStudyYear[$student->getStudyYear()->value][$student->getSection()->value][] = $student;
+  }
 }
 
-/** @var array<1|2|3|4|5, array<'A'|'B', StudentModel[]>> $studentsByStudyYear */
+/**
+ * @var array<1|2|3|4|5, array<'A'|'B', StudentModel[]>> $studentsByStudyYear
+ * @var StudentModel[] $graduatedStudents
+ * @var StudentModel[] $retiredStudents
+ */
 
 ?>
 
@@ -29,17 +42,39 @@ foreach ($students as $student) {
     <div class="card shadow mb-4">
       <div class="card-body">
         <div class="custom-tabs-container">
-          <ul class="nav nav-tabs justify-content-center">
+          <ul class="nav nav-tabs justify-content-center px-2">
             <?php foreach (StudyYear::cases() as $studyYear): ?>
               <li class="nav-item">
                 <a
                   class="nav-link <?= $studyYear->isFirstYear() ? 'active' : '' ?>"
                   data-bs-toggle="tab"
-                  href="#<?= $studyYear->value ?>">
+                  href="#<?= $studyYear->value ?>"
+                  style="border-bottom-width: 3px">
+                  <i class="bi bi-people"></i>
                   <?= $studyYear->ordinalValue() ?>
                 </a>
               </li>
             <?php endforeach ?>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                data-bs-toggle="tab"
+                href="#graduados"
+                style="border-bottom-width: 3px">
+                <i class="bi bi-mortarboard-fill"></i>
+                Graduados
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                data-bs-toggle="tab"
+                href="#retirados"
+                style="border-bottom-width: 3px">
+                <i class="bi bi-emoji-frown-fill"></i>
+                Retirados
+              </a>
+            </li>
           </ul>
           <div class="tab-content">
             <?php foreach (StudyYear::cases() as $studyYear): ?>
@@ -68,29 +103,34 @@ foreach ($students as $student) {
                           <table class="table align-middle table-hover m-0">
                             <thead>
                               <tr>
-                                <th></th>
                                 <th>Estudiante</th>
                                 <th>Representante</th>
+                                <th></th>
                               </tr>
                             </thead>
                             <tbody>
                               <?php foreach ($studentsByStudyYear[$studyYear->value][$section->value] as $student): ?>
                                 <tr>
-                                  <td>
-                                    <?php if ($student->isGraduated()): ?>
-                                      <span class="badge border border-success text-success">
-                                        <i class="bi bi-mortarboard-fill"></i>
-                                        Graduado
-                                      </span>
-                                    <?php elseif ($student->isRetired()): ?>
-                                      <span class="badge border border-danger text-danger">
-                                        <i class="bi bi-emoji-frown-fill"></i>
-                                        Retirado
-                                      </span>
-                                    <?php endif ?>
-                                  </td>
                                   <td><?= $student ?></td>
                                   <td><?= $student->currentRepresentative() ?></td>
+                                  <td>
+                                    <form method="post">
+                                      <?php if ($student->canGraduate()): ?>
+                                        <button
+                                          formaction="./estudiantes/<?= $student->id ?>/graduar"
+                                          class="btn btn-sm btn-outline-success bi bi-mortarboard-fill"
+                                          data-bs-toggle="tooltip"
+                                          title="Graduar">
+                                        </button>
+                                      <?php endif ?>
+                                      <button
+                                        formaction="./estudiantes/<?= $student->id ?>/retirar"
+                                        class="btn btn-sm btn-outline-danger bi bi-emoji-frown-fill"
+                                        data-bs-toggle="tooltip"
+                                        title="Retirar">
+                                      </button>
+                                    </form>
+                                  </td>
                                 </tr>
                               <?php endforeach ?>
                             </tbody>
@@ -102,6 +142,70 @@ foreach ($students as $student) {
                 </div>
               </div>
             <?php endforeach ?>
+            <div
+              class="tab-pane fade"
+              id="graduados">
+              <div class="tab-content">
+                <div class="table-responsive">
+                  <table class="table align-middle table-hover m-0">
+                    <thead>
+                      <tr>
+                        <th>Fecha</th>
+                        <th>Estudiante</th>
+                        <th>Representante</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php foreach ($graduatedStudents as $student): ?>
+                        <tr>
+                          <td>
+                            <?= mb_ucfirst((new Date($student->getGraduatedDate()))->diffForHumans()) ?>
+                          </td>
+                          <td><?= $student ?></td>
+                          <td><?= $student->currentRepresentative() ?></td>
+                        </tr>
+                      <?php endforeach ?>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div
+              class="tab-pane fade"
+              id="retirados">
+              <div class="tab-content">
+                <div class="table-responsive">
+                  <table class="table align-middle table-hover m-0">
+                    <thead>
+                      <tr>
+                        <th>Fecha</th>
+                        <th>Estudiante</th>
+                        <th>Representante</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php foreach ($retiredStudents as $student): ?>
+                        <tr>
+                          <td>
+                            <?= mb_ucfirst((new Date($student->getRetiredDate()))->diffForHumans()) ?>
+                          </td>
+                          <td><?= $student ?></td>
+                          <td><?= $student->currentRepresentative() ?></td>
+                          <td>
+                            <a
+                              href="./estudiantes/<?= $student->id ?>/reinscribir"
+                              class="btn btn-sm btn-outline-success">
+                              Reinscribir
+                            </a>
+                          </td>
+                        </tr>
+                      <?php endforeach ?>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

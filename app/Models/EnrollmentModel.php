@@ -63,11 +63,11 @@ final readonly class EnrollmentModel
   static function allActives(): array
   {
     $stmt = App::db()->prepare('
-      SELECT DISTINCT e.student_id as studentId, e.id as enrollmentId,
+      SELECT e.student_id as studentId, e.id as enrollmentId,
       e.studyYear, e.section, e.teacher_id as teacherId,
       e.enrollmentDate FROM enrollments e
       JOIN students s ON e.student_id = s.id AND s.graduatedDate IS NULL
-      AND s.retiredDate IS NULL
+      AND s.retiredDate IS NULL GROUP BY studentId
     ');
 
     $stmt->execute();

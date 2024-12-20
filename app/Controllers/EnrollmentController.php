@@ -85,4 +85,36 @@ final readonly class EnrollmentController
     // TODO: Send success message
     App::redirect('/');
   }
+
+  static function showReEnrollForm(string $studentId): void
+  {
+    $student = StudentModel::searchById($studentId) ?? App::redirect(App::request()->referrer);
+    $subjects = SubjectModel::all();
+
+    App::renderPage(
+      're-enroll',
+      'Reinscripción',
+      'mercury-home',
+      compact('student', 'subjects')
+    );
+  }
+
+  static function handleReEnrollment(string $studentId): void
+  {
+    $student = StudentModel::searchById($studentId) ?? App::redirect(App::request()->referrer);
+    $inscription = App::request()->data;
+
+    // TODO: Validate empty data
+    // TODO: Update student if changes
+    // TODO: Update extra representative if changes or register another representative
+    $student->enroll(
+      $inscription->studyYear,
+      $inscription->section,
+      App::loggedUser()->id,
+      $inscription->date
+    );
+
+    // TODO: Send success message
+    App::redirect('/');
+  }
 }

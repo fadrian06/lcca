@@ -40,6 +40,21 @@ final class RepresentativeModel implements Stringable
     $this->address = mb_convert_case($address, MB_CASE_TITLE);
   }
 
+  function isFromNationality(Nationality $nationality): bool
+  {
+    return $this->nationality === $nationality;
+  }
+
+  function hasEducationLevel(EducationLevel $educationLevel): bool
+  {
+    return $this->educationLevel === $educationLevel;
+  }
+
+  function works(): bool
+  {
+    return $this->jobRole !== null;
+  }
+
   static function create(
     string $nationality,
     int $idCard,
@@ -179,8 +194,7 @@ final class RepresentativeModel implements Stringable
     ?string $jobRole,
     ?string $companyOrInstitutionName,
     float $monthlyFamilyIncome
-  ): self
-  {
+  ): self {
     return new self(
       $id,
       Nationality::from($nationality),
@@ -201,7 +215,8 @@ final class RepresentativeModel implements Stringable
     );
   }
 
-  function __toString(): string {
+  function __toString(): string
+  {
     [$firstName] = explode(' ', $this->names);
     [$firstLastName] = explode(' ', $this->lastNames);
 

@@ -15,6 +15,11 @@ enum StudyYear: int
     return $this === self::First;
   }
 
+  function isFifthYear(): bool
+  {
+    return $this === self::Fifth;
+  }
+
   function ordinalValue(): string
   {
     return match ($this) {
@@ -29,5 +34,15 @@ enum StudyYear: int
   function getProgressPercent(): int
   {
     return ($this->value - 1) * 20;
+  }
+
+  function isGreaterOrEqualThan(self $studyYear): bool
+  {
+    return $this->value >= $studyYear->value;
+  }
+
+  function isGreaterThan(self $studyYear): bool
+  {
+    return $this->value > $studyYear->value;
   }
 }

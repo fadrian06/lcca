@@ -22,7 +22,17 @@ $urlSections = array_filter(explode('/', App::request()->url));
   </div>
   <div class="header-actions">
     <div class="me-2">
-      <?php App::renderComponent('search-student') ?>
+      <div class="dropdown">
+        <button
+          class="btn btn-outline-primary dropdown-toggle"
+          data-bs-toggle="dropdown"
+          data-bs-auto-close="outside">
+          Buscar estudiante
+        </button>
+        <div class="dropdown-menu">
+          <?php App::renderComponent('search-student') ?>
+        </div>
+      </div>
     </div>
     <div class="dropdown ms-3">
       <a
@@ -39,7 +49,7 @@ $urlSections = array_filter(explode('/', App::request()->url));
           class="dropdown-item d-flex align-items-center"
           href="./perfil/configurar">
           <i class="bi bi-gear fs-4 me-2"></i>
-          Configuraciones de la cuenta
+          Configurar perfil
         </a>
         <a class="dropdown-item d-flex align-items-center" href="./salir">
           <i class="bi bi-escape fs-4 me-2"></i>
