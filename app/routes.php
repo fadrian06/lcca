@@ -98,6 +98,16 @@ App::group('', function (): void {
       App::route('POST /retirar', [StudentController::class, 'handleRetirement']);
     });
   });
+
+  App::route('/respaldar', function (): void {
+    App::db()->backup();
+    App::redirect(App::request()->referrer);
+  });
+
+  App::route('/restaurar', function (): void {
+    App::restoreDb();
+    App::redirect('/salir');
+  });
 }, [EnsureUserIsLoggedMiddleware::class]);
 
 App::group('/api', function (): void {

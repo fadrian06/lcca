@@ -20,6 +20,7 @@ if (!file_exists('.env')) {
 $_ENV['PDO_DSN'] ??= 'sqlite::memory';
 $_ENV['PDO_USER'] ??= null;
 $_ENV['PDO_PASSWORD'] ??= null;
+$_ENV['MYSQLDUMP_PATH'] ??= 'C:/xampp/mysql/bin/mysqldump';
 $_ENV['MAINTENANCE'] = ($_ENV['MAINTENANCE'] ?? 'false') === 'true';
 
 date_default_timezone_set($_ENV['TIMEZONE'] ?? 'America/Caracas');

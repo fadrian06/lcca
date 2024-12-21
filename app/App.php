@@ -4,10 +4,11 @@ namespace LCCA;
 
 use Flight;
 use LCCA\Models\UserModel;
-use PDO;
 
 final class App extends Flight
 {
+  private static ?Database $db = null;
+
   static function renderPage(
     string $pageName,
     string $title,
@@ -25,17 +26,20 @@ final class App extends Flight
     self::render("components/$componentName", $componentData);
   }
 
-  static function db(): PDO
+  static function db(): Database
   {
-    static $pdo = null;
-
-    if (!$pdo) {
-      $pdo = new PDO($_ENV['PDO_DSN'], $_ENV['PDO_USER'], $_ENV['PDO_PASSWORD'], [
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
-      ]);
+    if (!self::$db) {
+      self::$db = Database::autoConnect();
     }
 
-    return $pdo;
+    return self::$db;
+  }
+
+  static function restoreDb(): void
+  {
+    self::$db = null;
+
+    Database::restore();
   }
 
   static function loggedUser(): ?UserModel

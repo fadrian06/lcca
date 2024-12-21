@@ -68,6 +68,20 @@ use LCCA\App;
           <span class="menu-text">Áreas de Formación</span>
         </a>
       </li>
+      <li class="treeview">
+        <a href="javascript:void">
+          <i class="bi bi-database-fill-gear"></i>
+          <span class="menu-text">Respaldo y restauración</span>
+        </a>
+        <ul class="treeview-menu">
+          <li>
+            <a href="./respaldar">Respaldar</a>
+          </li>
+          <li>
+            <a href="./restaurar">Restaurar</a>
+          </li>
+        </ul>
+      </li>
     </ul>
   </div>
 </nav>
