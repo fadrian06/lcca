@@ -90,6 +90,8 @@ App::group('', function (): void {
 
     App::group('/@id:\w+', function (): void {
       App::route('GET /', [StudentController::class, 'showStudentProfile']);
+      App::route('POST /', [StudentController::class, 'handleStudentUpdate']);
+      App::route('GET /editar', [StudentController::class, 'showEditStudent']);
       App::route('GET /reinscribir', [EnrollmentController::class, 'showReEnrollForm']);
       App::route('POST /reinscribir', [EnrollmentController::class, 'handleReEnrollment']);
       App::route('POST /graduar', [StudentController::class, 'handleGraduation']);

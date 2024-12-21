@@ -69,8 +69,8 @@ final readonly class EnrollmentController
       $inscription->student['genre'],
       $inscription->student['hasBicentennialCollection'],
       $inscription->student['hasCanaima'],
-      $inscription->student['pendingSubjects'] ?? [],
-      $inscription->student['disabilities'] ?? [],
+      array_filter($inscription->student['pendingSubjects'] ?? []),
+      array_filter($inscription->student['disabilities'] ?? []),
       $inscription->student['otherDisabilityAssistance'] === ''
         ? ($inscription->student['disabilityAssistance'] ?: [])
         : [$inscription->student['otherDisabilityAssistance']]
@@ -142,8 +142,8 @@ final readonly class EnrollmentController
       $inscription->student['genre'],
       $inscription->student['hasBicentennialCollection'],
       $inscription->student['hasCanaima'],
-      $inscription->student['pendingSubjects'] ?? [],
-      $inscription->student['disabilities'] ?? [],
+      array_filter($inscription->student['pendingSubjects'] ?? []),
+      array_filter($inscription->student['disabilities'] ?? []),
       $inscription->student['otherDisabilityAssistance'] === ''
         ? ($inscription->student['disabilityAssistance'] ?: [])
         : [$inscription->student['otherDisabilityAssistance']]

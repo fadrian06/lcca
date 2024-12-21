@@ -303,6 +303,7 @@ use LCCA\Models\UserModel;
               class="form-select"
               name="student[pendingSubjects][]"
               multiple>
+              <option value="">Ninguna</option>
               <?php foreach ($subjects as $subject): ?>
                 <option value="<?= $subject->id ?>"><?= $subject ?></option>
               <?php endforeach ?>
@@ -318,6 +319,7 @@ use LCCA\Models\UserModel;
           <div class="input-group h-100">
             <span class="input-group-text">¿Tiene alguna<br />discapacidad?</span>
             <select name="student[disabilities][]" multiple class="form-select">
+              <option value="">Ninguna</option>
               <?php foreach (Disability::cases() as $disability): ?>
                 <option><?= $disability->value ?></option>
               <?php endforeach ?>

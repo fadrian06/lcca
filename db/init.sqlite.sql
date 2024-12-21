@@ -100,6 +100,8 @@ CREATE TABLE IF NOT EXISTS pendingSubjects (
   student_id VARCHAR(255) NOT NULL,
   subject_id VARCHAR(255) NOT NULL,
 
+  UNIQUE (student_id, subject_id);
+
   FOREIGN KEY (student_id) REFERENCES students (id)
     ON UPDATE CASCADE
     ON DELETE CASCADE,

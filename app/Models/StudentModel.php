@@ -401,6 +401,9 @@ final class StudentModel implements Stringable
         ':id' => $this->id
       ]);
 
+      $stmt = App::db()->prepare('DELETE FROM pendingSubjects WHERE student_id = ?');
+      $stmt->execute([$this->id]);
+
       if ($this->pendingSubjects !== []) {
         $pendingSubjectsValues = array_map(
           fn(SubjectModel $subjectModel): string => "('$this->id', '$subjectModel->id')",
@@ -413,7 +416,6 @@ final class StudentModel implements Stringable
         $stmt->execute();
       }
 
-      // Check if $newOrUpdatedRepresentative is already in $this->representatives to create another row in representativeHistory
       if (!array_any(
         $this->representatives,
         fn(RepresentativeModel $representative): bool => $representative->id === $newOrUpdatedRepresentative->id
@@ -634,40 +636,19 @@ final class StudentModel implements Stringable
       'studySection' => $this->enrollments[count($this->enrollments) - 1]->section,
       'currentRepresentative' => $this->representatives[0],
       'fullIdCard' => strtoupper($this->nationality->value . $this->idCard),
-      'birthDate' => $this->birthDate,
       'otherDisabilityAssistance' => array_filter(
         $this->disabilityAssistance,
         fn(string|DisabilityAssistance $studentDisabilityAssistance): bool => is_string($studentDisabilityAssistance)
       )[0] ?? null,
-      'graduatedDate' => $this->graduatedDate,
       'canGraduate' => $this->studyYear->isFifthYear()
         && !$this->isGraduated
         && !$this->isRetired,
       'progressPercent' => $this->isGraduated ? 100 : $this->studyYear->getProgressPercent(),
-      'retiredDate' => $this->retiredDate,
-      'representatives' => $this->representatives,
       'age' => $this->birthDate->diff(new DateTimeImmutable())->y,
-      'disabilities' => $this->disabilities,
-      'disabilityAssistance' => $this->disabilityAssistance,
       'fullBirthPlace' => "$this->birthPlace, {$this->federalEntity->fullValue()}",
-      'indigenousPeople' => $this->indigenousPeople,
-      'stature' => $this->stature,
-      'weight' => $this->weight,
-      'shoeSize' => $this->shoeSize,
-      'shirtSize' => $this->shirtSize,
-      'pantsSize' => $this->pantsSize,
-      'laterality' => $this->laterality,
-      'genre' => $this->genre,
-      'hasBicentennialCollection' => $this->hasBicentennialCollection,
-      'hasCanaima' => $this->hasCanaima,
-      'pendingSubjects' => $this->pendingSubjects,
       'isMale' => $this->genre->isMale(),
       'isFemale' => $this->genre->isFemale(),
-      'idCard' => $this->idCard,
-      'names' => $this->names,
-      'lastNames' => $this->lastNames,
-      'birthPlace' => $this->birthPlace,
-      default => null,
+      default => property_exists($this, $name) ? $this->$name : null,
     };
   }
 

@@ -3,9 +3,12 @@
 use Jenssegers\Date\Date;
 use LCCA\Enums\Disability;
 use LCCA\Enums\DisabilityAssistance;
+use LCCA\Enums\Genre;
 use LCCA\Models\StudentModel;
 
-/** @var StudentModel $student */
+/**
+ * @var StudentModel $student
+ */
 
 function getRandomColor(): string
 {
@@ -23,6 +26,13 @@ function getRandomColor(): string
   return $colors[array_rand($colors)];
 }
 
+function getStudentImageUrlByGenre(Genre $genre): string
+{
+  return $genre->isMale()
+    ? './assets/images/istockphoto-1268716253-612x612.png'
+    : './assets/images/451-4515675_the-waitress-and-the-sailor-girl-going-to-school-icon.png';
+}
+
 ?>
 
 <div class="row justify-content-center">
@@ -32,7 +42,7 @@ function getRandomColor(): string
         <div class="row align-items-center">
           <div class="col-auto">
             <img
-              src="./assets/images/istockphoto-1268716253-612x612.png"
+              src="<?= getStudentImageUrlByGenre($student->genre) ?>"
               class="img-5xx rounded-circle" />
           </div>
           <div class="col">
@@ -58,7 +68,7 @@ function getRandomColor(): string
             <h4 class="m-0"><?= $student->fullName ?></h4>
           </div>
           <div class="col-12 col-md-auto">
-            <a href="javascript:" class="btn btn-outline-primary btn-lg">
+            <a href="./estudiantes/<?= $student->id ?>/editar" class="btn btn-outline-primary btn-lg">
               <i class="bi bi-pen-fill"></i>
               Editar
             </a>
