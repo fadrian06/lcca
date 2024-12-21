@@ -26,7 +26,10 @@
       "composer.*",
       "*.sql",
       "docs",
-      "*.tar"
+      "*.tar",
+      "*.sublime-*",
+      "*.backup",
+      "backup.*"
     ]
   }
 }
