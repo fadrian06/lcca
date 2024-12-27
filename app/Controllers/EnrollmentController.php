@@ -45,7 +45,8 @@ final readonly class EnrollmentController
       $inscription->representative['isFamilyBoss'] === 'Sí',
       $inscription->representative['jobRole'],
       $inscription->representative['companyOrInstitutionName'],
-      $inscription->representative['monthlyFamilyIncome']
+      $inscription->representative['monthlyFamilyIncome'],
+      $inscription->representative['otherHouseType'] ?: $inscription->representative['houseType']
     );
 
     // TODO: Validate empty data
@@ -83,7 +84,7 @@ final readonly class EnrollmentController
     );
 
     // TODO: Send success message
-    App::redirect('/');
+    App::redirect('/estudiantes');
   }
 
   static function showReEnrollForm(string $studentId): void
@@ -120,7 +121,8 @@ final readonly class EnrollmentController
       $inscription->representative['isFamilyBoss'] === 'Sí',
       $inscription->representative['jobRole'],
       $inscription->representative['companyOrInstitutionName'],
-      $inscription->representative['monthlyFamilyIncome']
+      $inscription->representative['monthlyFamilyIncome'],
+      $inscription->representative['otherHouseType'] ?: $inscription->representative['houseType']
     );
 
     $student->update(
@@ -156,6 +158,6 @@ final readonly class EnrollmentController
     );
 
     // TODO: Send success message
-    App::redirect('/');
+    App::redirect('/estudiantes');
   }
 }

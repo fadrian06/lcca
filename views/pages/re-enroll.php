@@ -5,6 +5,7 @@ use LCCA\Enums\DisabilityAssistance;
 use LCCA\Enums\EducationLevel;
 use LCCA\Enums\FederalEntity;
 use LCCA\Enums\Genre;
+use LCCA\Enums\HouseType;
 use LCCA\Enums\IndigenousPeople;
 use LCCA\Enums\Laterality;
 use LCCA\Enums\Nationality;
@@ -442,7 +443,7 @@ use LCCA\Models\SubjectModel;
     </fieldset>
   </fieldset>
   <fieldset class="my-3">
-    <legend>2.- DATOS PERSONALES DEL PADRE Y/O REPRESENTANTE</legend>
+    <legend>2.- DATOS PERSONALES DEL PADRE, MADRE Y/O REPRESENTANTE</legend>
     <div class="row">
       <div class="col-md-12">
         <div class="input-group mb-3">
@@ -671,6 +672,40 @@ use LCCA\Models\SubjectModel;
               required
               value="<?= $student->currentRepresentative->monthlyFamilyIncome ?>" />
             <span class="input-group-text">Bs.</span>
+          </label>
+        </div>
+        <div class="col-md-12">
+          <label class="input-group mb-3">
+            <span class="input-group-text">Tipo de vivienda:</span>
+            <div class="form-control">
+              <?php foreach (HouseType::cases() as $houseType): ?>
+                <label class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    onchange="document.querySelector(`[name='representative[otherHouseType]']`).removeAttribute('required')"
+                    type="radio"
+                    name="representative[houseType]"
+                    value="<?= $houseType->value ?>"
+                    <?= $student->currentRepresentative->hasHouseType($houseType) ? 'checked' : '' ?> />
+                  <span class="form-check-label"><?= $houseType->value ?></span>
+                </label>
+              <?php endforeach ?>
+              <label class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  onchange="document.querySelector(`[name='representative[otherHouseType]']`).setAttribute('required', true)"
+                  type="radio"
+                  name="representative[houseType]"
+                  value="Otra"
+                  <?= $student->currentRepresentative->otherHouseType ? 'checked' : '' ?> />
+                <span class="form-check-label">Otra</span>
+              </label>
+              <input
+                class="form-control mt-3"
+                placeholder="¿Cuál?"
+                name="representative[otherHouseType]"
+                value="<?= $student->currentRepresentative->otherHouseType ?>" />
+            </div>
           </label>
         </div>
       </div>

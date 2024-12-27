@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS representatives (
   jobRole VARCHAR(255),
   companyOrInstitutionName VARCHAR(255),
   monthlyFamilyIncome DECIMAL(10, 2) NOT NULL CHECK (monthlyFamilyIncome >= 0),
+  houseType VARCHAR(255) NOT NULL,
 
   UNIQUE (names, lastNames)
 );

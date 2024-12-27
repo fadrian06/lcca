@@ -89,8 +89,7 @@ php -r "file_exists('.env') || copy('.env.example', '.env');"
 
 7. Ejecuta el comando para configurar la base de datos:
 ```cmd
-php -r "$pdo = new PDO('sqlite:db/lcca.db'); array_map([$pdo, 'query'], explode(';',
-file_get_contents('db/init.sqlite.sql')));"
+php -r "$pdo = new PDO('sqlite:db/lcca.db'); array_map([$pdo, 'query'], explode(';', file_get_contents('db/init.sqlite.sql')));"
 ```
 
 8. ABRE XAMPP E INICIA APACHE, LUEGO ABRE EL NAVEGADOR Y ESCRIBE `localhost/lcca`.

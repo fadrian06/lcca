@@ -4,6 +4,7 @@ namespace LCCA\Models;
 
 use LCCA\App;
 use LCCA\Enums\EducationLevel;
+use LCCA\Enums\HouseType;
 use LCCA\Enums\Nationality;
 use PDOException;
 use Stringable;
@@ -26,6 +27,8 @@ use Stringable;
  * @property-read ?string $companyOrInstitutionName
  * @property-read float $monthlyFamilyIncome
  * @property-read bool $works
+ * @property-read string|HouseType $houseType
+ * @property-read ?string $otherHouseType
  */
 final class RepresentativeModel implements Stringable
 {
@@ -50,11 +53,13 @@ final class RepresentativeModel implements Stringable
     private bool $isFamilyBoss,
     private ?string $jobRole,
     private ?string $companyOrInstitutionName,
-    private float $monthlyFamilyIncome
+    private float $monthlyFamilyIncome,
+    private string|HouseType $houseType
   ) {
     $this->__set('names', $names);
     $this->__set('lastNames', $lastNames);
     $this->__set('address', $address);
+    $this->__set('houseType', $houseType);
   }
 
   function isFromNationality(Nationality $nationality): bool
@@ -65,6 +70,11 @@ final class RepresentativeModel implements Stringable
   function hasEducationLevel(EducationLevel $educationLevel): bool
   {
     return $this->educationLevel === $educationLevel;
+  }
+
+  function hasHouseType(string|HouseType $houseType): bool
+  {
+    return $this->houseType === $houseType;
   }
 
   static function create(
@@ -82,7 +92,8 @@ final class RepresentativeModel implements Stringable
     bool $isFamilyBoss,
     ?string $jobRole,
     ?string $companyOrInstitutionName,
-    float $monthlyFamilyIncome
+    float $monthlyFamilyIncome,
+    string $houseType
   ): self {
     $representativeModel = new self(
       uniqid(),
@@ -100,7 +111,8 @@ final class RepresentativeModel implements Stringable
       $isFamilyBoss,
       $jobRole ?: null,
       $companyOrInstitutionName ?: null,
-      $monthlyFamilyIncome
+      $monthlyFamilyIncome,
+      $houseType
     );
 
     try {
@@ -108,10 +120,10 @@ final class RepresentativeModel implements Stringable
         INSERT INTO representatives (id, nationality, idCard, names, lastNames,
         educationLevel, job, phone, email, address, bankAccountNumber,
         occupation, isFamilyBoss, jobRole, companyOrInstitutionName,
-        monthlyFamilyIncome) VALUES (:id, :nationality, :idCard, :names,
+        monthlyFamilyIncome, houseType) VALUES (:id, :nationality, :idCard, :names,
         :lastNames, :educationLevel, :job, :phone, :email, :address,
         :bankAccountNumber, :occupation, :isFamilyBoss, :jobRole,
-        :companyOrInstitutionName, :monthlyFamilyIncome)
+        :companyOrInstitutionName, :monthlyFamilyIncome, :houseType)
       ');
 
       $stmt->execute([
@@ -131,6 +143,9 @@ final class RepresentativeModel implements Stringable
         ':jobRole' => $representativeModel->jobRole,
         ':companyOrInstitutionName' => $representativeModel->companyOrInstitutionName,
         ':monthlyFamilyIncome' => $representativeModel->monthlyFamilyIncome,
+        ':houseType' => is_string($representativeModel->houseType)
+          ? $representativeModel->houseType
+          : $representativeModel->houseType->value
       ]);
     } catch (PDOException $exception) {
       dd($exception);
@@ -169,7 +184,8 @@ final class RepresentativeModel implements Stringable
     bool $isFamilyBoss,
     ?string $jobRole,
     ?string $companyOrInstitutionName,
-    float $monthlyFamilyIncome
+    float $monthlyFamilyIncome,
+    string $houseType
   ): self {
     if ($idCard !== $this->idCard) {
       return self::create(
@@ -187,7 +203,8 @@ final class RepresentativeModel implements Stringable
         $isFamilyBoss,
         $jobRole,
         $companyOrInstitutionName,
-        $monthlyFamilyIncome
+        $monthlyFamilyIncome,
+        $houseType
       );
     }
 
@@ -195,6 +212,7 @@ final class RepresentativeModel implements Stringable
     $this->__set('names', $names);
     $this->__set('lastNames', $lastNames);
     $this->__set('educationLevel', $educationLevel);
+    $this->__set('houseType', $houseType);
     $this->job = $job;
     $this->phone = $phone;
     $this->email = $email;
@@ -213,7 +231,8 @@ final class RepresentativeModel implements Stringable
       bankAccountNumber = :bankAccountNumber, occupation = :occupation,
       isFamilyBoss = :isFamilyBoss, jobRole = :jobRole,
       companyOrInstitutionName = :companyOrInstitutionName,
-      monthlyFamilyIncome = :monthlyFamilyIncome WHERE id = :id
+      monthlyFamilyIncome = :monthlyFamilyIncome, houseType = :houseType
+      WHERE id = :id
     ');
 
     $stmt->execute([
@@ -231,7 +250,10 @@ final class RepresentativeModel implements Stringable
       ':jobRole' => $this->jobRole,
       ':companyOrInstitutionName' => $this->companyOrInstitutionName,
       ':monthlyFamilyIncome' => $this->monthlyFamilyIncome,
-      ':id' => $this->id
+      ':id' => $this->id,
+      ':houseType' => is_string($this->houseType)
+        ? $this->houseType
+        : $this->houseType->value
     ]);
 
     return $this;
@@ -265,7 +287,8 @@ final class RepresentativeModel implements Stringable
         $representativeData->isFamilyBoss,
         $representativeData->jobRole,
         $representativeData->companyOrInstitutionName,
-        $representativeData->monthlyFamilyIncome
+        $representativeData->monthlyFamilyIncome,
+        $representativeData->houseType
       );
     }
 
@@ -288,7 +311,8 @@ final class RepresentativeModel implements Stringable
     bool $isFamilyBoss,
     ?string $jobRole,
     ?string $companyOrInstitutionName,
-    float $monthlyFamilyIncome
+    float $monthlyFamilyIncome,
+    string $houseType
   ): self {
     return new self(
       $id,
@@ -306,7 +330,8 @@ final class RepresentativeModel implements Stringable
       $isFamilyBoss,
       $jobRole,
       $companyOrInstitutionName,
-      $monthlyFamilyIncome
+      $monthlyFamilyIncome,
+      $houseType
     );
   }
 
@@ -326,6 +351,7 @@ final class RepresentativeModel implements Stringable
 
     return match ($name) {
       'works' => $this->jobRole !== null,
+      'otherHouseType' => is_string($this->houseType) ? $this->houseType : null,
       default => null
     };
   }
@@ -343,6 +369,9 @@ final class RepresentativeModel implements Stringable
         break;
       case 'educationLevel':
         $this->educationLevel = EducationLevel::from($value);
+        break;
+      case 'houseType':
+        $this->houseType = HouseType::tryFrom($value) ?? $value;
         break;
     }
   }
