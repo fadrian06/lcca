@@ -111,15 +111,17 @@ foreach ($students as $student) {
                             <tbody>
                               <?php foreach ($studentsByStudyYear[$studyYear->value][$section->value] as $student): ?>
                                 <tr>
-                                  <td><?= $student ?></td>
+                                  <td>
+                                    <a
+                                      href="./estudiantes/<?= $student->id ?>"
+                                      data-bs-toggle="tooltip"
+                                      title="Ver detalles">
+                                      <?= $student ?>
+                                    </a>
+                                  </td>
                                   <td><?= $student->currentRepresentative ?></td>
                                   <td>
                                     <form method="post">
-                                      <a
-                                        href="./estudiantes/<?= $student->id ?>"
-                                        class="btn btn-sm btn-light">
-                                        Detalles
-                                      </a>
                                       <?php if ($student->canGraduate): ?>
                                         <button
                                           formaction="./estudiantes/<?= $student->id ?>/graduar"
@@ -162,7 +164,6 @@ foreach ($students as $student) {
                         <th>Fecha</th>
                         <th>Estudiante</th>
                         <th>Representante</th>
-                        <th></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -171,15 +172,15 @@ foreach ($students as $student) {
                           <td>
                             <?= mb_ucfirst((new Date($student->graduatedDate))->diffForHumans()) ?>
                           </td>
-                          <td><?= $student ?></td>
-                          <td><?= $student->currentRepresentative ?></td>
                           <td>
                             <a
                               href="./estudiantes/<?= $student->id ?>"
-                              class="btn btn-sm btn-light">
-                              Detalles
+                              data-bs-toggle="tooltip"
+                              title="Ver detalles">
+                              <?= $student ?>
                             </a>
                           </td>
+                          <td><?= $student->currentRepresentative ?></td>
                         </tr>
                       <?php endforeach ?>
                     </tbody>
@@ -207,14 +208,16 @@ foreach ($students as $student) {
                           <td>
                             <?= mb_ucfirst((new Date($student->retiredDate))->diffForHumans()) ?>
                           </td>
-                          <td><?= $student ?></td>
-                          <td><?= $student->currentRepresentative ?></td>
                           <td>
                             <a
                               href="./estudiantes/<?= $student->id ?>"
-                              class="btn btn-sm btn-light">
-                              Detalles
+                              data-bs-toggle="tooltip"
+                              title="Ver detalles">
+                              <?= $student ?>
                             </a>
+                          </td>
+                          <td><?= $student->currentRepresentative ?></td>
+                          <td>
                             <a
                               href="./estudiantes/<?= $student->id ?>/reinscribir"
                               class="btn btn-sm btn-outline-success">
