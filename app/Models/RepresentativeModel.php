@@ -169,6 +169,16 @@ final class RepresentativeModel implements Stringable
     return $this;
   }
 
+  function remove(StudentModel $student): self
+  {
+    $this->students = array_filter(
+      $this->students,
+      fn(StudentModel $represented) => $represented->id !== $student->id
+    );
+
+    return $this;
+  }
+
   function updateOrCreate(
     string $nationality,
     int $idCard,

@@ -3,6 +3,7 @@
 namespace LCCA\Controllers;
 
 use LCCA\App;
+use LCCA\Models\RepresentativeModel;
 use LCCA\Models\StudentModel;
 use LCCA\Models\SubjectModel;
 
@@ -20,9 +21,9 @@ final readonly class StudentController
     );
   }
 
-  static function showStudentProfile(string $id): void
+  static function showStudentProfile(string $studentId): void
   {
-    $student = StudentModel::searchById($id) ?? App::redirect(App::request()->referrer);
+    $student = StudentModel::searchById($studentId) ?? App::redirect(App::request()->referrer);
 
     App::renderPage(
       'student-profile',
@@ -32,9 +33,9 @@ final readonly class StudentController
     );
   }
 
-  static function handleGraduation(string $id): void
+  static function handleGraduation(string $studentId): void
   {
-    $student = StudentModel::searchById($id) ?? App::redirect(App::request()->referrer);
+    $student = StudentModel::searchById($studentId) ?? App::redirect(App::request()->referrer);
 
     $student->graduate();
 
@@ -42,9 +43,9 @@ final readonly class StudentController
     App::redirect('/estudiantes');
   }
 
-  static function handleRetirement(string $id): void
+  static function handleRetirement(string $studentId): void
   {
-    $student = StudentModel::searchById($id) ?? App::redirect(App::request()->referrer);
+    $student = StudentModel::searchById($studentId) ?? App::redirect(App::request()->referrer);
 
     $student->retire();
 
@@ -52,9 +53,9 @@ final readonly class StudentController
     App::redirect('/estudiantes');
   }
 
-  static function showEditStudent(string $id): void
+  static function showEditStudent(string $studentId): void
   {
-    $student = StudentModel::searchById($id) ?? App::redirect(App::request()->referrer);
+    $student = StudentModel::searchById($studentId) ?? App::redirect(App::request()->referrer);
     $subjects = SubjectModel::all();
 
     App::renderPage(
@@ -65,9 +66,9 @@ final readonly class StudentController
     );
   }
 
-  static function handleStudentUpdate(string $id): void
+  static function handleStudentUpdate(string $studentId): void
   {
-    $student = StudentModel::searchById($id) ?? App::redirect(App::request()->referrer);
+    $student = StudentModel::searchById($studentId) ?? App::redirect(App::request()->referrer);
     $newStudentData = App::request()->data->student;
 
     $student->update(
@@ -98,5 +99,15 @@ final readonly class StudentController
     );
 
     App::redirect("/estudiantes/$student->id");
+  }
+
+  static function removeRepresentative(
+    string $studentId,
+    string $representativeId
+  ): void {
+    $student = StudentModel::searchById($studentId) ?? App::redirect(App::request()->referrer);
+    $student->removeRepresentativeById($representativeId);
+
+    App::redirect(App::request()->referrer);
   }
 }

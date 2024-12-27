@@ -505,6 +505,32 @@ final class StudentModel implements Stringable
     return $this;
   }
 
+  function removeRepresentativeById(string $id): self
+  {
+    $representative = array_find(
+      $this->representatives,
+      fn(RepresentativeModel $representative): bool => $representative->id === $id
+    );
+
+    $stmt = App::db()->prepare('
+      DELETE FROM representativeHistory
+      WHERE student_id = :studentId AND representative_id = :representativeId
+    ');
+
+    try {
+      $stmt->execute([
+        ':studentId' => $this->id,
+        ':representativeId' => $representative->id
+      ]);
+
+      $representative->remove($this);
+    } catch (PDOException $exception) {
+      dd($exception);
+    }
+
+    return $this;
+  }
+
   static function searchById(string $id): ?self
   {
     return self::searchByField('id', $id);

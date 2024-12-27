@@ -88,7 +88,7 @@ App::group('', function (): void {
   App::group('/estudiantes', function (): void {
     App::route('GET /', [StudentController::class, 'showStudents']);
 
-    App::group('/@id:\w+', function (): void {
+    App::group('/@studentId:\w+', function (): void {
       App::route('GET /', [StudentController::class, 'showStudentProfile']);
       App::route('POST /', [StudentController::class, 'handleStudentUpdate']);
       App::route('GET /editar', [StudentController::class, 'showEditStudent']);
@@ -96,6 +96,10 @@ App::group('', function (): void {
       App::route('POST /reinscribir', [EnrollmentController::class, 'handleReEnrollment']);
       App::route('POST /graduar', [StudentController::class, 'handleGraduation']);
       App::route('POST /retirar', [StudentController::class, 'handleRetirement']);
+
+      App::group('/representantes/@representativeId:\w+', function (): void {
+        App::route('/desvincular', [StudentController::class, 'removeRepresentative']);
+      });
     });
   });
 

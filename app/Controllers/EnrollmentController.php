@@ -51,7 +51,7 @@ final readonly class EnrollmentController
 
     // TODO: Validate empty data
     // TODO: Validate duplicates
-    StudentModel::create(
+    $student = StudentModel::create(
       $representativeModel,
       $inscription->student['nationality'],
       $inscription->student['idCard'],
@@ -76,7 +76,9 @@ final readonly class EnrollmentController
         ? ($inscription->student['disabilityAssistance'] ?: [])
         : [$inscription->student['otherDisabilityAssistance']]
         + ($inscription->student['disabilityAssistance'] ?: [])
-    )->enroll(
+    );
+
+    $student->enroll(
       $inscription->studyYear,
       $inscription->section,
       App::loggedUser()->id,
@@ -84,7 +86,7 @@ final readonly class EnrollmentController
     );
 
     // TODO: Send success message
-    App::redirect('/estudiantes');
+    App::redirect("/estudiantes/$student->id");
   }
 
   static function showReEnrollForm(string $studentId): void
@@ -158,6 +160,6 @@ final readonly class EnrollmentController
     );
 
     // TODO: Send success message
-    App::redirect('/estudiantes');
+    App::redirect("/estudiantes/$student->id");
   }
 }

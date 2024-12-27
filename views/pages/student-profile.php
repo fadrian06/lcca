@@ -404,7 +404,7 @@ function getStudentImageUrlByGenre(Genre $genre): string
       <div class="card-body">
         <div class="row g-2 row-cols-3">
           <?php foreach ($student->representatives as $representative): ?>
-            <div class="col text-center">
+            <div class="col text-center position-relative">
               <img
                 src="assets/images/146579-200.png"
                 class="img-fluid rounded-2" />
@@ -413,6 +413,13 @@ function getStudentImageUrlByGenre(Genre $genre): string
                 <span class="badge border border-success text-success">
                   Actual
                 </span>
+              <?php else: ?>
+                <a
+                  href="./estudiantes/<?= $student->id ?>/representantes/<?= $representative->id ?>/desvincular"
+                  class="btn-close position-absolute top-0 end-0"
+                  data-bs-toggle="tooltip"
+                  title="Ya no me representa">
+                </a>
               <?php endif ?>
             </div>
           <?php endforeach ?>
