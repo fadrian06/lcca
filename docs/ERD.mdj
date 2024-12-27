@@ -2345,8 +2345,7 @@
 							},
 							"name": "nroCuentaBancaria",
 							"type": "VARCHAR",
-							"length": 0,
-							"unique": true
+							"length": 0
 						},
 						{
 							"_type": "ERDColumn",
