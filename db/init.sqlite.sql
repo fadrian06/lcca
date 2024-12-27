@@ -13,8 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS subjects (
   id VARCHAR(255) PRIMARY KEY,
   name VARCHAR(255) UNIQUE NOT NULL,
-  imageUrl VARCHAR(255) UNIQUE,
-  deletedDate DATE
+  imageUrl VARCHAR(255) UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS representatives (
@@ -89,12 +88,8 @@ CREATE TABLE IF NOT EXISTS representativeHistory (
   student_id VARCHAR(255) NOT NULL,
   representative_id VARCHAR(255) NOT NULL,
 
-  FOREIGN KEY (student_id) REFERENCES students (id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE,
+  FOREIGN KEY (student_id) REFERENCES students (id),
   FOREIGN KEY (representative_id) REFERENCES representatives (id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS pendingSubjects (
@@ -103,12 +98,8 @@ CREATE TABLE IF NOT EXISTS pendingSubjects (
 
   UNIQUE (student_id, subject_id),
 
-  FOREIGN KEY (student_id) REFERENCES students (id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE,
+  FOREIGN KEY (student_id) REFERENCES students (id),
   FOREIGN KEY (subject_id) REFERENCES subjects (id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS enrollments (
@@ -119,12 +110,8 @@ CREATE TABLE IF NOT EXISTS enrollments (
   section VARCHAR(1) NOT NULL CHECK (section IN ('A', 'B')),
   enrollmentDate DATE NOT NULL,
 
-  FOREIGN KEY (student_id) REFERENCES students (id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE,
+  FOREIGN KEY (student_id) REFERENCES students (id),
   FOREIGN KEY (teacher_id) REFERENCES users (id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS notes (
@@ -133,12 +120,8 @@ CREATE TABLE IF NOT EXISTS notes (
   studyYear INTEGER NOT NULL CHECK (studyYear >= 1 AND studyYear <= 5),
   note INTEGER NOT NULL CHECK (note >= 0 AND note <= 20),
 
-  FOREIGN KEY (student_id) REFERENCES students (id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE,
+  FOREIGN KEY (student_id) REFERENCES students (id),
   FOREIGN KEY (subject_id) REFERENCES subjects (id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
 );
 
 INSERT INTO subjects (id, name, imageUrl) VALUES

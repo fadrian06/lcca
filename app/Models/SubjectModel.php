@@ -2,8 +2,6 @@
 
 namespace LCCA\Models;
 
-use DateTimeImmutable;
-use DateTimeInterface;
 use LCCA\App;
 use PDO;
 use PDOException;
@@ -17,7 +15,6 @@ final class SubjectModel implements Stringable
     public readonly string $id,
     string $name,
     private ?string $imageUrl,
-    private ?DateTimeInterface $deletedDate
   ) {
     $this->name = mb_convert_case($name, MB_CASE_TITLE);
   }
@@ -29,22 +26,14 @@ final class SubjectModel implements Stringable
 
   function delete(): self
   {
-    $this->deletedDate = new DateTimeImmutable;
-
-    $stmt = App::db()->prepare('
-      UPDATE subjects SET deletedDate = :deletedDate
-      WHERE id = :id
-    ');
-
-    $stmt->execute([
-      ':deletedDate' => $this->deletedDate->format('Y-m-d'),
-      ':id' => $this->id
-    ]);
+    $stmt = App::db()->prepare('DELETE FROM subjects WHERE id = ?');
+    $stmt->execute([$this->id]);
 
     return $this;
   }
 
-  function update(string $name, ?string $imageUrl): self {
+  function update(string $name, ?string $imageUrl): self
+  {
     $this->name = mb_convert_case($name, MB_CASE_TITLE);
 
     if ($imageUrl) {
@@ -85,7 +74,6 @@ final class SubjectModel implements Stringable
         $subjectData->id,
         $subjectData->name,
         $subjectData->imageUrl,
-        $subjectData->deletedDate
       );
     }
 
@@ -95,11 +83,7 @@ final class SubjectModel implements Stringable
   /** @return self[] */
   static function all(): array
   {
-    $stmt = App::db()->query('
-      SELECT * FROM subjects
-      WHERE deletedDate IS NULL
-    ');
-
+    $stmt = App::db()->query('SELECT * FROM subjects');
     $stmt->execute();
 
     return $stmt->fetchAll(PDO::FETCH_FUNC, [__CLASS__, 'mapper']);
@@ -109,7 +93,7 @@ final class SubjectModel implements Stringable
     string $name,
     ?string $imageUrl
   ): self {
-    $subjectModel = new self(uniqid(), $name, $imageUrl ?: null, null);
+    $subjectModel = new self(uniqid(), $name, $imageUrl ?: null);
 
     try {
       $stmt = App::db()->prepare('
@@ -133,14 +117,8 @@ final class SubjectModel implements Stringable
     string $id,
     string $name,
     ?string $imageUrl,
-    ?string $deletedDate
   ): self {
-    return new self(
-      $id,
-      $name,
-      $imageUrl,
-      $deletedDate ? new DateTimeImmutable($deletedDate) : null
-    );
+    return new self($id, $name, $imageUrl);
   }
 
   function __toString(): string
