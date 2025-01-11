@@ -57,7 +57,7 @@ final class Database extends PDO
       );
 
       foreach ($queries as $query) {
-        $database?->query($query);
+        $database->query($query);
       }
     } else {
       throw new Error('DB ' . explode(':', $_ENV['PDO_DSN'])[0] . ' backup not implemented');
