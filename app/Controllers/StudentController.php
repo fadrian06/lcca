@@ -3,9 +3,9 @@
 namespace LCCA\Controllers;
 
 use LCCA\App;
-use LCCA\Models\RepresentativeModel;
 use LCCA\Models\StudentModel;
 use LCCA\Models\SubjectModel;
+use PDO;
 
 final readonly class StudentController
 {
@@ -109,5 +109,28 @@ final readonly class StudentController
     $student->removeRepresentativeById($representativeId);
 
     App::redirect(App::request()->referrer);
+  }
+
+  static function searchStudentByIdCard(int $idCard): void {
+    $stmt = App::db()->query("
+      SELECT id, nationality, idCard, names, lastNames FROM students
+      WHERE idCard LIKE '$idCard%' OR idCard = $idCard
+    ");
+
+    $stmt->execute();
+
+    App::json($stmt->fetchAll(PDO::FETCH_ASSOC));
+  }
+
+  static function searchStudentByNames(string $names): void {
+    $stmt = App::db()->query("
+      SELECT id, nationality, idCard, names, lastNames FROM students
+      WHERE names LIKE '$names%' OR lastNames LIKE '$names%'
+      OR names = ? OR lastNames = ?
+    ");
+
+    $stmt->execute([$names]);
+
+    App::json($stmt->fetchAll(PDO::FETCH_ASSOC));
   }
 }

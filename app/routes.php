@@ -116,27 +116,7 @@ App::group('', function (): void {
 
 App::group('/api', function (): void {
   App::group('/estudiantes', function (): void {
-    App::route('GET /@idCard:[0-9]+', function (int $idCard): void {
-      $stmt = App::db()->query("
-        SELECT id, nationality, idCard, names, lastNames FROM students
-        WHERE idCard LIKE '$idCard%' OR idCard = $idCard
-      ");
-
-      $stmt->execute();
-
-      App::json($stmt->fetchAll(PDO::FETCH_ASSOC));
-    });
-
-    App::route('GET /@names:[a-zA-ZáéíóúÁÉÍÓÚñÑ]+', function (string $names): void {
-      $stmt = App::db()->query("
-        SELECT id, nationality, idCard, names, lastNames FROM students
-        WHERE names LIKE '$names%' OR lastNames LIKE '$names%'
-        OR names = ? OR lastNames = ?
-      ");
-
-      $stmt->execute([$names]);
-
-      App::json($stmt->fetchAll(PDO::FETCH_ASSOC));
-    });
+    App::route('GET /@idCard:[0-9]+', [StudentController::class, 'searchStudentByIdCard']);
+    App::route('GET /@names:[a-zA-ZáéíóúÁÉÍÓÚñÑ]+', [StudentController::class, 'searchStudentByNames']);
   });
 }, [EnsureUserIsLoggedMiddleware::class]);
