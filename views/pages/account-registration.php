@@ -2,7 +2,7 @@
   <div class="row justify-content-center">
     <div class="col-xl-4 col-lg-5 col-sm-6 col-12">
       <form method="post" class="my-5">
-        <div class="border border-dark rounded-2 p-4 mt-5">
+        <div class="border border-dark rounded-2 p-4 mt-5 card">
           <div class="login-form">
             <a href="./" class="mb-4 d-flex">
               <img

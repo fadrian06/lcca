@@ -17,6 +17,11 @@ $_SESSION['messages'] = ['error' => null, 'success' => null];
   <link rel="icon" href="./assets/images/favicon.ico" />
   <link rel="stylesheet" href="./assets/fonts/bootstrap/bootstrap-icons.css" />
   <link rel="stylesheet" href="./assets/css/main.min.css" />
+  <style>
+    body {
+      background: radial-gradient(#c33764, #1d2671) no-repeat fixed;
+    }
+  </style>
 </head>
 
 <body>

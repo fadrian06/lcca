@@ -13,7 +13,7 @@ use LCCA\Models\UserModel;
         method="post"
         action="./perfil/recuperar/<?= $userFound->getIdCard() ?>/cambiar-clave"
         class="my-5">
-        <div class="border border-dark rounded-2 p-4 mt-5">
+        <div class="border border-dark rounded-2 p-4 mt-5 card">
           <div class="login-form">
             <a href="./" class="mb-4 d-flex">
               <img src="./assets/images/logo-sm.svg" height="48" />
