@@ -7,7 +7,13 @@
     "flightphp/core": "^3.13",
     "symfony/dotenv": "^7.2",
     "symfony/polyfill-php84": "^1.31",
-    "jenssegers/date": "^4.0"
+    "jenssegers/date": "^4.0",
+    "leafs/form": "^3.2",
+    "leafs/password": "^1.0",
+    "leafs/auth": "^3.4",
+    "leafs/db": "^2.3",
+    "leafs/session": "^2.3",
+    "illuminate/container": "^11.41"
   },
   "scripts": {
     "dev": "composer i & start php -S localhost:80",
