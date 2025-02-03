@@ -1,5 +1,9 @@
 {
   "require": {
+    "php": "^8.2",
+    "ext-pdo": "*",
+    "ext-pdo_sqlite": "*",
+    "ext-pdo_mysql": "*",
     "flightphp/core": "^3.13",
     "symfony/dotenv": "^7.2",
     "symfony/polyfill-php84": "^1.31",
@@ -7,7 +11,10 @@
   },
   "scripts": {
     "dev": "composer i & start php -S localhost:80",
-    "build": "composer i --no-dev & composer archive"
+    "build": "composer i --no-dev & composer archive",
+    "pre-install-cmd": [
+      "composer check-platform-reqs"
+    ]
   },
   "autoload": {
     "psr-4": {
