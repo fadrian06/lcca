@@ -26,7 +26,7 @@ use LCCA\Models\UserModel;
               <label class="form-label">Tu contraseña</label>
               <input
                 type="password"
-                name="password"
+                name="contraseña"
                 required
                 minlength="8"
                 class="form-control"

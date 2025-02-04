@@ -4,7 +4,9 @@ use Illuminate\Container\Container;
 use Jenssegers\Date\Date;
 use LCCA\App;
 use LCCA\Models\UserModel;
+use Leaf\Auth;
 use Leaf\Form;
+use Leaf\Helpers\Password;
 use Leaf\Http\Session;
 use Symfony\Component\Dotenv\Dotenv;
 
@@ -40,16 +42,21 @@ $container->singletonIf(PDO::class, static fn(): PDO => new PDO(
   [PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ]
 ));
 
-$container->singletonIf(Form::class);
 App::registerContainerHandler([$container, 'get']);
+
+////////////////////
+// Authentication //
+////////////////////
+auth()->dbConnection($container->get(PDO::class));
+$loginParamsError = '¡Cédula o contraseña incorrecta!';
+auth()->config('messages.loginParamsError', $loginParamsError);
+auth()->config('messages.loginPasswordError', $loginParamsError);
+auth()->config('session', true);
 
 /////////////////
 // Validations //
 /////////////////
-$form = $container->get(Form::class);
-assert($form instanceof Form);
-
-$form->message([
+form()->message([
   'email' => '{Field} must be a valid email address',
   'alpha' => '{Field} must contain only alphabets and spaces',
   'text' => '{Field} must contain only alphabets and spaces',
@@ -87,21 +94,21 @@ $form->message([
   'array' => '{field} must be an array',
 ]);
 
-$form->rule('required', '/^.+$/', '{Field} es requerido');
+form()->rule('required', '/^.+$/', '{Field} es requerido');
 
-$form->rule(
+form()->rule(
   'name',
   '/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{3,}$/',
   '{Field} debe contener solo letras y espacios'
 );
 
-$form->rule(
+form()->rule(
   'password',
   '/^(?=.*\d)(?=.*[A-ZÑ])(?=.*\W).{8,}$/',
   '{Field} debe contener al menos 8 caracteres, una letra mayúscula, un número y un caracter especial'
 );
 
-$form->rule(
+form()->rule(
   'question',
   '/^[a-z-A-Z0-9áéíóúÁÉÍÓÚñÑ\?\¿\s]+$/',
   '{Field} debe contener solo letras, números y los caracteres especiales: ¿?'
@@ -110,12 +117,8 @@ $form->rule(
 /////////////
 // Session //
 /////////////
-session_start();
-$_SESSION['loggedUser'] ??= [];
-$_SESSION['messages'] ??= ['error' => null, 'success' => null];
-
-if (key_exists('id', $_SESSION['loggedUser'])) {
-  $loggedUser = UserModel::searchById($_SESSION['loggedUser']['id']);
+if (auth()->id() !== null) {
+  $loggedUser = UserModel::searchById(auth()->id());
 
   App::view()->set('loggedUser', $loggedUser);
 }

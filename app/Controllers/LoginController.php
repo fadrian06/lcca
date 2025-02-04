@@ -4,40 +4,40 @@ namespace LCCA\Controllers;
 
 use LCCA\App;
 use LCCA\Models\UserModel;
+use Leaf\Flash;
 
-final readonly class LoginController
+final readonly class LoginController extends Controller
 {
   static function showLogin(): void
   {
     App::renderPage('login', 'Ingresar', 'mercury-login');
   }
 
-  static function handleLogin(): void
+  function handleLogin(): void
   {
-    $credentials = App::request()->data;
+    $credentials = $this->getValidatedData([
+      'cédula' => ['required'],
+      'contraseña' => ['required']
+    ]);
 
-    // TODO: Validate empty data
-    $userFound = UserModel::searchByIdCard($credentials->idCard);
+    $wasLoggedSuccessfully = auth()->login([
+      'idCard' => $credentials->cédula,
+      'password' => $credentials->contraseña
+    ]);
 
-    if (
-      $userFound?->isCorrectPassword($credentials->password)
-      && !$userFound->isDeleted()
-    ) {
-      $_SESSION['loggedUser']['id'] = $userFound->id;
-      App::redirect('/');
+    if (!$wasLoggedSuccessfully) {
+      Flash::set(auth()->errors(), 'errors');
+      App::redirect('/ingresar');
 
-      return;
+      exit;
     }
 
-    $_SESSION['loggedUser'] = [];
-
-    App::redirect(App::request()->referrer);
+    App::redirect('/');
   }
 
   static function handleLogout(): void
   {
-    $_SESSION['loggedUser'] = [];
-
+    auth()->logout();
     App::redirect('/ingresar');
   }
 
@@ -75,12 +75,11 @@ final readonly class LoginController
     }
   }
 
-  static function recoverPassword(int $userIdCard): void
+  function recoverPassword(int $userIdCard): void
   {
     $userFound = UserModel::searchByIdCard($userIdCard);
-    $userFound->changePassword(App::request()->data->password);
-
-    App::request()->data->idCard = $userFound->getIdCard();
-    self::handleLogin();
+    $userFound->changePassword($this->data->contraseña);
+    $this->data->cédula = $userFound->getIdCard();
+    $this->handleLogin();
   }
 }

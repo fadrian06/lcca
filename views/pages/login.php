@@ -14,7 +14,7 @@
               <label class="form-label">Tu cédula</label>
               <input
                 type="number"
-                name="idCard"
+                name="cédula"
                 required
                 class="form-control"
                 placeholder="Introduce tu cédula" />
@@ -23,7 +23,7 @@
               <label class="form-label">Tu contraseña</label>
               <input
                 type="password"
-                name="password"
+                name="contraseña"
                 required
                 class="form-control"
                 placeholder="Introduce tu contraseña" />

@@ -6,14 +6,13 @@ use Error;
 use LCCA\App;
 use Leaf\Anchor;
 use Leaf\Flash;
-use Leaf\Form;
 use Throwable;
 
 abstract readonly class Controller
 {
   protected object $data;
 
-  function __construct(private Form $form)
+  function __construct()
   {
     $this->data = (object) Anchor::sanitize(App::request()->data->getData());
   }
@@ -21,10 +20,10 @@ abstract readonly class Controller
   /** @return object|never */
   function getValidatedData(array $validationSet): object
   {
-    $validated = $this->form->validate((array) $this->data, $validationSet);
+    $validated = form()->validate((array) $this->data, $validationSet);
 
     if (!$validated) {
-      $errors = $this->form->errors();
+      $errors = form()->errors();
 
       foreach ($errors as &$error) {
         $error = str_replace('_', ' ', $error);

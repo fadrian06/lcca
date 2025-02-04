@@ -8,7 +8,7 @@ final class EnsureUserIsNotLoggedMiddleware
 {
   function before()
   {
-    if ($_SESSION['loggedUser'] === []) {
+    if (auth()->id() === null) {
       return true;
     }
 
