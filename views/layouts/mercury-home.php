@@ -2,12 +2,10 @@
 
 use LCCA\App;
 use LCCA\Models\UserModel;
+use Leaf\Flash;
 
 /** @var UserModel $loggedUser */
-
-$messages = $_SESSION['messages'];
-
-$_SESSION['messages'] = ['error' => null, 'success' => null];
+$errors = (array) Flash::display('errors');
 
 ?>
 
@@ -50,13 +48,11 @@ $_SESSION['messages'] = ['error' => null, 'success' => null];
   <script src="./assets/js/custom.js"></script>
   <script defer src="./assets/js/alpinejs.min.js"></script>
 
-  <script>
-    <?php if ($messages['error']): ?>
-      alert('<?= $messages['error'] ?>')
-    <?php elseif ($messages['success']): ?>
-      alert('✅ <?= $messages['success'] ?>')
-    <?php endif ?>
-  </script>
+  <?php if ($errors): ?>
+    <script>
+      alert(`<?= array_values($errors)[0] ?>`)
+    </script>
+  <?php endif ?>
 </body>
 
 </html>

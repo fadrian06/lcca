@@ -4,6 +4,7 @@ namespace LCCA\Models;
 
 use DateTimeImmutable;
 use DateTimeInterface;
+use Exception;
 use LCCA\App;
 use LCCA\Enums\Role;
 use PDO;
@@ -142,6 +143,7 @@ final class UserModel implements Stringable
     ]);
   }
 
+  /** @throws Exception */
   static function create(
     string $name,
     int $idCard,
@@ -182,7 +184,10 @@ final class UserModel implements Stringable
         ':secretAnswer' => $userModel->secretAnswer
       ]);
     } catch (PDOException $exception) {
-      dd($exception);
+      throw new Exception(match (true) {
+        str_contains($exception->getMessage(), 'UNIQUE') && str_contains($exception->getMessage(), 'idCard') => 'La cédula ya está registrada',
+        default => $exception->getMessage()
+      });
     }
 
     return $userModel;

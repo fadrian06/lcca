@@ -4,9 +4,60 @@ namespace LCCA\Controllers;
 
 use Error;
 use LCCA\App;
+use Leaf\Anchor;
+use Leaf\Flash;
+use Leaf\Form;
+use Throwable;
 
 abstract readonly class Controller
 {
+  protected object $data;
+
+  function __construct(private Form $form)
+  {
+    $this->data = (object) Anchor::sanitize(App::request()->data->getData());
+  }
+
+  /** @return object|never */
+  function getValidatedData(array $validationSet): object
+  {
+    $validated = $this->form->validate((array) $this->data, $validationSet);
+
+    if (!$validated) {
+      $errors = $this->form->errors();
+
+      foreach ($errors as &$error) {
+        $error = str_replace('_', ' ', $error);
+      }
+
+      Flash::set($errors, 'errors');
+      Flash::set($this->data, 'lastData');
+      App::redirect(App::request()->referrer);
+
+      exit;
+    }
+
+    return (object) $validated;
+  }
+
+  /**
+   * @template TReturn
+   * @param callable(): TReturn $callable
+   * @return TReturn|never
+   */
+  function tryOfFail(callable $callable): mixed
+  {
+    try {
+      return $callable();
+    } catch (Throwable $exception) {
+      Flash::set([__METHOD__ => $exception->getMessage()], 'errors');
+      Flash::set($this->data, 'lastData');
+      App::redirect(App::request()->referrer);
+
+      exit;
+    }
+  }
+
   /**
    * @return string File URL relative path.
    * @throws Error If file isn't provided.
