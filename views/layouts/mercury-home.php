@@ -25,7 +25,8 @@ $_SESSION['messages'] = ['error' => null, 'success' => null];
   <link rel="stylesheet" href="./assets/css/main.min.css" />
   <link rel="stylesheet" href="./assets/vendor/overlay-scroll/OverlayScrollbars.min.css" />
   <style>
-    th, td {
+    th,
+    td {
       white-space: nowrap;
     }
   </style>
@@ -47,6 +48,7 @@ $_SESSION['messages'] = ['error' => null, 'success' => null];
   <script src="./assets/vendor/overlay-scroll/jquery.overlayScrollbars.min.js"></script>
   <script src="./assets/vendor/overlay-scroll/custom-scrollbar.js"></script>
   <script src="./assets/js/custom.js"></script>
+  <script defer src="./assets/js/alpinejs.min.js"></script>
 
   <script>
     <?php if ($messages['error']): ?>

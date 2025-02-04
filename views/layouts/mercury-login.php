@@ -15,7 +15,7 @@ $_SESSION['messages'] = ['error' => null, 'success' => null];
   <base href="<?= str_replace('index.php', '', $_SERVER['SCRIPT_NAME']) ?>" />
   <title><?= $title ?> - LCCA</title>
   <link rel="icon" href="./assets/images/favicon.ico" />
-  <link rel="stylesheet" href="./assets/fonts/bootstrap/bootstrap-icons.css" />
+  <link rel="stylesheet" href="./assets/fonts/bootstrap/bootstrap-icons.min.css" />
   <link rel="stylesheet" href="./assets/css/main.min.css" />
   <style>
     body {
@@ -27,6 +27,7 @@ $_SESSION['messages'] = ['error' => null, 'success' => null];
 <body>
   <?= $page ?>
 
+  <script defer src="./assets/js/alpinejs.min.js"></script>
   <script>
     <?php if ($messages['error']): ?>
       alert('<?= $messages['error'] ?>')

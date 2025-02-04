@@ -9,6 +9,7 @@
   <link rel="icon" href="./assets/images/favicon.ico" />
   <link rel="stylesheet" href="./assets/fonts/bootstrap/bootstrap-icons.css" />
   <link rel="stylesheet" href="./assets/css/main.min.css" />
+  <script defer src="./assets/js/alpinejs.min.js"></script>
 </head>
 
 <?= $page ?>
