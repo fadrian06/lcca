@@ -2,10 +2,8 @@
 
 use LCCA\App;
 use LCCA\Models\UserModel;
-use Leaf\Flash;
 
 /** @var UserModel $loggedUser */
-$errors = (array) Flash::display('errors');
 
 ?>
 
@@ -47,12 +45,7 @@ $errors = (array) Flash::display('errors');
   <script src="./assets/vendor/overlay-scroll/custom-scrollbar.js"></script>
   <script src="./assets/js/custom.js"></script>
   <script defer src="./assets/js/alpinejs.min.js"></script>
-
-  <?php if ($errors): ?>
-    <script>
-      alert(`<?= array_values($errors)[0] ?>`)
-    </script>
-  <?php endif ?>
+  <?php App::renderComponent('toasts') ?>
 </body>
 
 </html>

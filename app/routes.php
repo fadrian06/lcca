@@ -11,6 +11,7 @@ use LCCA\Controllers\TeacherController;
 use LCCA\Controllers\UserProfileController;
 use LCCA\Middlewares\EnsureUserIsLoggedMiddleware;
 use LCCA\Middlewares\EnsureUserIsNotLoggedMiddleware;
+use Leaf\Flash;
 
 App::route('/salir', [LoginController::class, 'handleLogout']);
 
@@ -105,11 +106,13 @@ App::group('', function (): void {
 
   App::route('/respaldar', function (): void {
     App::db()->backup();
+    Flash::set('Base de datos respaldada exitósamente', 'success');
     App::redirect(App::request()->referrer);
   });
 
   App::route('/restaurar', function (): void {
     App::restoreDb();
+    Flash::set('Base de datos restaurada exitósamente', 'success');
     App::redirect('/salir');
   });
 }, [EnsureUserIsLoggedMiddleware::class]);

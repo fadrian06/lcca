@@ -1,8 +1,6 @@
 <?php
 
-use Leaf\Flash;
-
-$errors = (array) Flash::display('errors');
+use LCCA\App;
 
 ?>
 
@@ -29,26 +27,7 @@ $errors = (array) Flash::display('errors');
 
   <script defer src="./assets/js/alpinejs.min.js"></script>
   <script src="./assets/js/bootstrap.bundle.min.js"></script>
-
-  <div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <?php foreach ($errors as $error): ?>
-      <div class="toast">
-        <div class="toast-header text-danger">
-          <i class="bi bi-x-circle-fill text-danger me-2"></i>
-          <strong class="me-auto"><?= $error ?></strong>
-          <button class="btn-close" data-bs-dismiss="toast"></button>
-        </div>
-      </div>
-    <?php endforeach ?>
-
-    <script>
-      for (const element of document.querySelectorAll('.toast')) {
-        const toast = new bootstrap.Toast(element)
-
-        toast.show()
-      }
-    </script>
-  </div>
+  <?php App::renderComponent('toasts') ?>
 </body>
 
 </html>

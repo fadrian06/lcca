@@ -6,7 +6,7 @@ T2T2:
  ☐ ¿En todos los Módulos se pueden Modificar los registros?
  ☐ ¿En todos los Módulos se pueden Eliminar los registros?
  ☐ ¿El sistema genera Reportes por pantalla y por Impresión?
- ☐ ¿El sistema permite Restaurar y Respaldar la Base de datos?
+ ✔ ¿El sistema permite Restaurar y Respaldar la Base de datos? @done (04/02/2025 11:59:24)
  ☐ ¿Los formularios validan los campos de entrada?
  ☐ ¿Las interfaces son de fácil comprensión al usuario y presenta uniformidad en el estilo (Colores y tamaño de letras)
 
@@ -18,6 +18,6 @@ T2T3:
  ☐ ¿En todos los Módulos se pueden Modificar los registros?
  ☐ ¿En todos los Módulos se pueden Eliminar los registros?
  ☐ ¿El sistema genera Reportes por pantalla y por Impresión?
- ☐ ¿El sistema permite Restaurar y Respaldar la Base de datos?
+ ✔ ¿El sistema permite Restaurar y Respaldar la Base de datos? @done (04/02/2025 11:59:27)
  ☐ ¿Los formularios validan los campos de entrada?
  ☐ ¿Las interfaces son de fácil comprensión al usuario y presenta uniformidad en el estilo (Colores y tamaño de letras)
