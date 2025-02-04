@@ -1,0 +1,9 @@
+includes:
+  - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+
+parameters:
+  paths:
+    - app
+    # - views
+  level: 0
+  errorFormat: raw
