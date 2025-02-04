@@ -46,7 +46,8 @@
     "phpunit/phpunit": "^11.5",
     "phpstan/phpstan-phpunit": "^2.0",
     "staabm/phpstan-todo-by": "^0.2.0",
-    "spaze/phpstan-disallowed-calls": "^4.2"
+    "spaze/phpstan-disallowed-calls": "^4.2",
+    "leafs/fetch": "^0.2.0"
   },
   "archive": {
     "name": "LCCA",
