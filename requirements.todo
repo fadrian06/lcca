@@ -1,6 +1,6 @@
 T2T2:
  ✔ ¿Presenta autenticación de usuarios? @done (04/02/2025 11:01:58)
- ☐ ¿El sistema Autoriza los usuarios (Inicia sesión según privilegio)
+ ✔ ¿El sistema Autoriza los usuarios (Inicia sesión según privilegio) @done (04/02/2025 18:43:12)
  ☐ ¿Permite Insertar registros a la base de datos desde los Módulos?
  ☐ ¿El sistema permite Consultar datos registrados?
  ☐ ¿En todos los Módulos se pueden Modificar los registros?
@@ -12,7 +12,7 @@ T2T2:
 
 T2T3:
  ✔ ¿Presenta autenticación de usuarios? @done (04/02/2025 11:01:59)
- ☐ ¿El sistema Autoriza los usuarios (Inicia sesión según privilegio)
+ ✔ ¿El sistema Autoriza los usuarios (Inicia sesión según privilegio) @done (04/02/2025 18:43:13)
  ☐ ¿Permite Insertar registros a la base de datos desde los Módulos?
  ☐ ¿El sistema permite Consultar datos registrados?
  ☐ ¿En todos los Módulos se pueden Modificar los registros?

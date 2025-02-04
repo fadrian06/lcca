@@ -9,6 +9,7 @@ use LCCA\Controllers\StudentController;
 use LCCA\Controllers\SubjectController;
 use LCCA\Controllers\TeacherController;
 use LCCA\Controllers\UserProfileController;
+use LCCA\Middlewares\EnsureUserIsCoordinator;
 use LCCA\Middlewares\EnsureUserIsLoggedMiddleware;
 use LCCA\Middlewares\EnsureUserIsNotLoggedMiddleware;
 use Leaf\Flash;
@@ -108,13 +109,13 @@ App::group('', function (): void {
     App::db()->backup();
     Flash::set('Base de datos respaldada exitósamente', 'success');
     App::redirect(App::request()->referrer);
-  });
+  })->addMiddleware(EnsureUserIsCoordinator::class);
 
   App::route('/restaurar', function (): void {
     App::restoreDb();
     Flash::set('Base de datos restaurada exitósamente', 'success');
     App::redirect('/salir');
-  });
+  })->addMiddleware(EnsureUserIsCoordinator::class);
 }, [EnsureUserIsLoggedMiddleware::class]);
 
 App::group('/api', function (): void {

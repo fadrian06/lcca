@@ -29,6 +29,11 @@ final class UserModel implements Stringable
     $this->name = mb_convert_case($name, MB_CASE_TITLE);
   }
 
+  function isCoordinator(): bool
+  {
+    return $this->role === Role::Coordinator;
+  }
+
   function isCorrectPassword(string $password): bool
   {
     return password_verify($password, $this->password);
