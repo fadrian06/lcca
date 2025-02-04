@@ -26,9 +26,11 @@
       "composer check-platform-reqs"
     ],
     "ci": [
+      "phpunit --no-progress",
       "phpstan -cphpstan.neon --memory-limit=1G --no-progress",
       "biome check assets --apply"
-    ]
+    ],
+    "test": "phpunit"
   },
   "autoload": {
     "psr-4": {
@@ -40,7 +42,11 @@
     "phpstan/phpstan": "^2.1",
     "phpstan/extension-installer": "^1.4",
     "phpstan/phpstan-strict-rules": "^2.0",
-    "phpstan/phpstan-deprecation-rules": "^2.0"
+    "phpstan/phpstan-deprecation-rules": "^2.0",
+    "phpunit/phpunit": "^11.5",
+    "phpstan/phpstan-phpunit": "^2.0",
+    "staabm/phpstan-todo-by": "^0.2.0",
+    "spaze/phpstan-disallowed-calls": "^4.2"
   },
   "archive": {
     "name": "LCCA",

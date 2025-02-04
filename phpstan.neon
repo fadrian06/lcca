@@ -7,3 +7,8 @@ parameters:
     # - views
   level: 0
   errorFormat: raw
+  disallowedFunctionCalls:
+    - function: 'dd()' # `method` is an alias of `function`
+      message: 'use logger instead'
+    - function: 'dump()'
+      message: 'use logger instead'

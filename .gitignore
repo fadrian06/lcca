@@ -7,3 +7,4 @@ backup.*
 *.backup
 /LCCA-*
 ~$*.docx
+.phpunit.cache
