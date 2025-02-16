@@ -2,8 +2,10 @@
 
 namespace LCCA;
 
+use Closure;
 use Flight;
 use LCCA\Models\UserModel;
+use PHPUnit\Framework\Constraint\Callback;
 
 final class App extends Flight
 {
@@ -47,5 +49,20 @@ final class App extends Flight
   static function loggedUser(): ?UserModel
   {
     return self::view()->get('loggedUser');
+  }
+
+  static function sendServerEventMessage(
+    string $message,
+    ?callable $afterCallback = null
+  ): void {
+    self::response()->header('Content-Type', 'text/event-stream');
+
+    echo "data: $message\n\n";
+    ob_flush();
+    flush();
+
+    if ($afterCallback) {
+      $afterCallback();
+    }
   }
 }

@@ -9,16 +9,18 @@ use Symfony\Component\Dotenv\Dotenv;
 ///////////////////////////
 // Environment variables //
 ///////////////////////////
-if (!file_exists('.env')) {
-  copy('.env.example', '.env');
+if (!file_exists(__DIR__ . '/../.env')) {
+  copy(__DIR__ . '/../.env.example', __DIR__ . '/../.env');
 }
 
-(new Dotenv)->load('.env');
+(new Dotenv)->load(__DIR__ . '/../.env');
 $_ENV['PDO_DSN'] ??= 'sqlite::memory';
 $_ENV['PDO_USER'] ??= null;
 $_ENV['PDO_PASSWORD'] ??= null;
 $_ENV['MYSQLDUMP_PATH'] ??= 'C:/xampp/mysql/bin/mysqldump';
 $_ENV['MAINTENANCE'] = ($_ENV['MAINTENANCE'] ?? 'false') === 'true';
+
+$_ENV['PDO_DSN'] = str_replace('%s', __DIR__ . '/../', $_ENV['PDO_DSN']);
 
 /////////////////////
 // Datetime locale //
