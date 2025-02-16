@@ -13,5 +13,7 @@ final class EnsureUserIsLogged
     }
 
     App::redirect('/ingresar', 401);
+
+    exit;
   }
 }

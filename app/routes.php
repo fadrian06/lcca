@@ -16,31 +16,31 @@ use LCCA\Middlewares\EnsureUserIsNotLogged;
 
 App::route('/salir', [LoginController::class, 'handleLogout']);
 
-App::group('/perfil/recuperar(/@idCard:[0-9]+)', function (): void {
+App::group('/perfil/recuperar(/@idCard:[0-9]+)', static function (): void {
   App::route('GET /', [LoginController::class, 'showRecover']);
   App::route('POST /', [LoginController::class, 'checkAnswer']);
   App::route('POST /cambiar-clave', [LoginController::class, 'recoverPassword']);
 }, [EnsureUserIsNotLogged::class]);
 
-App::group('/ingresar', function (): void {
+App::group('/ingresar', static function (): void {
   App::route('GET /', [LoginController::class, 'showLogin']);
   App::route('POST /', [LoginController::class, 'handleLogin']);
 }, [EnsureUserIsNotLogged::class]);
 
-App::group('/registrarse', function (): void {
+App::group('/registrarse', static function (): void {
   App::route('GET /', [AccountRegistrationController::class, 'showRegistration']);
   App::route('POST /', [AccountRegistrationController::class, 'handleRegistration']);
 });
 
-App::group('', function (): void {
+App::group('', static function (): void {
   App::route('GET /', [HomeController::class, 'showHome']);
 
-  App::group('/inscribir', function (): void {
+  App::group('/inscribir', static function (): void {
     App::route('GET /', [EnrollmentController::class, 'showEnrollmentForm']);
     App::route('POST /', [EnrollmentController::class, 'handleNewEnrollment']);
   });
 
-  App::group('/perfil', function (): void {
+  App::group('/perfil', static function (): void {
     App::route(
       'GET /configurar',
       [UserProfileController::class, 'showConfigurations']
@@ -76,21 +76,21 @@ App::group('', function (): void {
     });
   });
 
-  App::group('/areas', function (): void {
+  App::group('/areas', static function (): void {
     App::route('GET /', [SubjectController::class, 'showSubjects']);
     App::route('POST /', [SubjectController::class, 'addSubject']);
 
-    App::group('/@id:[\w]+', function (): void {
+    App::group('/@id:[\w]+', static function (): void {
       App::route('GET /editar', [SubjectController::class, 'showEditPage']);
       App::route('POST /editar', [SubjectController::class, 'handleEditSubject']);
       App::route('/eliminar', [SubjectController::class, 'deleteSubject']);
     });
   });
 
-  App::group('/estudiantes', function (): void {
+  App::group('/estudiantes', static function (): void {
     App::route('GET /', [StudentController::class, 'showStudents']);
 
-    App::group('/@studentId:\w+', function (): void {
+    App::group('/@studentId:\w+', static function (): void {
       App::route('GET /', [StudentController::class, 'showStudentProfile']);
       App::route('POST /', [StudentController::class, 'handleStudentUpdate']);
       App::route('GET /editar', [StudentController::class, 'showEditStudent']);
@@ -99,26 +99,28 @@ App::group('', function (): void {
       App::route('POST /graduar', [StudentController::class, 'handleGraduation']);
       App::route('POST /retirar', [StudentController::class, 'handleRetirement']);
 
-      App::group('/representantes/@representativeId:\w+', function (): void {
+      App::group('/representantes/@representativeId:\w+', static function (): void {
         App::route('/desvincular', [StudentController::class, 'removeRepresentative']);
       });
     });
   });
 
-  App::route('/respaldar', function (): void {
+  App::route('/respaldar', static function (): void {
     App::db()->backup();
+
     flash()->set('Base de datos respaldada exitósamente', 'success');
     App::redirect(App::request()->referrer);
   })->addMiddleware(EnsureUserIsCoordinator::class);
 
-  App::route('/restaurar', function (): void {
+  App::route('/restaurar', static function (): void {
     App::restoreDb();
+
     flash()->set('Base de datos restaurada exitósamente', 'success');
     App::redirect('/salir');
   })->addMiddleware(EnsureUserIsCoordinator::class);
 }, [EnsureUserIsLogged::class, EnsureUserIsActive::class]);
 
-App::group('/api', function (): void {
+App::group('/api', static function (): void {
   App::group('/estudiantes', function (): void {
     App::route('GET /@idCard:[0-9]+', [StudentController::class, 'searchStudentByIdCard']);
     App::route('GET /@names:[a-zA-ZáéíóúÁÉÍÓÚñÑ]+', [StudentController::class, 'searchStudentByNames']);
