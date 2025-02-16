@@ -29,7 +29,7 @@
     if (data === 'end') {
       source.close()
       source.removeEventListener('message', updateStatus)
-      location.reload()
+      location = './registrarse'
 
       return
     }
