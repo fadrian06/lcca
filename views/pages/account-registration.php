@@ -1,10 +1,8 @@
 <?php
 
 use LCCA\App;
-use Leaf\Flash;
 
 App::renderComponent('secret-questions', ['id' => 'secretQuestions']);
-$lastData = (array) Flash::display('lastData');
 
 ?>
 
@@ -14,7 +12,7 @@ $lastData = (array) Flash::display('lastData');
       <form
         method="post"
         class="my-5"
-        x-data="{ secretQuestion: '' }">
+        x-data="{ secretQuestion: `<?= $lastData['secretQuestion'] ?? '' ?>` }">
         <div class="border border-dark rounded-2 p-4 mt-5 card">
           <div class="login-form">
             <a href="./" class="mb-4 d-flex">
@@ -46,16 +44,15 @@ $lastData = (array) Flash::display('lastData');
                 value="<?= $lastData['cédula'] ?? '' ?>" />
             </div>
             <div class="mb-3">
-              <label class="form-label">Tu contraseña</label>
-              <input
-                type="password"
-                name="contraseña"
-                required
-                class="form-control"
-                placeholder="Introduce tu contraseña"
-                pattern="(?=.*\d)(?=.*[A-ZÑ])(?=.*\W).{8,}"
-                title="La contraseña debe tener al menos 8 caracteres, un número, un símbolo y una mayúscula"
-                value="<?= $lastData['contraseña'] ?? '' ?>" />
+              <?php App::renderComponent('input-password', [
+                'label' => 'Tu contraseña',
+                'name' => 'contraseña',
+                'required' => true,
+                'placeholder' => 'Introduce tu contraseña',
+                'pattern' => '(?=.*\d)(?=.*[A-ZÑ])(?=.*\W).{8,}',
+                'title' => 'La contraseña debe tener al menos 8 caracteres, un número, un símbolo y una mayúscula',
+                'value' => $lastData['contraseña'] ?? ''
+              ]) ?>
             </div>
             <div class="mb-3">
               <label class="form-label">Pregunta de seguridad</label>

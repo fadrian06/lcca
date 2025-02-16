@@ -62,7 +62,7 @@ App::group('', function (): void {
     );
   });
 
-  App::group('/docentes', function (): void {
+  App::group('/docentes', static function (): void {
     App::route('GET /', [TeacherController::class, 'showTeachers']);
     App::route('GET /registrar', [TeacherController::class, 'showAddTeacherPage']);
 
@@ -71,7 +71,7 @@ App::group('', function (): void {
       'handleTeacherRegistration'
     ]);
 
-    App::group('/@id:[\w]+', function (): void {
+    App::group('/@id:[\w]+', static function (): void {
       App::route('POST /eliminar', [TeacherController::class, 'deleteTeacher']);
     });
   });

@@ -15,6 +15,8 @@ final class App extends Flight
     string $layout,
     array $pageData = []
   ): void {
+    $pageData['lastData'] ??= (array) flash()->display('lastData');
+
     self::render("pages/$pageName", $pageData, 'page');
     self::render("layouts/$layout", compact('title'));
   }

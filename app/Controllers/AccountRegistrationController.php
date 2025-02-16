@@ -2,13 +2,17 @@
 
 namespace LCCA\Controllers;
 
-use Exception;
 use LCCA\App;
 use LCCA\Enums\Role;
 use LCCA\Models\UserModel;
 
 final readonly class AccountRegistrationController extends Controller
 {
+  function __construct(private LoginController $loginController)
+  {
+    parent::__construct();
+  }
+
   static function showRegistration(): void
   {
     App::renderPage('account-registration', 'Regístrarse', 'mercury-login');
@@ -24,7 +28,7 @@ final readonly class AccountRegistrationController extends Controller
       'respuesta_secreta' => ['required', 'alphanum']
     ]);
 
-    $user = $this->tryOfFail(static fn(): UserModel => UserModel::create(
+    $this->tryOfFail(static fn(): UserModel => UserModel::create(
       $userData->nombre,
       $userData->cédula,
       $userData->contraseña,
@@ -33,11 +37,8 @@ final readonly class AccountRegistrationController extends Controller
       $userData->respuesta_secreta
     ));
 
-    dd($user);
-
-    // TODO: Send success message
-    $_SESSION['messages']['success'] = 'Cuenta de coordinador creada exitósamente';
-    unset($_SESSION['lastData']);
-    LoginController::handleLogin();
+    flash()->set('Cuenta de coordinador creada exitósamente', 'success');
+    session()->remove('lastData');
+    $this->loginController->handleLogin();
   }
 }
