@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS users (
   signature BLOB UNIQUE,
   secretQuestion VARCHAR(255) NOT NULL,
   secretAnswer VARCHAR(255) NOT NULL,
-  deletedDate DATE
+  active BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE IF NOT EXISTS subjects (

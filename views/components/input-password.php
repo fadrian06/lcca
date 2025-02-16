@@ -15,22 +15,18 @@ foreach ($data as $attributeName => $attributeValue) {
 ?>
 
 <label for="<?= $id ?>" class="form-label"><?= $label ?? '$label' ?></label>
-<div class="input-group" x-data="{ showPassword: false }">
+<div class="input-group" x-data="{ show: false }">
   <input
     id="<?= $id ?>"
-    :type="showPassword ? 'text' : 'password'"
+    :type="show ? 'text' : 'password'"
     <?= join(' ', $attributes) ?>
     required
-    class="form-control"
-    placeholder="Introduce tu contraseña"
-    pattern="(?=.*\d)(?=.*[A-ZÑ])(?=.*\W).{8,}"
-    title="La contraseña debe tener al menos 8 caracteres, un número, un símbolo y una mayúscula"
-    value="<?= $lastData['contraseña'] ?? '' ?>" />
+    class="form-control" />
   <button
     tabindex="-1"
     type="button"
-    @click="showPassword = !showPassword"
+    @click="show = !show"
     class="input-group-text btn btn-outline-primary">
-    <i :class="`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`"></i>
+    <i :class="`bi ${show ? 'bi-eye-slash' : 'bi-eye'}`"></i>
   </button>
 </div>

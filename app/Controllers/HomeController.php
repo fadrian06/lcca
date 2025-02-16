@@ -11,7 +11,7 @@ final readonly class HomeController
 {
   static function showHome(): void
   {
-    $teachersAmount = count(UserModel::all(Role::Teacher));
+    $teachersAmount = count(UserModel::allByRole(Role::Teacher));
     $activeStudentsAmount = count(EnrollmentModel::allActives());
 
     App::renderPage(

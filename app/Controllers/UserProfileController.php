@@ -4,6 +4,7 @@ namespace LCCA\Controllers;
 
 use Error;
 use LCCA\App;
+use LCCA\Models\UserModel;
 
 final readonly class UserProfileController extends Controller
 {
@@ -25,11 +26,19 @@ final readonly class UserProfileController extends Controller
       $loggedUser->changePassword($passwords->newPassword);
     }
 
+    flash()->set('Contraseña actualizada exitosamente', 'success');
     App::redirect(App::request()->referrer);
   }
 
-  static function handleProfileInfoChange(): void
+  function handleProfileInfoChange(): void
   {
+    $profileData = $this->getValidatedData([
+      'nombre' => ['required', 'name'],
+      'cédula' => ['required', 'number', 'min:1'],
+      'pregunta_secreta' => ['required', 'question'],
+      'respuesta_secreta' => ['required', 'alphanum']
+    ]);
+
     $profileData = App::request()->data;
     $loggedUser = App::loggedUser();
 
@@ -39,22 +48,25 @@ final readonly class UserProfileController extends Controller
       $signatureImagePath = $loggedUser->getSignatureUrl();
     }
 
-    $loggedUser->updateProfile(
-      $profileData->name,
-      $profileData->idCard,
+    $this->tryOfFail(static fn(): UserModel => $loggedUser->updateProfile(
+      $profileData->nombre,
+      $profileData->cédula,
       $signatureImagePath
         ? base64_encode(file_get_contents($signatureImagePath))
         : null,
-      $profileData->secretQuestion,
-      $profileData->secretAnswer
-    );
+      $profileData->pregunta_secreta,
+      $profileData->respuesta_secreta
+    ));
 
+    flash()->set('Perfil actualizado exitosamente', 'success');
     App::redirect(App::request()->referrer);
   }
 
-  static function deleteAccount(): void {
-    App::loggedUser()?->delete();
+  static function disableAccount(): void
+  {
+    App::loggedUser()->disable();
 
-    App::redirect('./salir');
+    flash()->set('Cuenta desactivada exitosamente', 'success');
+    App::redirect('/salir');
   }
 }

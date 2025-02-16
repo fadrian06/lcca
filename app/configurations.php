@@ -31,23 +31,22 @@ Date::setLocale($_ENV['LOCALE'] ?? 'es');
 ///////////////
 $container = Container::getInstance();
 
-$container->singletonIf(PDO::class, static fn(): PDO => new PDO(
-  $_ENV['PDO_DSN'],
-  $_ENV['PDO_USER'],
-  $_ENV['PDO_PASSWORD'],
-  [PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ]
-));
+$container->singletonIf(PDO::class, static fn(): PDO => App::db());
 
 App::registerContainerHandler([$container, 'get']);
 
 ////////////////////
 // Authentication //
 ////////////////////
+db()->connection($container->get(PDO::class));
 auth()->dbConnection($container->get(PDO::class));
+
 $loginParamsError = '¡Cédula o contraseña incorrecta!';
 auth()->config('messages.loginParamsError', $loginParamsError);
 auth()->config('messages.loginPasswordError', $loginParamsError);
 auth()->config('session', true);
+auth()->config('timestamps', false);
+auth()->config('unique', ['idCard', 'signature']);
 
 /////////////////
 // Validations //

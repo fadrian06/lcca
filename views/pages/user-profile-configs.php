@@ -1,5 +1,6 @@
 <?php
 
+use LCCA\App;
 use LCCA\Models\UserModel;
 
 /** @var UserModel $loggedUser */
@@ -24,7 +25,7 @@ use LCCA\Models\UserModel;
                   <div class="mb-3 col-md-6">
                     <label class="form-label">Tu nombre</label>
                     <input
-                      name="name"
+                      name="nombre"
                       required
                       class="form-control"
                       placeholder="Introduce tu nombre"
@@ -36,32 +37,18 @@ use LCCA\Models\UserModel;
                     <label class="form-label">Tu cédula</label>
                     <input
                       type="number"
-                      name="idCard"
+                      name="cédula"
                       required
                       class="form-control"
                       placeholder="Introduce tu cédula"
                       min="0"
                       value="<?= $loggedUser->getIdCard() ?>" />
                   </div>
+                  <?php App::renderComponent('inputs-secret-question-answer', [
+                    'secretQuestion' => $lastData['pregunta_secreta'] ?? $loggedUser->getSecretQuestion(),
+                    'secretAnswer' => $lastData['respuesta_secreta'] ?? ''
+                  ]) ?>
                   <div class="mb-3 col-md-12">
-                    <label class="form-label">Pregunta de seguridad</label>
-                    <input
-                      onchange="document.querySelector('[name=secretAnswer]').setAttribute('placeholder', `Respuesta a: ${this.value}`)"
-                      name="secretQuestion"
-                      required
-                      class="form-control"
-                      placeholder="Introduce tu pregunta"
-                      value="<?= $loggedUser->getSecretQuestion() ?>" />
-                  </div>
-                  <div class="mb-3 col-md-12">
-                    <label class="form-label">Respuesta de seguridad</label>
-                    <input
-                      type="password"
-                      name="secretAnswer"
-                      class="form-control"
-                      placeholder="Introduce tu respuesta" />
-                  </div>
-                  <div class="mb-3 col-9">
                     <label class="form-label">Firma</label>
                     <input
                       capture="user"
@@ -123,7 +110,9 @@ use LCCA\Models\UserModel;
         </div>
       </div>
       <div class="card-footer text-end">
-        <a href="./perfil/eliminar" class="btn btn-danger">Eliminar cuenta</a>
+        <a href="./perfil/desactivar" class="btn btn-danger">
+          Desactivar cuenta
+        </a>
       </div>
     </div>
   </div>

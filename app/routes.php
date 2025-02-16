@@ -9,10 +9,10 @@ use LCCA\Controllers\StudentController;
 use LCCA\Controllers\SubjectController;
 use LCCA\Controllers\TeacherController;
 use LCCA\Controllers\UserProfileController;
+use LCCA\Middlewares\EnsureUserIsActive;
 use LCCA\Middlewares\EnsureUserIsCoordinator;
-use LCCA\Middlewares\EnsureUserIsLoggedMiddleware;
-use LCCA\Middlewares\EnsureUserIsNotLoggedMiddleware;
-use Leaf\Flash;
+use LCCA\Middlewares\EnsureUserIsLogged;
+use LCCA\Middlewares\EnsureUserIsNotLogged;
 
 App::route('/salir', [LoginController::class, 'handleLogout']);
 
@@ -20,12 +20,12 @@ App::group('/perfil/recuperar(/@idCard:[0-9]+)', function (): void {
   App::route('GET /', [LoginController::class, 'showRecover']);
   App::route('POST /', [LoginController::class, 'checkAnswer']);
   App::route('POST /cambiar-clave', [LoginController::class, 'recoverPassword']);
-}, [EnsureUserIsNotLoggedMiddleware::class]);
+}, [EnsureUserIsNotLogged::class]);
 
 App::group('/ingresar', function (): void {
   App::route('GET /', [LoginController::class, 'showLogin']);
   App::route('POST /', [LoginController::class, 'handleLogin']);
-}, [EnsureUserIsNotLoggedMiddleware::class]);
+}, [EnsureUserIsNotLogged::class]);
 
 App::group('/registrarse', function (): void {
   App::route('GET /', [AccountRegistrationController::class, 'showRegistration']);
@@ -57,8 +57,8 @@ App::group('', function (): void {
     );
 
     App::route(
-      '/eliminar',
-      [UserProfileController::class, 'deleteAccount']
+      '/desactivar',
+      [UserProfileController::class, 'disableAccount']
     );
   });
 
@@ -107,20 +107,20 @@ App::group('', function (): void {
 
   App::route('/respaldar', function (): void {
     App::db()->backup();
-    Flash::set('Base de datos respaldada exitósamente', 'success');
+    flash()->set('Base de datos respaldada exitósamente', 'success');
     App::redirect(App::request()->referrer);
   })->addMiddleware(EnsureUserIsCoordinator::class);
 
   App::route('/restaurar', function (): void {
     App::restoreDb();
-    Flash::set('Base de datos restaurada exitósamente', 'success');
+    flash()->set('Base de datos restaurada exitósamente', 'success');
     App::redirect('/salir');
   })->addMiddleware(EnsureUserIsCoordinator::class);
-}, [EnsureUserIsLoggedMiddleware::class]);
+}, [EnsureUserIsLogged::class, EnsureUserIsActive::class]);
 
 App::group('/api', function (): void {
   App::group('/estudiantes', function (): void {
     App::route('GET /@idCard:[0-9]+', [StudentController::class, 'searchStudentByIdCard']);
     App::route('GET /@names:[a-zA-ZáéíóúÁÉÍÓÚñÑ]+', [StudentController::class, 'searchStudentByNames']);
   });
-}, [EnsureUserIsLoggedMiddleware::class]);
+}, [EnsureUserIsLogged::class]);

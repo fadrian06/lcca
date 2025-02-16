@@ -4,14 +4,14 @@ namespace LCCA\Middlewares;
 
 use LCCA\App;
 
-final class EnsureUserIsNotLoggedMiddleware
+final class EnsureUserIsLogged
 {
   function before()
   {
-    if (auth()->user() === null) {
+    if (auth()->user() !== null) {
       return true;
     }
 
-    App::redirect('/');
+    App::redirect('/ingresar', 401);
   }
 }

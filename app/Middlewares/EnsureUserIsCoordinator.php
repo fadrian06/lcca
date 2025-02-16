@@ -3,17 +3,15 @@
 namespace LCCA\Middlewares;
 
 use LCCA\App;
-use LCCA\Models\UserModel;
 use Leaf\Flash;
 
 final readonly class EnsureUserIsCoordinator
 {
   function before()
   {
-    $loggedUser = App::view()->get('loggedUser');
-    assert($loggedUser instanceof UserModel);
+    $loggedUser = App::loggedUser();
 
-    if ($loggedUser->isCoordinator()) {
+    if ($loggedUser?->isCoordinator()) {
       return true;
     }
 

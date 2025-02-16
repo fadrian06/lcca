@@ -2,8 +2,6 @@
 
 namespace LCCA\Models;
 
-use DateTimeImmutable;
-use DateTimeInterface;
 use Exception;
 use LCCA\App;
 use LCCA\Enums\Role;
@@ -24,7 +22,7 @@ final class UserModel implements Stringable
     private ?string $signatureBase64,
     private string $secretQuestion,
     private string $secretAnswer,
-    private ?DateTimeInterface $deletedDate
+    private bool $active
   ) {
     $this->name = mb_convert_case($name, MB_CASE_TITLE);
   }
@@ -67,11 +65,6 @@ final class UserModel implements Stringable
   function hasSignature(): bool
   {
     return $this->signatureBase64 !== null;
-  }
-
-  function isDeleted(): bool
-  {
-    return $this->deletedDate !== null;
   }
 
   function changePassword(string $newPassword): self
@@ -133,19 +126,26 @@ final class UserModel implements Stringable
     return $this;
   }
 
-  function delete(): void
+  function disable(): self
   {
-    $this->deletedDate = new DateTimeImmutable;
+    $this->active = false;
 
-    $stmt = App::db()->prepare('
-      UPDATE users SET deletedDate = :deletedDate
-      WHERE id = :id
-    ');
+    try {
+      $stmt = App::db()->prepare('
+        UPDATE users SET active = :active WHERE id = :id
+      ');
 
-    $stmt->execute([
-      ':id' => $this->id,
-      ':deletedDate' => $this->deletedDate->format('Y-m-d')
-    ]);
+      $stmt->execute([':id' => $this->id, ':active' => $this->active]);
+    } catch (PDOException $exception) {
+      dd($exception);
+    }
+
+    return $this;
+  }
+
+  function isActive(): bool
+  {
+    return $this->active;
   }
 
   /** @throws Exception */
@@ -158,7 +158,6 @@ final class UserModel implements Stringable
     string $secretAnswer
   ): self {
     $signatureBase64 = null;
-    $deletedDate = null;
 
     $userModel = new self(
       uniqid(),
@@ -169,7 +168,7 @@ final class UserModel implements Stringable
       $signatureBase64,
       $secretQuestion,
       password_hash($secretAnswer, PASSWORD_DEFAULT),
-      $deletedDate
+      true
     );
 
     try {
@@ -209,13 +208,16 @@ final class UserModel implements Stringable
   }
 
   /** @return self[] */
-  static function all(?Role $role = null): array
+  static function all(): array
   {
-    $query = $role
-      ? 'SELECT * FROM users WHERE role = ? AND deletedDate IS NULL'
-      : 'SELECT * FROM users WHERE deletedDate IS NULL';
+    $stmt = App::db()->query('SELECT * FROM users');
 
-    $stmt = App::db()->prepare($query);
+    return $stmt->fetchAll(PDO::FETCH_FUNC, [__CLASS__, 'mapper']);
+  }
+
+  static function allByRole(Role $role): array
+  {
+    $stmt = App::db()->prepare('SELECT * FROM users WHERE role = ?');
     $stmt->execute([$role->value]);
 
     return $stmt->fetchAll(PDO::FETCH_FUNC, [__CLASS__, 'mapper']);
@@ -237,7 +239,7 @@ final class UserModel implements Stringable
         $userData->signature,
         $userData->secretQuestion,
         $userData->secretAnswer,
-        $userData->deletedDate
+        $userData->active
       );
     }
 
@@ -253,7 +255,7 @@ final class UserModel implements Stringable
     ?string $signature,
     string $secretQuestion,
     string $secretAnswer,
-    ?string $deletedDate
+    bool $active
   ): self {
     return new self(
       $id,
@@ -264,7 +266,7 @@ final class UserModel implements Stringable
       $signature,
       $secretQuestion,
       $secretAnswer,
-      $deletedDate ? new DateTimeImmutable($deletedDate) : null
+      $active
     );
   }
 
