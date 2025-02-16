@@ -8,7 +8,7 @@ final class EnsureUserIsNotLoggedMiddleware
 {
   function before()
   {
-    if (auth()->id() === null) {
+    if (auth()->user() === null) {
       return true;
     }
 

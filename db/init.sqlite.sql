@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS users (
-  id VARCHAR(255) PRIMARY KEY,
+  id VARCHAR(255) NOT NULL PRIMARY KEY,
   name VARCHAR(255) NOT NULL CHECK (LENGTH(name) >= 3),
   idCard INTEGER UNIQUE NOT NULL CHECK (idCard >= 0),
   password VARCHAR(255) NOT NULL,
@@ -11,13 +11,13 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS subjects (
-  id VARCHAR(255) PRIMARY KEY,
+  id VARCHAR(255) NOT NULL PRIMARY KEY,
   name VARCHAR(255) UNIQUE NOT NULL,
   imageUrl VARCHAR(255) UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS representatives (
-  id VARCHAR(255) PRIMARY KEY,
+  id VARCHAR(255) NOT NULL PRIMARY KEY,
   nationality VARCHAR(1) NOT NULL CHECK (nationality IN ('V', 'E')),
   idCard INTEGER UNIQUE NOT NULL CHECK (idCard > 0),
   names VARCHAR(255) NOT NULL CHECK (LENGTH(names) >= 3),
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS representatives (
 );
 
 CREATE TABLE IF NOT EXISTS students (
-  id VARCHAR(255) PRIMARY KEY,
+  id VARCHAR(255) NOT NULL PRIMARY KEY,
   nationality VARCHAR(1) NOT NULL CHECK (nationality IN ('V', 'E')),
   idCard INTEGER UNIQUE NOT NULL CHECK (idCard > 0),
   names VARCHAR(255) NOT NULL CHECK (LENGTH(names) >= 3),
@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS pendingSubjects (
 );
 
 CREATE TABLE IF NOT EXISTS enrollments (
-  id VARCHAR(255) PRIMARY KEY,
+  id VARCHAR(255) NOT NULL PRIMARY KEY,
   student_id VARCHAR(255) NOT NULL,
   teacher_id VARCHAR(255) NOT NULL,
   studyYear INTEGER NOT NULL CHECK (studyYear >= 1 AND studyYear <= 5),
@@ -112,6 +112,26 @@ CREATE TABLE IF NOT EXISTS enrollments (
 
   FOREIGN KEY (student_id) REFERENCES students (id),
   FOREIGN KEY (teacher_id) REFERENCES users (id)
+);
+
+CREATE TABLE IF NOT EXISTS studyYears (
+  id VARCHAR(255) NOT NULL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL UNIQUE,
+  ordinal INTEGER NOT NULL UNIQUE CHECK (ordinal > 0),
+  disabled BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE IF NOT EXISTS studySections (
+  id VARCHAR(255) NOT NULL PRIMARY KEY,
+  letter VARCHAR(1) NOT NULL,
+  capacity INTEGER NOT NULL CHECK (capacity >= 0),
+  disabled BOOLEAN DEFAULT FALSE,
+  studyYear_id VARCHAR(255) NOT NULL,
+
+  UNIQUE (letter, studyYear_id),
+  FOREIGN KEY (studyYear_id) REFERENCES studyYears (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS notes (
@@ -137,3 +157,17 @@ INSERT INTO subjects (id, name, imageUrl) VALUES
 ('67420594e677e', 'Biología', './assets/images/subjects/biologia.png'),
 ('6742059cddca5', 'Formación Para La Soberanía Nacional', './assets/images/subjects/soberania.png'),
 ('674205bd9d8ce', 'Ciencias De La Tierra', './assets/images/subjects/tierra.png');
+
+INSERT INTO studyYears (id, name, ordinal) VALUES
+('67a29bbd59419', 'Primer', 1),
+('67a29bd875390', 'Segundo', 2),
+('67a29be33141d', 'Tercer', 3),
+('67a29becd7687', 'Cuarto', 4),
+('67a29bf587b1f', 'Quinto', 5);
+
+INSERT INTO studySections (id, letter, capacity, studyYear_id) VALUES
+('67a29c1ea590f', 'A', 15, '67a29bbd59419'),
+('67a29c3c3d3e3', 'A', 20, '67a29bd875390'),
+('67a29c4d92ef3', 'A', 18, '67a29be33141d'),
+('67a29c5b41d39', 'A', 16, '67a29becd7687'),
+('67a29c73c44bc', 'A', 17, '67a29bf587b1f');

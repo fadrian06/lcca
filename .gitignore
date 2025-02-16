@@ -8,3 +8,4 @@ backup.*
 /LCCA-*
 ~$*.docx
 .phpunit.cache
+*.db-journal
