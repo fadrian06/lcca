@@ -10,7 +10,7 @@ final readonly class TeacherController extends Controller
 {
   static function showTeachers(): void
   {
-    $teachers = UserModel::all(Role::Teacher);
+    $teachers = UserModel::allByRole(Role::Teacher);
 
     App::renderPage(
       'teachers-list',
