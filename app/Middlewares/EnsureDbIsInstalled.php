@@ -3,13 +3,18 @@
 namespace LCCA\Middlewares;
 
 use LCCA\App;
+use PDOException;
 
 final readonly class EnsureDbIsInstalled
 {
   function before()
   {
-    App::renderPage('db-install-loader', 'Instalando base de datos', 'mercury-login');
+    try {
+      App::db()->query('SELECT * FROM users LIMIT 1');
+    } catch (PDOException) {
+      App::renderPage('db-install-loader', 'Instalando base de datos', 'mercury-login');
 
-    exit;
+      exit;
+    }
   }
 }

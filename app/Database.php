@@ -64,12 +64,12 @@ final class Database extends PDO
     }
   }
 
-  private static function isSqlite(): bool
+  static function isSqlite(): bool
   {
     return str_contains($_ENV['PDO_DSN'], 'sqlite');
   }
 
-  private static function isMysql(): bool
+  static function isMysql(): bool
   {
     return str_contains($_ENV['PDO_DSN'], 'mysql');
   }
