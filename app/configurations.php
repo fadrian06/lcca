@@ -4,10 +4,6 @@ use Illuminate\Container\Container;
 use Jenssegers\Date\Date;
 use LCCA\App;
 use LCCA\Models\UserModel;
-use Leaf\Auth;
-use Leaf\Form;
-use Leaf\Helpers\Password;
-use Leaf\Http\Session;
 use Symfony\Component\Dotenv\Dotenv;
 
 ///////////////////////////
@@ -126,7 +122,7 @@ if (auth()->id() !== null) {
 //////////////
 // 404 page //
 //////////////
-App::map('notFound', function (): void {
+App::map('notFound', static function (): void {
   App::renderPage('404', 'Página no encontrada', 'mercury-error');
 });
 
