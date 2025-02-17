@@ -2,7 +2,7 @@
 
 use LCCA\App;
 
-$urlSections = array_filter(explode('/', App::request()->url));
+$urlSections = array_filter(explode('/', urldecode(App::request()->url)));
 
 ?>
 
@@ -66,9 +66,7 @@ $urlSections = array_filter(explode('/', App::request()->url));
       <a href="./">Inicio</a>
       <?php foreach ($urlSections as $section): ?>
         &nbsp;/
-        <a>
-          <?= mb_convert_case($section, MB_CASE_TITLE) ?>
-        </a>
+        <span><?= mb_convert_case($section, MB_CASE_TITLE) ?></span>
       <?php endforeach ?>
     <?php elseif (date('H') <= 12): ?>
       Que tengas un buen día 😊

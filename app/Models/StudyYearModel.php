@@ -28,6 +28,37 @@ final class StudyYearModel implements Stringable
     }
   }
 
+  function isActive(): bool
+  {
+    return !$this->disabled;
+  }
+
+  function getSectionsNumber(): int
+  {
+    return count($this->sections);
+  }
+
+  function openSection(string $letter, int $capacity): StudySectionModel
+  {
+    $section = StudySectionModel::create(
+      $letter,
+      $capacity,
+      $this
+    );
+
+    $section->assignStudyYear($this);
+
+    $this->sections[] = $section;
+
+    return $section;
+  }
+
+  /** @return StudySectionModel[] */
+  function getSections(): array
+  {
+    return $this->sections;
+  }
+
   function delete(): self
   {
     $stmt = App::db()->prepare('DELETE FROM studyYears WHERE id = ?');
@@ -37,7 +68,7 @@ final class StudyYearModel implements Stringable
   }
 
   /** @throws Exception */
-  function update(string $name, ?int $ordinal): self
+  function update(string $name, ?int $ordinal, bool $disabled): self
   {
     $this->__set('name', $name);
 
@@ -45,16 +76,20 @@ final class StudyYearModel implements Stringable
       $this->ordinal = $ordinal;
     }
 
+    $this->disabled = $disabled;
+
     try {
       $stmt = App::db()->prepare('
-        UPDATE studyYears SET name = :name, ordinal = :ordinal
+        UPDATE studyYears SET name = :name, ordinal = :ordinal,
+        disabled = :disabled
         WHERE id = :id
       ');
 
       $stmt->execute([
         ':id' => $this->id,
         ':name' => $this->name,
-        ':ordinal' => $this->ordinal
+        ':ordinal' => $this->ordinal,
+        ':disabled' => $this->disabled
       ]);
     } catch (PDOException $exception) {
       throw self::handleError($exception);

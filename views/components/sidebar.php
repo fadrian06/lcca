@@ -68,6 +68,15 @@ use LCCA\App;
           <span class="menu-text">Áreas de Formación</span>
         </a>
       </li>
+      <?php if ($loggedUser->isCoordinator()): ?>
+        <li>
+          <a href="./años">
+            <i class="bi bi-bar-chart"></i>
+            <span class="menu-text">Años y secciones</span>
+          </a>
+        </li>
+      <?php endif ?>
+
       <li class="treeview">
         <a href="javascript:void">
           <i class="bi bi-database-fill-gear"></i>
@@ -94,7 +103,9 @@ use LCCA\App;
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        <?php App::renderComponent('search-student', ['hrefFormat' => './estudiantes/${student.id}/reinscribir']) ?>
+        <?php App::renderComponent('search-student', [
+          'hrefFormat' => './estudiantes/${student.id}/reinscribir'
+        ]) ?>
       </div>
     </div>
   </div>

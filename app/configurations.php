@@ -93,6 +93,8 @@ form()->message([
 
 form()->rule('required', '/^.+$/', '{Field} es requerido');
 
+form()->rule('boolean', '/^(true|false|1|0|on|off)$/');
+
 form()->rule(
   'name',
   '/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{3,}$/',

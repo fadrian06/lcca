@@ -32,6 +32,21 @@ final class StudySectionModel implements Stringable
     return $this;
   }
 
+  function getCapacity(): int
+  {
+    return $this->capacity;
+  }
+
+  function isActive(): bool
+  {
+    return !$this->disabled;
+  }
+
+  function canBeDeleted(): bool
+  {
+    return true;
+  }
+
   function delete(): self
   {
     $stmt = App::db()->prepare('DELETE FROM studySections WHERE id = ?');
@@ -41,17 +56,20 @@ final class StudySectionModel implements Stringable
   }
 
   /** @throws Exception */
-  function update(string $name, ?int $ordinal): self
+  function update(string $name, ?int $capacity, bool $disabled): self
   {
     $this->__set('name', $name);
 
-    if ($ordinal) {
-      $this->ordinal = $ordinal;
+    if ($capacity) {
+      $this->capacity = $capacity;
     }
+
+    $this->disabled = $disabled;
 
     try {
       $stmt = App::db()->prepare('
-        UPDATE studySections SET name = :name, ordinal = :ordinal, disabled = :disabled
+        UPDATE studySections SET letter = :letter,
+        capacity = :capacity, disabled = :disabled
         WHERE id = :id
       ');
 

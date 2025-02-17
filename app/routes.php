@@ -6,9 +6,11 @@ use LCCA\Controllers\EnrollmentController;
 use LCCA\Controllers\HomeController;
 use LCCA\Controllers\LoginController;
 use LCCA\Controllers\StudentController;
+use LCCA\Controllers\StudyYearController;
 use LCCA\Controllers\SubjectController;
 use LCCA\Controllers\TeacherController;
 use LCCA\Controllers\UserProfileController;
+use LCCA\Enums\StudyYear;
 use LCCA\Middlewares\EnsureUserIsActive;
 use LCCA\Middlewares\EnsureUserIsCoordinator;
 use LCCA\Middlewares\EnsureUserIsLogged;
@@ -102,6 +104,26 @@ App::group('', static function (): void {
       App::group('/representantes/@representativeId:\w+', static function (): void {
         App::route('/desvincular', [StudentController::class, 'removeRepresentative']);
       });
+    });
+  });
+
+  App::group('/años', static function (): void {
+    App::route('GET /', [StudyYearController::class, 'showStudyYears']);
+
+    App::group('/@id:\w+', static function (): void {
+      App::route('POST /', [StudyYearController::class, 'handleUpdateStudyYear']);
+
+      App::route(
+        'POST /secciones',
+        [StudyYearController::class, 'handleOpenSection']
+      );
+    });
+  }, [EnsureUserIsCoordinator::class]);
+
+  App::group('/secciones', static function (): void {
+    App::group('/@id:\w+', static function (): void {
+      App::route('GET /eliminar', [StudyYearController::class, 'deleteSection']);
+      App::route('POST /', [StudyYearController::class, 'handleUpdateSection']);
     });
   });
 

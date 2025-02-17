@@ -24,6 +24,11 @@ use LCCA\Models\UserModel;
     th,
     td {
       white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    [x-cloak] {
+      display: none;
     }
   </style>
 </head>
