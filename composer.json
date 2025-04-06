@@ -4,17 +4,17 @@
     "ext-pdo": "*",
     "ext-pdo_sqlite": "*",
     "ext-pdo_mysql": "*",
-    "flightphp/core": "^3.13",
+    "flightphp/core": "^3.15",
     "symfony/dotenv": "^7.2",
     "symfony/polyfill-php84": "^1.31",
     "jenssegers/date": "^4.0",
     "leafs/form": "^3.2",
     "leafs/password": "^1.0",
-    "leafs/auth": "^3.4",
-    "leafs/db": "^2.4",
-    "leafs/session": "^2.3",
-    "illuminate/container": "^11.42",
-    "leafs/leaf": "^3.12"
+    "leafs/auth": "^4.0",
+    "leafs/db": "^4.0",
+    "leafs/session": "^4.0",
+    "illuminate/container": "^12.7",
+    "leafs/leaf": "^4.1"
   },
   "scripts": {
     "dev": "composer i & start php -S localhost:80",
@@ -47,7 +47,7 @@
     "phpunit/phpunit": "^11.5",
     "phpstan/phpstan-phpunit": "^2.0",
     "staabm/phpstan-todo-by": "^0.2.0",
-    "spaze/phpstan-disallowed-calls": "^4.3",
+    "spaze/phpstan-disallowed-calls": "^4.4",
     "leafs/fetch": "^0.2.0"
   },
   "archive": {
